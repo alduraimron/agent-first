@@ -3,7 +3,7 @@ name: af-database
 description: Read-only consultation for relational or document modeling, migrations, transactions, tenant-scoped persistence, and query design when data integrity or rollout behavior is uncertain.
 tools: [read, grep, glob]
 spawns: []
-autoloadSkills: [af-database]
+autoloadSkills: [af-database, af-principles]
 thinking-level: medium
 ---
 

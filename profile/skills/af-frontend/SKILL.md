@@ -7,6 +7,8 @@ description: Engineer UI interactions, accessibility, responsive layouts, and cl
 
 Use shared RULES.md, af-engineering requirements/routing, and af-verification evidence handling. Main owns edits and any browser activity; advisors remain read-only.
 
+Select through `af-principles`: experience-first for a changed user journey, domain modeling for ambiguous interaction state, and boundary discipline for client/server or component ownership. Explore competing interactions only when an important unresolved difference warrants it; static advice is not browser evidence.
+
 ## Procedure
 1. Trace the requested user journey through routes, components, state, data fetching, and existing design tokens. Identify supported viewports, input modes, and accessibility conventions from the project.
 2. Define visible states and transitions: initial, loading, empty, success, validation failure, server failure, disabled, and retry where applicable. Specify URL/history behavior and state ownership.

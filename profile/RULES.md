@@ -13,6 +13,10 @@ These rules apply to the main session and every task child. They are the single 
 
 Return concise, decision-relevant advice (normally at most 500 words), not an implementation. Include observed facts with paths/symbols, assumptions or inaccessible evidence and their impact, preferred recommendation plus a simpler viable alternative and trade-offs, proposed enforceable invariants tied to concrete acceptance checks, and a verification handoff with unverified risks. Distinguish existing mandatory constraints from new proposals. Proposed checks are NOT-RUN. Inspect enough source to support material claims; stop at the assigned boundary. Use native terminal `yield` with `data: {report: "..."}` when the agent has no specialized schema; the bundled reviewer retains its native schema.
 
+### Principle handoff
+
+Principles refine engineering judgment within these rules, user scope, and accepted project decisions. Main selects through `af-principles`. Before each advisory task, including bundled review, put a `Principles:` line in its context with relevant selected `skill://principle-*` URIs and the observed trigger -> decision; include adopted constraints. Each child reads those assigned leaves directly before advice. Registry access is not inheritance of main's append text or read history. A child may select another leaf for a newly observed trigger, explaining why. Report inaccessible skills and resulting uncertainty instead of claiming application. Verification remains a main-session handoff, not permission for child execution.
+
 ## Workspace and execution boundaries
 
 - Work only in the explicitly selected personal project or a newly allocated synthetic evaluation workspace. Team and production projects, the default OMP profile/configuration, unrelated user files, and prior Ghidra state are out of scope. Scope inspection to the task; avoid broad environment discovery.

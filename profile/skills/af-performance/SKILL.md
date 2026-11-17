@@ -7,6 +7,8 @@ description: Measure bottlenecks and compare optimization experiments across lat
 
 Use shared RULES.md, af-engineering planning/routing, and af-verification evidence execution. Main runs measurements and implements; advisors analyze available evidence.
 
+Use `af-principles` to explain measured numbers and reason from the actual limiting mechanism. Consider ownership separation only for evidenced contention and leverage only for recurring measurement work. Predictions and source complexity remain distinct from observed performance.
+
 ## Procedure
 1. Define metric, budget, workload distribution, concurrency, data size, environment, and correctness constraints. Read existing benchmarks, profiling hooks, hot paths, and prior measurements with their revision/conditions.
 2. Specify a comparable baseline: warmup/cold-start distinction, sample count/duration, percentiles or distribution, noise sources, and resource measurements. Use existing installed tooling; identify missing measurement prerequisites explicitly.

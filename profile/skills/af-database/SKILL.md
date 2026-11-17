@@ -7,6 +7,8 @@ description: Engineer schemas, migrations, transactions, and queries with explic
 
 Use shared RULES.md; af-engineering owns requirements/routing and af-verification owns evidence execution/reporting. Main implements; advisors inspect and recommend.
 
+Select through `af-principles` when domain invariants need representation, retries need idempotency, shared writes need ownership separation, or old/new callers need a migration boundary. These lenses refine the persistence decision; they do not replace this procedure or authorize a migration.
+
 ## Procedure
 1. Read schema/model definitions, migrations, repository queries, transaction boundaries, and affected callers. Identify the actual database engine/version from project evidence and map entity ownership and data sensitivity.
 2. Define cardinality, nullability, uniqueness, referential integrity, deletion/retention, and ordering requirements. Distinguish application assumptions from constraints enforced by the database.

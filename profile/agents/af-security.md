@@ -3,7 +3,7 @@ name: af-security
 description: Read-only threat and trust-boundary consultation for authorization, sensitive data, untrusted input, credentials, and consequential external actions; ground risks in reachable source paths.
 tools: [read, grep, glob]
 spawns: []
-autoloadSkills: [af-security]
+autoloadSkills: [af-security, af-principles]
 thinking-level: medium
 ---
 

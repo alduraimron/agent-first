@@ -10,8 +10,9 @@ Apply shared RULES.md. This router serves the main session; advisors use the rel
 ## Route from evidence
 
 1. Inspect the request, affected code, immediate callers, and existing commands. Identify observable intent, complexity, risk, and architectural impact. File count is not a classifier.
-2. Start the first visible prose with the selected row's exact literal prefix below, followed by a concise rationale covering intent, complexity, risk and architectural impact. Inspection tools may precede it. Choose the smallest adequate procedure automatically, without asking the user to choose.
+2. Start the first visible prose with the selected row's exact literal prefix below, followed by a concise rationale covering intent, complexity, risk and architectural impact. Inspection tools may precede it. Verification-only and blocked requests still have a route; if the final report is the first prose, put the prefix there. Choose the smallest adequate procedure automatically, without asking the user to choose.
 3. Read the selected procedure before acting. Reclassify visibly when evidence changes the route. Architecture-impacting takes precedence over implementation routes when changing ownership, public contracts, persistence/schema design, trust boundaries, dependency direction, or cross-cutting design. Investigation and review remain read-only unless modification is authorized.
+4. After relevant inspection, read `skill://af-principles`, select by the actual decision triggers, and read the selected leaves before applying them. Reassess when evidence changes. Use the selector's proportionality guidance rather than loading a fixed bundle for each route.
 
 | Intent | Route and procedure |
 | --- | --- |
@@ -34,7 +35,7 @@ Use `skill://af-context` when meaningful work needs durable requirements, decisi
 
 Trivial quick changes have no delegation. Consult only for a material domain question or uncertainty, or an explicit request for independent domain assessment: `af-architect` for architecture, `af-database` for persistence, `af-security` for trust, `af-frontend` for UI/accessibility, `af-performance` for measured bottlenecks, `af-devops` for deployment/observability. Architecture-impacting requires actual returned architect advice before affected implementation. Other consultations are conditional, not a six-agent checklist. Keep at most two concurrent consultations, recursion one, and no child spawning.
 
-Supply the specific question, scope/non-goals, paths, observed evidence, acceptance criteria, alternatives, constraints, and requested advisory output. Use native `task` with the exact `agent` name. Omit per-task `tools` or leave it empty: it forwards eval functions, not built-in permissions. Agent frontmatter controls built-ins. Preserve native output schemas. Evaluate returned advice against source evidence and document adoption or rejection with reasons; an announced delegation is not consultation.
+Supply the specific question, scope/non-goals, paths, observed evidence, acceptance criteria, alternatives, constraints, and requested advisory output. Follow RULES.md's principle handoff for relevant selected leaves; children must read them themselves. Use native `task` with the exact `agent` name. Omit per-task `tools` or leave it empty: it forwards eval functions, not built-in permissions. Agent frontmatter controls built-ins. Preserve native output schemas. Evaluate returned advice against source evidence and document adoption or rejection with reasons; an announced delegation is not consultation.
 
 ## Bundled reviewer protocol
 

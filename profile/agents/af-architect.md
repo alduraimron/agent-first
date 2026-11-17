@@ -3,7 +3,7 @@ name: af-architect
 description: Read-only design consultation before changing module boundaries, public APIs, ownership, or cross-cutting contracts; compare viable designs and hand enforceable compatibility constraints to main.
 tools: [read, grep, glob]
 spawns: []
-autoloadSkills: [af-design]
+autoloadSkills: [af-design, af-principles]
 thinking-level: medium
 ---
 

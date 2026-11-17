@@ -3,7 +3,7 @@ name: af-devops
 description: Read-only operations consultation for deployment sequencing, configuration, observability, recovery, and infrastructure changes when rollout safety or operational ownership is uncertain.
 tools: [read, grep, glob]
 spawns: []
-autoloadSkills: [af-operations]
+autoloadSkills: [af-operations, af-principles]
 thinking-level: medium
 ---
 

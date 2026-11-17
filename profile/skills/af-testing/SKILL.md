@@ -7,6 +7,8 @@ description: Diagnose failures through falsifiable hypotheses and design focused
 
 Use shared RULES.md; af-engineering owns scope/planning and af-verification owns check execution and evidence status. This skill designs diagnosis and coverage, not a second reporting protocol.
 
+Select root-cause and behavioral-test lenses through `af-principles` for uncertain failures and new regression coverage. Attack a shared premise only when failed approaches actually expose it, not automatically after one failed check. Use proof to connect the diagnosis and resulting observable behavior.
+
 ## Procedure
 1. Read the reported observation, stack/error output, affected implementation, test fixtures, and existing test scripts. Preserve the reported failure as ground truth; do not rerun solely to confirm it.
 2. Define expected invariants and identify the first observed divergence. Build a short hypothesis set separating inputs, state, code, dependency, configuration, and environment causes.

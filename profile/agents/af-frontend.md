@@ -3,7 +3,7 @@ name: af-frontend
 description: Read-only UI consultation for interaction state, accessibility, responsive layout, frontend data flow, and client/server boundaries when behavior or existing component fit is uncertain.
 tools: [read, grep, glob]
 spawns: []
-autoloadSkills: [af-frontend]
+autoloadSkills: [af-frontend, af-principles]
 thinking-level: medium
 ---
 

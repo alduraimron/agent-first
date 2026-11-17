@@ -7,6 +7,8 @@ description: Analyze trust boundaries, authorization, sensitive data, injection,
 
 Use shared RULES.md and af-engineering for authorization/routing; main owns implementation and evidence execution through af-verification. Advisors inspect and recommend within scope.
 
+Use `af-principles` for boundary discipline where untrusted data crosses authority, root causes where a defense targets a symptom, and type discipline where the existing language can encode a security-relevant distinction. No principle relaxes approvals, native denies, or the need to preserve legitimate authorized behavior.
+
 ## Procedure
 1. Map assets, actors, entry points, trust boundaries, privileged operations, and sensitive-data flow from source. Distinguish authentication, authorization, validation, and encoding controls.
 2. State attacker-controlled inputs and required capabilities. Trace realistic paths to data exposure, cross-tenant access, privilege escalation, injection, resource exhaustion, or unsafe outbound access.

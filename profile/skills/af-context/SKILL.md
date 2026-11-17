@@ -7,6 +7,8 @@ description: Recover a personal project's active task and decisions across sessi
 
 Use repository files as a small, inspectable memory, not a new runtime or policy engine. Shared safety is inherited from RULES.md; evidence execution and outcome meanings belong to `af-verification`. Main maintains these artifacts within the authorized personal project. Advisors can inspect them and recommend updates but cannot write them.
 
+Select through `af-principles` when context volume threatens decisive evidence or recurring ledger entries justify structural enforcement. Preserve recoverable source pointers and accepted constraints; encode a demonstrated lesson at its narrowest owner instead of automatically expanding prompts.
+
 ## Recovery first
 
 1. Locate the authorized repository root with native inspection. Look for `.agent-first/context.md`; if absent, inspect existing project documentation and the requested scope before deciding whether initialization is useful. Trivial quick changes need no new paperwork. Existing context still needs relevant task/evidence updates.

@@ -7,6 +7,8 @@ description: Engineer deployment, configuration, observability, and recovery wit
 
 Use shared RULES.md and af-engineering for scope/approval/routing; main owns implementation and runtime evidence through af-verification. Advisors inspect and recommend, not provision infrastructure.
 
+Use `af-principles` for idempotency when work can replay, verifiable units when rollout stages need independent stop conditions, and safe autonomy when approval blocks only one branch. Consequential integration stays blocked while genuinely independent authorized work continues.
+
 ## Procedure
 1. Read runtime manifests, service entry points, deployment/configuration files, CI scripts, and runbooks. Map environments, dependencies, process ownership, persistent state, and configuration/secret sources.
 2. Trace startup/readiness/liveness and graceful shutdown. Identify dependency timeouts, retry budgets, backpressure, resource limits, and failure signals. Distinguish process-alive from ready-to-serve.

@@ -7,6 +7,8 @@ description: Design architecture and API boundaries, compare alternatives, and d
 
 Use shared RULES.md and af-engineering for routing, requirements, and consultation. Advisors provide analysis; main owns changes and evidence execution.
 
+Use `af-principles` for triggered design lenses: domain modeling when concepts or invariants are unclear, boundary discipline when ownership changes, and caller migration when replacing an internal API. Explore alternatives only for an unresolved material fork; apply the shared principle handoff rather than copying leaf bodies into assignments.
+
 ## Procedure
 1. Read the affected interfaces, implementations, consumers, and existing decisions. Map dependency direction, data/control flow, ownership, and sources of truth with source locations. Finish when every changed boundary has identified producers and consumers.
 2. Enumerate contract invariants: valid/invalid input, output/error semantics, identity, ordering, concurrency, resource lifecycle, compatibility, and failure propagation. Mark unknowns that could change the design.

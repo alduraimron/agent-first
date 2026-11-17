@@ -7,6 +7,8 @@ description: Explicitly requested isolated implementation or risky experimentati
 
 Apply shared RULES.md. This is a main-agent procedure, not another execution runtime or a security sandbox. Existing automatic task isolation/application stay disabled. Ordinary projects continue using `bin/af --cwd PROJECT` without OVNFS.
 
+Use `af-principles` only for an actual isolation decision, such as independently verifiable experimental units or safe work while integration awaits approval. No principle authorizes application, widens checkout scope, or turns OVNFS into a security sandbox.
+
 ## Opt in and capture scope
 
 1. Require an explicit request for isolation or obtain approval for the concrete source directory and experiment. Identify the source, native checkout name, intended change, permitted commands, verification, and retention/cleanup owner. Resolve project scripts and dependency/runtime availability first; opening an environment must not authorize provisioning.

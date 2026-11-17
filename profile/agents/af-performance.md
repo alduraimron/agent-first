@@ -3,7 +3,7 @@ name: af-performance
 description: Read-only performance consultation for measured latency, throughput, memory, allocation, or scaling problems; separate bottleneck evidence from complexity hypotheses and define comparable checks.
 tools: [read, grep, glob]
 spawns: []
-autoloadSkills: [af-performance]
+autoloadSkills: [af-performance, af-principles]
 thinking-level: medium
 ---
 
