@@ -1,6 +1,6 @@
 ---
 name: af-isolation
-description: Explicitly requested isolated implementation or risky experimentation; use native OVNFS checkout, diff and dry-run review, approved operator integration, rollback planning, and owned-checkout cleanup.
+description: Explicitly requested isolated implementation or risky experimentation; use native OVNFS checkout, reviewed diff, per-call dry-run/integration approval, rollback planning, and authorized owned-checkout cleanup.
 ---
 
 # Optional native OVNFS work
@@ -34,22 +34,24 @@ Inspect additions/deletions, binary changes, excluded paths, changed contracts, 
 
 ## Dry-run, approval, integration
 
-The profile explicitly denies `ovnfs apply`, including `--dry-run`. Respect that deny. Present commands for the human to run in their own terminal; do not reroute them through eval or another tool, and do not lower the policy:
+`profile/config.yml` is the settings authority: `ovnfs apply`, including `--dry-run`, is ASK, not automatic. After reviewing the diff, show the short exact command, cwd, resolved source/checkout targets, impact/risk and rollback before submitting this native per-call prompt:
 
 ```sh
 ovnfs apply af-chosen-experiment --dry-run
 ```
 
-Retain its actual output. Conflicts or unexpected changes block integration, not a reason to force/reset. Before a real apply, present exact source/checkout, reviewed diff, dry-run result, check outcomes, known gaps, and rollback plan. Obtain explicit approval for this integration; approval of creating the checkout is not approval of applying it. The operator then runs:
+Retain its actual output. Conflicts or unexpected changes block integration, not a reason to force/reset. Before real apply, present exact source/checkout, reviewed diff, dry-run result, check outcomes, known gaps and rollback plan, then obtain separate native per-call authorization. Creation and dry-run approval do not authorize real integration:
 
 ```sh
 ovnfs apply af-chosen-experiment
 ```
 
-Recheck if the source changed after review/dry-run. Preserve unrelated edits and get new approval for a materially changed patch. Run the affected source checks after successful integration; describe an unexecuted operator command as NOT-RUN, never as completed. `--branch` changes Git branch state and needs its own explicit decision; it is not a silent fallback.
+Recheck if the source changed after review/dry-run. Preserve unrelated edits and get new approval for a materially changed patch. Run affected source checks after successful integration; describe unexecuted work as NOT-RUN, never completed. `--branch` changes Git branch state and needs its own explicit decision; it is not a silent fallback. `bash.gitGuard` stays true: branch/stash can refuse a shared main checkout after approval. Use reviewed operator action or explicitly opted-in private OVNFS where appropriate, never absolute Git paths, wrappers or environment bypass.
+
+Native command display is truncated and does not infer semantics or show cwd; split/review long consequential commands before submission. Explicit prompts offer per-call Approve/Deny, not session approval. ASK fails closed without an interactive UI; keep dependent integration pending while independent safe work continues. Use operator fallback only for actual deny/guard or unavailable approval, not by default for a supported prompt. Do not reroute through eval, scripts, children or policy changes.
 
 ## Rollback and cleanup
 
-Before integration, the operator must retain a recoverable checkpoint/backup including relevant uncommitted and untracked work using their existing approved backup/VCS process. Preserve the exact patch and source baseline. For regression after apply, stop dependent work, compare the current source with that record, prepare a targeted inverse or restore plan preserving later/user edits, and obtain approval before applying it. Blind Git reset/reverse-patch is not a rollback plan. Removing a checkout does not undo an applied change.
+Before integration, retain a recoverable checkpoint/backup including relevant uncommitted and untracked work using the existing approved backup/VCS process; any consequential commands require their own authorization. Preserve the exact patch and source baseline. For regression after apply, stop dependent work, compare current source with that record, prepare a targeted inverse or restore plan preserving later/user edits, and obtain native authorization for consequential execution. Blind Git reset/reverse-patch is not a rollback plan. Removing a checkout does not undo an applied change.
 
-For abandoning an unintegrated experiment, preserve useful evidence and explicitly confirm this checkout is owned, no workers need it, and changes may be discarded; then remove only it with `ovnfs rm NAME`. Never prune unrelated checkouts, stop the shared daemon, or delete Ghidra state. Record whether integration was applied, blocked, rejected, or NOT-RUN and whether owned cleanup completed.
+For abandoning an unintegrated experiment, preserve useful evidence and explicitly confirm this checkout is owned, no workers need it, and changes may be discarded. Cleanup/discard is consequential ASK, not implied by creation: show the exact `ovnfs rm NAME`, cwd, resolved checkout, impact/risk and recovery limits, then obtain native per-call authorization before removing only it. Never prune unrelated checkouts, stop the shared daemon, or delete Ghidra state. Record whether integration was applied, blocked, rejected, or NOT-RUN and whether owned cleanup completed.

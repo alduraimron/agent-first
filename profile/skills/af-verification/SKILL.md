@@ -5,7 +5,7 @@ description: Evidence-based verification of fixes, features, designs, reviews, r
 
 # Evidence-based verification
 
-Apply the shared Agent-First RULES.md, including scoped autonomy, point-of-risk authorization, explicit native prompts/denies, child scope, browser backend, and no-install boundaries. This execution procedure is for the main agent; an advisory child may recommend checks but cannot perform them.
+Apply the shared Agent-First RULES.md, including AUTO/ASK/DENY scope, native prompts/denies, child scope, browser backend and dependency authorization. This execution procedure is for main; an advisory child may recommend checks but cannot perform them. Before an ASK operation use `approval.md`; ordinary installed checks remain AUTO.
 
 Read `skill://af-principles` if not already read, including verification-only or denied-check requests. Before a completion or blocked-check report, read `skill://principle-prove-it-works` in full unless already read. Select other triggered lenses through the selector, such as behavior-not-implementation for test oracles and explain-the-number for quantitative claims. Leaves guide the evidence decision; this skill remains the verification and final-report procedure.
 
