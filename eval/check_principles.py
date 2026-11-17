@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check principle packaging and native OMP discovery/URI reads without model calls."""
+"""Check native principle/interaction discovery and URI reads without model calls."""
 import argparse
 import hashlib
 import json
@@ -24,6 +24,12 @@ PRINCIPLES = (
 ORIGINAL = {'af-engineering', 'af-design', 'af-database', 'af-frontend', 'af-testing',
             'af-security', 'af-performance', 'af-operations', 'af-context',
             'af-verification', 'af-isolation'}
+INTERACTIONS = (
+    'how', 'why', 'teach', 'blast-radius', 'technical-writing', 'bro',
+    'interview-me', 'in-your-own-words', 'idea-refine', 'sharpen', 'architect',
+    'figure-it-out', 'recall', 'ketchup', 'show-me-your-work', 'pause-safely',
+    'reflect', 'correct', 'automate-me', 'unslop',
+)
 SECTIONS = ('Purpose', 'Triggers', 'Decision procedure', 'Trade-offs', 'Examples',
             'Observable outcomes', 'Verification')
 
@@ -53,8 +59,11 @@ def main():
         checks.append({'name': name, 'status': 'PASS' if passed else 'FAIL', 'detail': detail})
 
     expected_leaves = {'principle-' + name for name in PRINCIPLES}
+    interaction_leaves = {'interaction-' + name for name in INTERACTIONS}
+    hidden_leaves = expected_leaves | interaction_leaves
+    visible_skills = ORIGINAL | {'af-principles', 'af-interaction'}
     files = {path.parent.name: path for path in (ROOT / 'profile/skills').glob('*/SKILL.md')}
-    check('complete-skill-set', set(files) == ORIGINAL | {'af-principles'} | expected_leaves,
+    check('complete-skill-set', set(files) == visible_skills | hidden_leaves,
           sorted(files))
     source = (ROOT / 'profile/skills/af-principles/SOURCES.md').read_text()
     license_text = (ROOT / 'profile/skills/af-principles/LICENSE').read_text()
@@ -71,6 +80,12 @@ def main():
               and 'skill://af-principles/SOURCES.md' in content)
         check('indexed-and-attributed-' + name, 'skill://' + name in selector
               and '/skills/' + name + '/SKILL.md' in source)
+    interaction_selector = files['af-interaction'].read_text() if 'af-interaction' in files else ''
+    for name in sorted(interaction_leaves):
+        content = files[name].read_text() if name in files else ''
+        check('interaction-contract-' + name, '\nname: ' + name + '\n' in content
+              and '\n## Output contract\n' in content)
+        check('interaction-indexed-' + name, 'skill://' + name in interaction_selector)
     check('no-principle-bodies-in-main-prompt', all(
         '## ' + section not in (ROOT / 'profile/APPEND_SYSTEM.md').read_text()
         for section in SECTIONS))
@@ -111,14 +126,14 @@ def main():
         try:
             skills = json.loads(listing.stdout)['skills'] if listing and listing.returncode == 0 else []
             registered = {item['name']: item for item in skills}
-            check('native-discovery-exact-36', set(registered) == set(files))
+            check('native-discovery-exact-57', set(registered) == set(files))
             check('native-hidden-leaves-only',
-                  {name for name, item in registered.items() if item.get('hide')} == expected_leaves)
-            check('native-visible-catalog-12',
-                  {name for name, item in registered.items() if not item.get('hide')} == ORIGINAL | {'af-principles'})
+                  {name for name, item in registered.items() if item.get('hide')} == hidden_leaves)
+            check('native-visible-catalog-13',
+                  {name for name, item in registered.items() if not item.get('hide')} == visible_skills)
         except (ValueError, KeyError, TypeError) as error:
             check('native-skill-list-readable', False, str(error))
-        for name in ['af-principles', *sorted(expected_leaves)]:
+        for name in ['af-principles', 'af-interaction', *sorted(hidden_leaves)]:
             run = native('read-' + name, ['read', 'skill://' + name])
             expected = files.get(name)
             # Native output must contain the actual body, not just a registry entry.
@@ -131,7 +146,7 @@ def main():
             check('native-settings-readable', False, str(error))
     values = {key: item.get('value') for key, item in settings.items()}
     check('effective-exact-inclusion', set(values.get('skills.includeSkills') or []) == set(files))
-    check('effective-leaf-hiding', values.get('skills.manualSkills') == ['principle-*'])
+    check('effective-leaf-hiding', values.get('skills.manualSkills') == ['principle-*', 'interaction-*'])
     check('existing-safety-invariants', values.get('tools.approvalMode') == 'yolo'
           and values.get('task.maxConcurrency') == 2 and values.get('task.maxRecursionDepth') == 1
           and values.get('task.isolation.enabled') is False
@@ -147,6 +162,12 @@ def main():
         check('only-skill-settings-changed', not differences, differences)
         check('launcher-unchanged', digest(ROOT / 'bin/af') == baseline['launcher_sha256'])
         check('default-config-baseline-unchanged', default_hashes() == baseline['default_configuration_hashes'])
+        allowed = {'profile/config.yml', 'profile/APPEND_SYSTEM.md', 'profile/RULES.md',
+                   'profile/skills/af-engineering/SKILL.md', 'bin/af'}
+        preserved = {name: {'before': value, 'after': digest(ROOT / name) if (ROOT / name).is_file() else None}
+                     for name, value in baseline.get('source_hashes', {}).items()
+                     if name not in allowed and (not (ROOT / name).is_file() or digest(ROOT / name) != value)}
+        check('existing-profile-assets-unchanged', not preserved, preserved)
     check('default-config-check-unchanged', default_hashes() == before)
     result = {'status': 'FAIL' if any(item['status'] != 'PASS' for item in checks) else 'PASS',
               'checks': checks, 'artifacts': str(output),

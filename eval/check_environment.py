@@ -11,13 +11,13 @@ import subprocess
 import tempfile
 import time
 
-from check_principles import PRINCIPLES
+from check_principles import INTERACTIONS, PRINCIPLES
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ['af-engineering', 'af-design', 'af-database', 'af-frontend', 'af-testing',
           'af-security', 'af-performance', 'af-operations', 'af-context',
-          'af-verification', 'af-isolation', 'af-principles']
-LEAVES = ['principle-' + name for name in PRINCIPLES]
+          'af-verification', 'af-isolation', 'af-principles', 'af-interaction']
+LEAVES = ['principle-' + name for name in PRINCIPLES] + ['interaction-' + name for name in INTERACTIONS]
 
 # These are policy observations only. No command below is submitted or executed.
 PROMPT_RULES = ('git *commit*', 'git *push*', 'git *fetch*', 'git *pull*',
@@ -208,7 +208,9 @@ def main():
             'all-skills-discovered': bool(commands.get('success')) and all(
                 name in commands_text for name in SKILLS + LEAVES),
             'principle-selector-catalog-visible': 'af-principles' in system_prompt_text,
-            'principle-leaf-catalog-hidden': all(name not in system_prompt_text for name in LEAVES),
+            'interaction-selector-catalog-visible': 'af-interaction' in system_prompt_text,
+            'interaction-routing-contract-loaded': 'Interaction-first intent routing' in state_text,
+            'on-demand-leaf-catalog-hidden': all(name not in system_prompt_text for name in LEAVES),
         }
         for name, passed in native_checks.items():
             result['checks'].append({'name': name, 'status': 'PASS' if passed else 'FAIL'})
