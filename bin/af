@@ -51,7 +51,7 @@ def check_project(directory):
         raise ValueError(f"Project directory does not exist: {directory}")
     tools = directory / ".omp" / "tools"
     if tools.exists() and (not tools.is_dir() or any(tools.iterdir())):
-        raise ValueError(f"Native project tools are outside the Phase 1 trust boundary: {tools}")
+        raise ValueError(f"Native project tools are outside the personal profile trust boundary: {tools}")
     home = Path.home().resolve()
     for ancestor in (directory, *directory.parents):
         agents = ancestor / ".omp" / "agents"
