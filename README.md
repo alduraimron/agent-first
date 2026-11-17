@@ -73,7 +73,7 @@ Main inspects intent, complexity, risk, and architectural impact, announces the 
 | Measured latency/resource problem | [Performance Optimization](profile/skills/af-engineering/workflows/performance-optimization.md) |
 | Local understood low-risk edit | [Quick Change](profile/skills/af-engineering/workflows/quick-change.md) |
 
-Each procedure specifies inputs, steps/decision points, consultation criteria, verification, exit, and failure/escalation behavior. Architecture-impacting implementation requires actual architect advice first. Trivial changes do not delegate; read-only requests do not authorize edits.
+Each procedure specifies inputs, steps/decision points, consultation criteria, verification, exit, and failure/escalation behavior. The sequence remains **workflow -> relevant domain procedure -> decision-relevant principles -> main implementation and checks**. Architecture-impacting implementation requires actual architect advice first. Trivial changes do not delegate; read-only requests do not authorize edits.
 
 ## Domain consultation and skills
 
@@ -86,9 +86,13 @@ Each procedure specifies inputs, steps/decision points, consultation criteria, v
 | `af-performance` | `af-performance` | Measured bottlenecks, algorithms, resources and experiment design |
 | `af-devops` | `af-operations` | Deployment ordering, health, observability, recovery |
 
-Custom advisors expose only read/grep/glob, cannot spawn, and hand advice to main through native yield. Shared report fields live in `profile/RULES.md`; domain files define distinct engineering questions and constraints. Main evaluates advice, owns implementation, and performs checks. The bundled native `reviewer` is reused without a replacement definition. Routine work stays inline; implemented data-exposure/corruption invariants require independent review of the actual patch, not just pre-design consultation.
+Custom advisors expose only read/grep/glob, cannot spawn, and hand advice to main through native yield. All six autoload their domain skill plus `af-principles`. Main passes only selected leaf URIs, their observed triggers and the decision question; each child reads those leaves directly before advice. Children do not inherit main's append text or leaf-read history. Shared report and handoff rules live in `profile/RULES.md`. Main evaluates advice, owns implementation, and performs checks. The bundled native `reviewer` receives the same explicit principle handoff and actual patch, without a cloned definition. Routine work stays inline; implemented data-exposure/corruption invariants require independent review of the actual patch, not just pre-design consultation.
 
-`af-engineering` owns requirements analysis, planning, routing and native consultation protocol. `af-testing` owns debugging/test design. `af-verification`, `af-context`, and `af-isolation` own execution evidence, durable project records, and optional checkout lifecycle. All eleven skills are model-discoverable; no manual skill invocation is required.
+The eleven original domain/support skills remain: `af-engineering` owns requirements, planning, routing and consultation; domain skills own their engineering procedures; `af-testing` owns diagnosis/test design; `af-verification`, `af-context`, and `af-isolation` own evidence, project records and optional checkout lifecycle. Adding the `af-principles` selector and 24 independent leaves gives **36 native registry entries, with 12 visible catalog entries**. See the [skills catalog](docs/skills-catalog.md) for all names and pointers.
+
+The [selector](profile/skills/af-principles/SKILL.md) is the authoritative activation map, not a fixed checklist. Usually one to three leaves inform a decision; a trivial understood edit normally needs only `prove-it-works`, with at most one other relevant leaf. Main reads selected leaves in full before applying them. No manual skill commands, new planning ceremony, agent or runtime are required. In OMP 18.22.0, `skills.manualSkills: [principle-*]` hides leaf metadata from the visible catalog, not native `skill://` access; exact `includeSkills` entries keep all leaves registered. Start a fresh session after profile changes.
+
+The principles adapt [pstack at revision `2f87c854fe3e2fcda44ca86b46ede35aad3c46b7`](https://github.com/cursor/plugins/tree/2f87c854fe3e2fcda44ca86b46ede35aad3c46b7/pstack), Copyright (c) 2026 Lauren Tan, MIT. [Source attribution](profile/skills/af-principles/SOURCES.md) and the [preserved license](profile/skills/af-principles/LICENSE) cover those adaptations, not unrelated Agent-First files. Launcher behavior and safety policy are unchanged.
 
 ## Context, decisions and handoff
 
@@ -151,6 +155,10 @@ The normal profile denies `ovnfs apply`, including dry-run. Main presents review
 python3 -B eval/check_environment.py
 python3 -B eval/check_cli.py --native
 python3 -B eval/check_controlled_yolo.py --model PROVIDER/MODEL
+# Principle-layer checks; commands are not recorded results:
+python3 -B eval/check_principles.py
+python3 -B eval/run.py --suite principles --keep-workspaces \
+  --model PROVIDER/MODEL --max-time 600 --max-cost 1.5
 python3 -B eval/run.py --suite full --keep-workspaces \
   --model PROVIDER/MODEL --max-time 600 --max-cost 1.5
 # Original cases remain available:
@@ -159,11 +167,11 @@ python3 -B eval/run.py --suite phase1 --model PROVIDER/MODEL
 python3 -B eval/run.py --suite phase1 --policy profile --model PROVIDER/MODEL
 ```
 
-The sequential native-session harness evaluates natural prompts and actual task/tool journals, then runs independent consumer and project checks. It preserves failed runs, private journals, workspace archives, and intermediate errors. Read-only, approval-denied, recovered-context and measured-optimization cases have explicit contracts instead of pretending every task must edit files.
+The sequential native-session harness evaluates natural prompts and actual task/tool journals, then runs independent consumer and project checks. `phase1` retains the original three cases, `full` retains all thirteen, and `principles` adds three cases plus principle metadata to the full suite. Principle evidence requires full native leaf reads before the relevant decision, child URI/read chronology, and bounded manual assessment of actual choices, not name mentions. It preserves failed runs, private journals, workspace archives, and intermediate errors. Read-only, approval-denied, recovered-context and measured-optimization cases have explicit contracts instead of pretending every task must edit files.
 
 Historical verification covers thirteen scenarios across explicit runs and two authorized models, all eight routes, the six advisors plus bundled reviewer, actual Tern interaction, and approved disposable OVNFS apply/restore/cleanup under the earlier policy. It is not a clean single-model full-suite result or evidence for the current YOLO policy; native reviewer timeouts and recovered tool/schema errors remain documented.
 
-Current-policy probe results and limitations belong in [Controlled YOLO validation](eval/controlled-yolo-validation.md), separately from [historical full validation](eval/full-validation.md) and [Phase 1 history](eval/validation.md). See also [evaluation instructions](eval/README.md), [architecture](docs/architecture.md), [correction ledger](docs/corrections.md), and [improvement backlog](docs/backlog.md). The ledger records recurrence, root cause, smallest correction placement and actual validation; it does not automatically rewrite global policy after one failure.
+Observed principle-layer results belong in [Principles validation](eval/principles-validation.md); adding instructions alone establishes neither model compliance nor causal improvement. [Controlled YOLO validation](eval/controlled-yolo-validation.md), [historical full validation](eval/full-validation.md) and [Phase 1 history](eval/validation.md) retain their original scope and failures. See also [evaluation instructions](eval/README.md), [architecture](docs/architecture.md), [correction ledger](docs/corrections.md), and [improvement backlog](docs/backlog.md). The ledger records recurrence, root cause, smallest correction placement and actual validation; it does not automatically rewrite global policy after one failure.
 
 ## Source layout
 
@@ -171,12 +179,13 @@ Current-policy probe results and limitations belong in [Controlled YOLO validati
 bin/af
 profile/{config.yml,APPEND_SYSTEM.md,RULES.md}
 profile/agents/             # Six native domain definitions; no reviewer copy
-profile/skills/             # Eleven skills, eight workflows, context templates
-eval/{run.py,check_environment.py,check_cli.py,check_controlled_yolo.py,browser-check.mjs}
-eval/{cases.json,extended-cases.json,ui-case.json,config.yml,profile.yml,prompt-check.yml}
-eval/{README.md,controlled-yolo-validation.md,validation.md,full-validation.md}
+profile/skills/             # 11 original skills + selector + 24 leaves; 8 workflows
+eval/{run.py,check_environment.py,check_cli.py,check_controlled_yolo.py,check_principles.py,browser-check.mjs}
+eval/{cases.json,extended-cases.json,ui-case.json,principle-cases.json,principle-expectations.json}
+eval/{config.yml,profile.yml,prompt-check.yml}
+eval/{README.md,principles-validation.md,controlled-yolo-validation.md,validation.md,full-validation.md}
 eval/results/              # Private, gitignored execution evidence
-docs/{architecture.md,implementation-plan.md,corrections.md,backlog.md}
+docs/{architecture.md,skills-catalog.md,implementation-plan.md,corrections.md,backlog.md}
 ```
 
 Recorded checks are scoped evidence, not deterministic model guarantees, production certification, cross-database compatibility, full accessibility compliance, or OS containment. Independently managed OMP/Tern/OVNFS upgrades require revalidation of relevant interfaces.

@@ -14,7 +14,18 @@ From this repository, run:
 python3 -B eval/run.py --suite full --keep-workspaces --model PROVIDER/MODEL --max-time 600 --max-cost 1.5
 ```
 
-Replace `PROVIDER/MODEL` with an authorized explicit selector. That selector is used for all main sessions; native child model routing is inherited. Actual provider/model and usage evidence remains in the journals. The runner does not import authentication, silently change provider, retry paid failures, or resume a previous session. `--suite phase1` runs the original three cases unchanged; the default full suite adds ten cases.
+Replace `PROVIDER/MODEL` with an authorized explicit selector. That selector is used for all main sessions; native child model routing is inherited. Actual provider/model and usage evidence remains in the journals. The runner does not import authentication, silently change provider, retry paid failures, or resume a previous session. `--suite phase1` runs the original three cases unchanged; the default `--suite full` retains all thirteen. `--suite principles` runs those thirteen plus three new cases with principle-selection/read metadata. Normal `af` usage gains no mandatory evaluation commands.
+
+For the principle layer, proposed validation commands are:
+
+```sh
+python3 -B eval/check_principles.py
+python3 -B -m unittest discover -s eval -p test_principle_evidence.py -v
+python3 -B eval/run.py --suite principles --keep-workspaces \
+  --model PROVIDER/MODEL --max-time 600 --max-cost 1.5
+```
+
+These commands describe checks to run, not observed success. Record actual versions, commands, results, failures and NOT-RUN limits in [Principles validation](principles-validation.md). Keep [full validation](full-validation.md), [Phase 1 history](validation.md) and [Controlled YOLO validation](controlled-yolo-validation.md) as evidence for their original scopes. A prompt addition does not establish all-model compliance or causal improvement.
 
 To isolate an integrated failure, use an explicit case ID:
 
@@ -58,7 +69,7 @@ Each fixture's AGENTS.md describes the actual selected policy. Initial files are
 
 All evaluation policies use `async.enabled: false` for settled native `details.results` and actual `agentSource`/child IDs. The permission-neutral overlay changes only scheduling and child runtime/request budgets, retaining concurrency two and recursion depth one. Normal launcher scheduling is unchanged. Effective policy, ordered config snapshots/hashes and scheduling are retained per case; the summary records selected and effective policies. Native `--wait-async` remains present. Planned text is not actual task/yield/tool evidence.
 
-Per-case defaults are 600 native seconds and a USD 1.50 soft cost cap; full suite is thirteen sequential cases (USD 19.50 nominal batch cap), original suite three (USD 4.50). Actual requests in flight can exceed native soft caps. Limits accept 60..1200 seconds and USD 0.01..5 per case, with a subprocess deadline thirty seconds later and thirty-second independent checks. Children retain the synthetic five-minute/sixty-request budget. All selected cases run after earlier failures; no automatic paid retry occurs. Use an explicit subset to investigate a changed scenario.
+Per-case defaults are 600 native seconds and a USD 1.50 soft cost cap: `full` is thirteen sequential cases (USD 19.50 nominal batch cap), `phase1` three (USD 4.50), and `principles` sixteen (USD 24.00). Actual requests in flight can exceed native soft caps. Limits accept 60..1200 seconds and USD 0.01..5 per case, with a subprocess deadline thirty seconds later and thirty-second independent checks. Children retain the synthetic five-minute/sixty-request budget. All selected cases run after earlier failures; no automatic paid retry occurs. Use an explicit subset to investigate a changed scenario.
 
 ## Coverage and evidence
 
@@ -94,22 +105,46 @@ Only JSONL files with a native session header are evaluated as conversations. Na
 
 Child provenance uses the ID in native synchronous `task` results, not a requested display name or every journal sharing an agent type. Empty, unreferenced startup journals remain diagnostic artifacts; referenced cancellations and non-advisory attempts still fail. The native-ID regression replays retained evidence and must preserve the real reviewer timeout while recognizing the completed architect consultation.
 
+### Principle-layer evidence
+
+The [skills catalog](../docs/skills-catalog.md) lists the preserved eleven skills, `af-principles` and 24 independent leaves. The [selector](../profile/skills/af-principles/SKILL.md) remains the activation authority. OMP 18.22.0 registers 36 exact names while showing 12 catalog entries: native `skills.manualSkills: [principle-*]` hides leaf metadata, not `skill://` access. Exact `includeSkills` entries matter. Use fresh sessions after changes; a stale session is not a loading probe.
+
+The `principles` suite adds these cases without replacing the original route, safety, chronology or consumer contracts:
+
+| Case | Observable coverage |
+| --- | --- |
+| `principle-uncertain-rounding` | Trace shared default-precision mutation and repair the cause; independent consumers alternate explicit/default precisions across repeated and isolated sequences |
+| `principle-minimal-cli` | Deliver count/sum/average through the public API and real text/JSON CLI; fresh deployment contains only the existing CLI/module/package files, and invalid input reports errors without stacks |
+| `principle-approval-independent-work` | Submit one native-denied `node --test`, then actually read independent rollout notes and report concrete reset preparation, approval and rollback; no mutation/reset/marker and honest NOT-RUN |
+
+Case additions live in `principle-cases.json`; `principle-expectations.json` adds selection/read expectations to the original thirteen only in the new suite. Trivial cases retain tight read bounds. Larger architecture cases exclude concretely untriggered leaves instead of using an incidental whole-task cap: the guidance is proportional per decision, not a fixed bundle or number-based judgment score. Evaluate these distinct evidence layers:
+
+- **Loading:** successful native `read` results contain the selected full leaf body, not only a catalog description, a quoted name, selector row, partial read or failed request. Read relevant leaves before the decision or implementation they inform; a late read does not retroactively establish application.
+- **Selection:** compare observed triggers with relevant leaves and negative-selection expectations. Usually one to three leaves suffice per decision; trivial understood work normally needs proof only and no more than two leaves. A one-off change alone does not justify design-space exploration, toolmaking, premise attacks or context delegation. Unnecessary delegation or ceremony remains a defect even if names are correct.
+- **Advisory sharing:** main's actual task assignment includes relevant selected leaf URIs, observed triggers and the specific decision. Match actual native child IDs and successful child leaf reads before advice; children do not inherit main append text or read history. All six custom advisors autoload selector plus domain, while bundled review uses explicit handoff without a replacement reviewer. Autoload metadata or a parent's read alone does not prove a child's leaf application.
+- **Behavior:** independent consumers check the actual contract and negative cases. Keep real main-session checks, read-only boundaries, approval-specific NOT-RUN and executed FAIL requirements. Principle names, self-reported compliance and source spelling never substitute for consumer outcomes.
+
+For bounded manual decision assessment, inspect representative consequential choices and any selection failure: record the observed trigger, selected leaf/read evidence, actual choice, viable alternative and observable consequence. Read actual advisor recommendations and main disposition. Judge whether the principle helped that choice rather than count mentions; automated read chronology cannot grade reasoning. Keep missing or inaccessible evidence explicit. Unknown-skill behavior and broader native versions/environments remain limitations until separately observed.
+
+Retain failed cases and intermediate tools without relabeling FAIL or NOT-RUN as success. Report native loading/read compliance, consumer correctness and manual decision quality separately. Neither one passing case nor an uncontrolled before/after prompt change establishes reliability across models or a causal benefit.
+
 ## Retained output and human assessment
 
 Before the disposable workspace is deleted, each case retains:
 
 - The natural prompt, independent consumer test, every actual argv/cwd/deadline/status, stdout, and stderr.
+- New runs retain `case.json` with the exact fixture and scoring metadata; later expectation edits require an explicitly separate evidence replay, never replacement of original results.
 - Native print JSON events and the complete session/artifact directory, including child journals.
 - `result.json`: selected/effective policy, ordered config sources and SHA-256 hashes, scheduling, explicit failures, observed route, tool calls/results, task dispatches, child activity, actual verification evidence, usage, and failed intermediate tools. `policy-configs/` retains the exact applied config snapshots.
 - `workspace.tar.gz` and a SHA-256/symlink manifest for the completed or failed workspace. Archive limits are 2000 entries and 10 MiB per regular file; incomplete retention is a visible failure. Symlinks are retained without following them.
 
 The run-level `summary.json` is updated after each case. Results are private local diagnostic material, not automatically published. Authentication files, environment dumps, and prior profile sessions are never copied. Native journals can contain synthetic source, prompts, provider identifiers, usage, and pseudonymous credential-pin metadata; inspect before sharing.
 
-Read actual advice and main disposition for decision quality. Automated chronology cannot grade alternatives, unsupported premises or finding rejection; record human-assessed deficiencies separately. Browser flow is a separate actual Tern check on the retained model-produced UI, not a source-text assertion. These cases do not prove OS containment or safety for real repositories.
+Read actual advice and main disposition for decision quality. Automated chronology cannot grade alternatives, unsupported premises or finding rejection; record bounded human-assessed deficiencies separately, including relevant principle triggers and actual decision consequences. Browser flow is a separate actual Tern check on the retained model-produced UI, not a source-text assertion. These cases do not prove OS containment or safety for real repositories.
 
 ## Environment, browser and isolation follow-through
 
-`python3 -B eval/check_environment.py` makes no model requests. It exercises ten launcher guards in a temporary HOME, inspects actual native RPC context/skill discovery and effective settings in a fresh project, checks the pinned policy against a conflicting synthetic project configuration, verifies delegation/isolation/provisioning settings, and compares default configuration hashes. Raw RPC/settings results are private local evidence. This synthetic team-config check never opens or changes a real team repository.
+`python3 -B eval/check_environment.py` makes no model requests. It exercises launcher guards in a temporary HOME, inspects actual native RPC context/skill discovery and effective settings in a fresh project, checks the pinned policy against a conflicting synthetic project configuration, verifies delegation/isolation/provisioning settings, and compares default configuration hashes. Principle-layer loading checks must distinguish all 36 registered skills from the 12 visible entries and establish direct leaf URI access; catalog hiding alone proves neither removal nor read success. `python3 -B eval/check_principles.py` is the companion principle-layer check. Raw RPC/settings results are private local evidence. This synthetic team-config check never opens or changes a real team repository.
 
 After the UI case, start its retained `workspace/server.js` on a task-owned localhost port using installed Node. Perform browser follow-through in a normal-profile session, not the strict overlay that denies eval. Read `xd://eval/browser` and preflight the existing Tern host without downloading or deliberately opening fallback engines. In a normal-profile OMP JavaScript eval, open the owned tab first:
 
@@ -134,11 +169,11 @@ const result = await checkTaskUi({
 
 Inspect the actual native open result. A requested Tern app is not backend proof: native own-engine fallback is possible, so no fail-closed or no-download guarantee follows from requesting Tern. If fallback occurs, close only the owned tab and record NOT-RUN for Tern coverage. The helper exercises associated label/form, empty Enter feedback, keyboard submission, actual API persistence, safe markup-like text, focus/live status, reload, page errors and screenshot. It reads DOM/API state but does not manufacture success. It closes its owned tab in finally. Stop the owned runtime after evidence capture. Manual screen-reader/full audit and unsupported viewport/cross-browser checks stay explicit gaps.
 
-Run [the disposable OVNFS procedure](ovnfs-check.md) separately with explicit opt-in and integration approval; normal profile application stays denied and automatic isolation/application stays off. Read [Controlled YOLO validation](controlled-yolo-validation.md) for new-policy evidence when available. [Full validation](full-validation.md) and [Phase 1 history](validation.md) preserve earlier-policy commands, results and failures; they do not establish the new policy's behavior. No repository artifact claiming PASS substitutes for an actual result.
+Run [the disposable OVNFS procedure](ovnfs-check.md) separately with explicit opt-in and integration approval; normal profile application stays denied and automatic isolation/application stays off. Read [Principles validation](principles-validation.md) for actual new-layer observations and [Controlled YOLO validation](controlled-yolo-validation.md) for its current-policy evidence. [Full validation](full-validation.md) and [Phase 1 history](validation.md) preserve earlier-policy commands, results and failures; they do not establish principle-layer behavior. No repository artifact claiming PASS substitutes for an actual result.
 
-## Recorded global CLI verification
+## Historical global CLI verification
 
-Executed on OMP 18.22.0 with the user-local `af` installed by `bin/af --setup`:
+The following CLI work was executed on OMP 18.22.0 with the user-local `af` installed by `bin/af --setup`, before this principle-layer update. These retained results are not new registry/read or model-suite verification:
 
 | Check | Observed result | Private evidence |
 | --- | --- | --- |
@@ -147,6 +182,6 @@ Executed on OMP 18.22.0 with the user-local `af` installed by `bin/af --setup`:
 | `python3 -B eval/check_environment.py` | PASS: 25 context, discovery, enrollment and policy checks | `results/environment-alfnrh50/` |
 | `python3 -B eval/check_controlled_yolo.py --model opencode-go/gpt-5.6-luna --max-time 180 --max-cost 0.75` | PASS: 23 checks, including routine execution, explicit model override and 8 harmless protected-command denials | `results/controlled-yolo-r2t0rvz4/` |
 
-The two independent personal directories and cross-cwd override each used the configured `opencode-go/deepseek-v4.1-flash:max` selector and actually read the correct cwd-relative marker. This records the observed user preference, not a model pin in the launcher. All fixture approvals were revoked. Preservation checks matched all 37 profile source files and the default config/rules/MCP baseline; no safety setting, workflow, skill or agent definition changed.
+The two independent personal directories and cross-cwd override each used the configured `opencode-go/deepseek-v4.1-flash:max` selector and actually read the correct cwd-relative marker. This records the observed user preference, not a model pin in the launcher. All fixture approvals were revoked. At that recorded CLI checkpoint, preservation checks matched all 37 then-existing profile source files and the default config/rules/MCP baseline; no safety setting, workflow, skill or agent definition changed for that CLI work.
 
 These are CLI startup/admission and existing safety probes, not a fresh browser or full workflow-suite run. Explicit personal designation is not automatic team-ownership detection or OS containment. Local evidence is ignored/private and may be absent in another checkout. No dependencies were installed and no commits or pushes were made for this CLI change; the requested user-local launcher symlink was installed.

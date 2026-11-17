@@ -11,7 +11,8 @@ flowchart TD
     C[Project source and durable context] --> M
     M --> R[Engineering router]
     R --> W[Selected workflow and domain skills]
-    W --> M
+    W --> P[Principle selector and relevant leaves]
+    P --> M
     M -->|Material domain question| T[Native task consultation]
     T --> A[Read-only domain advisor or bundled reviewer]
     A -->|Evidence and proposed constraints| M
@@ -22,7 +23,7 @@ flowchart TD
     E --> H[Developer handoff]
 ```
 
-Shared safety is authoritative in `profile/RULES.md`. Main-only orchestration is appended by `APPEND_SYSTEM.md`. Workflow ordering and consultation API belong to `af-engineering`; domain procedures belong to focused skills; actual check execution/status belongs to `af-verification`; project records belong to `af-context`; optional checkout lifecycle belongs to `af-isolation`. Pointers disclose relevant material instead of loading every procedure into every task.
+Shared safety is authoritative in `profile/RULES.md`. Main-only orchestration is appended by `APPEND_SYSTEM.md`. Workflow ordering and consultation API belong to `af-engineering`; domain procedures belong to focused skills; `af-principles` supplies decision criteria, not a replacement procedure; actual check execution/status belongs to `af-verification`; project records belong to `af-context`; optional checkout lifecycle belongs to `af-isolation`. The sequence is workflow -> relevant domain procedure -> relevant principles -> main implementation and checks.
 
 ## Native configuration boundaries
 
@@ -54,15 +55,25 @@ Local reversible choices satisfying the authorized outcome proceed autonomously 
 
 Existing explicit denies remain denies even after chat approval. Main presents the reviewed operator-terminal action; it does not use eval, a wrapper command, subprocess, child, or policy change to evade the deny. Coarsely denied command families remain operator-only even when a particular invocation appears harmless. Behavioral approval authorizes an outcome, not a permission-policy override.
 
+### Native index-and-leaf loading
+
+The eleven original domain/support skills remain intact. `af-principles` adds one selector and 24 independent `principle-*` leaves: **36 exact native registry entries, 12 visible catalog entries**. The [skills catalog](skills-catalog.md) lists names, purposes and pointers; the [selector](../profile/skills/af-principles/SKILL.md) is the authoritative trigger/workflow/domain activation map. Each leaf holds its own operational guidance rather than a title or an alias into one large document.
+
+OMP 18.22.0's `skills.manualSkills: [principle-*]` suppresses leaf catalog metadata while preserving native URI reads. `includeSkills` must include every exact name; hiding an included leaf is different from filtering it out. The model discovers the selector, matches observed decision triggers, then uses direct native `read` on the relevant `skill://principle-*` URIs in full before applying them. Leaf bodies are not appended to the main prompt. This index-and-leaf path limits always-loaded context without adding a runtime, manual commands or an eager all-leaf bundle. Use a fresh session after profile changes; hot-reload is not established.
+
+Usually one to three leaves suffice per decision; trivial understood work normally reads only `prove-it-works`, with at most one other leaf for an actual decision. Reassess when evidence changes, reuse already-read applicable material, and use existing task/decision records only when the choice warrants recording. This is proportional engineering judgment, not a new mandatory ceremony or permission grant. Compatibility, authorization, read-only advice, maximum concurrency two and recursion one remain unchanged.
+
+The selector and leaves adapt [pstack](https://github.com/cursor/plugins/tree/2f87c854fe3e2fcda44ca86b46ede35aad3c46b7/pstack), pinned at `2f87c854fe3e2fcda44ca86b46ede35aad3c46b7`, Copyright (c) 2026 Lauren Tan, MIT. [Sources and adaptation boundaries](../profile/skills/af-principles/SOURCES.md) and the [preserved MIT notice](../profile/skills/af-principles/LICENSE) apply to that material; they do not relicense unrelated project files.
+
 ## Consultation
 
-Six custom domains cover architecture, persistence, trust, UI, performance and operations. Each has concrete inputs, engineering questions, bounds, output constraints and verification recommendations; these are not implementation personas. Native frontmatter restricts built-ins to read/grep/glob, disables spawning, selects medium thinking and autoloads only the relevant domain skill. Shared advice fields distinguish facts, assumptions, recommendations, enforceable constraints and proposed checks.
+Six custom domains cover architecture, persistence, trust, UI, performance and operations. Each has concrete inputs, engineering questions, bounds, output constraints and verification recommendations; these are not implementation personas. Native frontmatter restricts built-ins to read/grep/glob, disables spawning, selects medium thinking and autoloads the relevant domain skill plus `af-principles`. Shared advice fields distinguish facts, assumptions, recommendations, enforceable constraints and proposed checks.
 
 Main requests only material consultations, supplies the decision question and evidence, evaluates returned advice and resolves/rejects findings with reasons. Native concurrency stays two and recursion one. No nested workers or parallel CLI agents are introduced. Architecture-impacting implementation requires returned architect advice, not a declaration that delegation will happen.
 
-The bundled reviewer is not copied or replaced. Its native metadata is broader than its assigned advisory scope; main supplies actual diff/new-file content so its normal Git procedure is unnecessary. Structured task output retains its native schema. Per-task `tools` forwards eval-defined functions and is not a built-in permission list. Yield-schema failures, timeouts, and attempted forbidden tools remain evidence, not clean completions.
+The bundled reviewer is not copied or replaced. Its native metadata is broader than its assigned advisory scope; main supplies actual diff/new-file content so its normal Git procedure is unnecessary. It receives relevant selected leaf URIs, triggers and the review decision explicitly, rather than relying on a custom autoload definition. Structured task output retains its native schema. Per-task `tools` forwards eval-defined functions and is not a built-in permission list. Yield-schema failures, timeouts, and attempted forbidden tools remain evidence, not clean completions.
 
-Native children drop main append text and AGENTS.md but inherit RULES.md. Their native tier handling uses yolo too; explicit denies still deny and explicit prompts fail closed without an approver. Their advisory read-only scope remains binding independently of available tools. Tool lists and approvals are not OS containment, and additive capabilities need separate attention.
+Native children drop main append text and AGENTS.md but inherit RULES.md and have access to the native skill registry. They do not inherit main's leaf-read history. Main passes only decision-relevant selected leaf URIs, observed triggers, the specific question and adopted constraints; each child reads assigned leaves directly before advice. A new question-relevant trigger can justify an additional child leaf; inaccessible skills remain explicit uncertainty. Their native tier handling uses yolo too; explicit denies still deny and explicit prompts fail closed without an approver. Advisory read-only scope remains binding independently of available tools. Tool lists and approvals are not OS containment, and additive capabilities need separate attention.
 
 ## Durable state
 
@@ -84,6 +95,8 @@ OVNFS is optional and explicitly selected. Use installed native new/diff/apply-d
 
 ## Evaluation contract and limits
 
-The existing sequential evaluation harness remains an evaluation tool, not a runtime for user work. Its restrictive regression overlay uses synthetic projects, one selected model, bounded native requests, exact test/diff grants, real task journals and independent consumer checks; that overlay is deliberately stricter than the operating profile. Original cases and failure evidence remain. Fresh-session recovery, review-only/no-edit, deliberately prompted denied verification and measured performance have distinct contracts. Context bookkeeping is separated from implementation timing. Actual native child IDs, not display names or audit JSONL, establish consultation provenance.
+The existing sequential evaluation harness remains an evaluation tool, not a runtime for user work. Its restrictive regression overlay uses synthetic projects, one selected model, bounded native requests, exact test/diff grants, real task journals and independent consumer checks; that overlay is deliberately stricter than the operating profile. The original three-case `phase1` and thirteen-case `full` suites remain; `principles` runs all thirteen plus three new cases and principle metadata. Fresh-session recovery, review-only/no-edit, deliberately prompted denied verification and measured performance retain distinct contracts. Context bookkeeping is separated from implementation timing. Actual native child IDs, not display names or audit JSONL, establish consultation provenance.
 
-Environment probes do not send model prompts. Browser evaluation uses the actual model-produced UI and native Tern; OVNFS validation uses only disposable repositories and explicit application approval. Read actual advice for design quality: chronology/tool scores cannot grade reasoning. Current-policy probes and their exact scope belong in [Controlled YOLO validation](../eval/controlled-yolo-validation.md). [Full validation](../eval/full-validation.md) and [Phase 1 validation](../eval/validation.md) retain earlier-policy results as history, not proof of current-policy behavior. Hostile repositories, OS sandboxing, production deployment, all database dialects, and complete accessibility/security certification are not established by these checks.
+Principle evidence requires successful full native leaf reads before the relevant decision, explicit child URI handoff and child-read chronology, plus consumer-observable acceptance. Names in prose and catalog visibility are not evidence of application. Negative-selection cases check that trivial work avoids gratuitous exploration, toolmaking and delegation. Bounded manual assessment records the trigger, choice and evidence; chronology alone cannot establish reasoning quality or causal benefit from added prompts. FAIL and NOT-RUN remain visible.
+
+Environment probes do not send model prompts. Browser evaluation uses the actual model-produced UI and native Tern; OVNFS validation uses only disposable repositories and explicit application approval. Read actual advice for design quality: chronology/tool scores cannot grade reasoning. New principle-layer observations belong in [Principles validation](../eval/principles-validation.md), with commands and actual limits, not an assumed all-model pass. Current-policy probes retain their exact scope in [Controlled YOLO validation](../eval/controlled-yolo-validation.md). [Full validation](../eval/full-validation.md) and [Phase 1 validation](../eval/validation.md) remain historical. Hostile repositories, OS sandboxing, production deployment, all database dialects, complete accessibility/security certification, broader native versions/environments and unknown-skill failure handling are not established by these checks.
