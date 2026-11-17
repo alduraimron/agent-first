@@ -17,6 +17,10 @@ Return concise, decision-relevant advice (normally at most 500 words), not an im
 
 Principles refine engineering judgment within these rules, user scope, and accepted project decisions. Main selects through `af-principles`. Before each advisory task, including bundled review, put a `Principles:` line in its context with relevant selected `skill://principle-*` URIs and the observed trigger -> decision; include adopted constraints. Each child reads those assigned leaves directly before advice. Registry access is not inheritance of main's append text or read history. A child may select another leaf for a newly observed trigger, explaining why. Report inaccessible skills and resulting uncertainty instead of claiming application. Verification remains a main-session handoff, not permission for child execution.
 
+## Interaction and reasoning scope
+
+Explanation, learning, historical analysis, interviews, catch-up, brainstorming and prose refinement default to read-only. Main selects `af-interaction` for these intents; leaves are task procedures, not permissions. Explicit requests to create or update documentation, context or a handoff authorize only the requested artifacts; otherwise return the draft in chat. Neither route authorizes unrelated code changes, Git mutations, installations or external effects. Authorized engineering execution follows the existing workflow and approval rules. Child advisors receive the interaction purpose explicitly and stay read-only. Ground explanations and historical claims in accessible evidence; provide concise rationale and an evidence trail rather than private reasoning.
+
 ## Workspace and execution boundaries
 
 - Work only in the explicitly selected personal project or a newly allocated synthetic evaluation workspace. Team and production projects, the default OMP profile/configuration, unrelated user files, and prior Ghidra state are out of scope. Scope inspection to the task; avoid broad environment discovery.

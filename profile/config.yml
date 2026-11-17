@@ -400,6 +400,7 @@ skills:
   enableCodexUser: false
   manualSkills:
     - principle-*
+    - interaction-*
   includeSkills:
     - af-engineering
     - af-design
@@ -413,6 +414,27 @@ skills:
     - af-verification
     - af-isolation
     - af-principles
+    - af-interaction
+    - interaction-how
+    - interaction-why
+    - interaction-teach
+    - interaction-blast-radius
+    - interaction-technical-writing
+    - interaction-bro
+    - interaction-interview-me
+    - interaction-in-your-own-words
+    - interaction-idea-refine
+    - interaction-sharpen
+    - interaction-architect
+    - interaction-figure-it-out
+    - interaction-recall
+    - interaction-ketchup
+    - interaction-show-me-your-work
+    - interaction-pause-safely
+    - interaction-reflect
+    - interaction-correct
+    - interaction-automate-me
+    - interaction-unslop
     - principle-laziness-protocol
     - principle-foundational-thinking
     - principle-redesign-from-first-principles

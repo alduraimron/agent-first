@@ -1,11 +1,15 @@
 ---
 name: af-engineering
-description: Route ordinary engineering requests automatically across initialization, fixes, features, architecture, debugging, refactoring, review, and optimization; derive acceptance criteria and proportional plans before main-session implementation.
+description: Route code/configuration changes, defect investigation/review and new check execution across the eight engineering workflows; documentation-only authoring and existing-evidence summaries use af-interaction.
 ---
 
 # Adaptive engineering
 
 Apply shared RULES.md. This router serves the main session; advisors use the relevant domain procedure and their own read-only contract.
+
+## Non-implementation request boundary
+
+Use `skill://af-interaction` for explanation, learning, interviews, ideation, historical rationale, context catch-up, prose refinement, documentation-only authoring/edits or existing-evidence reports. In particular, a README file edit uses `interaction-technical-writing`; inspecting a diff to explain what changed or what previously passed uses `interaction-show-me-your-work`, not verification-only quick-change. Executing new checks remains engineering verification. An explicit defect assessment remains `code-review`; diagnosis of uncertain faulty behavior remains `bug-investigation`. Mixed requests use interaction skills for needed discovery, then route the authorized engineering outcome here. Clear tasks need no interview or teaching ceremony.
 
 ## Route from evidence
 
