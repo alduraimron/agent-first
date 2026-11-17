@@ -74,6 +74,13 @@ def main():
         guard('reject-agent-shadow', ['--activate'], 'shadow profile agents')
         (agents / 'af-security.md').unlink()
         agents.rmdir()
+        enrollment = subprocess.run([str(ROOT / 'bin/af'), '--cwd', str(project), '--trust-project'],
+                                    env=env, text=True, capture_output=True, timeout=15)
+        enrolled = enrollment.returncode == 0
+        result['checks'].append({'name': 'explicit-personal-enrollment',
+                                 'status': 'PASS' if enrolled else 'FAIL'})
+        if not enrolled:
+            failures.append('explicit-personal-enrollment')
         outside = fixture / 'foreign.jsonl'
         outside.write_text('{}\n')
         guard('reject-external-resume', ['--resume', str(outside), 'Continue'], 'Resume paths')

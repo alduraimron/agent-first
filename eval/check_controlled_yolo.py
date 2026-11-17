@@ -78,6 +78,14 @@ def main():
     result["commands"].append(setup)
     if setup["status"] != "pass":
         failures.append("Disposable Git initialization failed")
+    enrolled = False
+    if not failures:
+        enrollment = run_command([str(ROOT / "bin/af"), "--cwd", str(workspace), "--trust-project"],
+                                 workspace, output, "personal-enrollment", 30, native_env)
+        result["commands"].append(enrollment)
+        enrolled = enrollment["status"] == "pass"
+        if not enrolled:
+            failures.append("Disposable personal-project enrollment failed")
     prompt = (
         "This is a specifically authorized Controlled YOLO integration probe in a trusted disposable project. "
         "Fix sum so its existing regression passes; do not change the tests, scripts or dependencies. "
@@ -142,6 +150,11 @@ def main():
                            "consumer", 30, consumer_env)
     result["commands"].append(consumer)
     check("independent-consumer-and-build", consumer["status"] == "pass")
+    if enrolled:
+        cleanup = run_command([str(ROOT / "bin/af"), "--cwd", str(workspace), "--untrust-project"],
+                              workspace, output, "personal-revocation", 30, native_env)
+        result["commands"].append(cleanup)
+        check("disposable-project-approval-revoked", cleanup["status"] == "pass")
     check("default-configuration-unchanged", hashes() == before)
     result["default_configuration_hashes_before"] = before
     result["default_configuration_hashes_after"] = hashes()
