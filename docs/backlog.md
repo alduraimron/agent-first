@@ -1,0 +1,17 @@
+# Improvement backlog
+
+This is iterative improvement after the requested architecture, not permission to omit its components or add a new runtime. Evidence and limits belong to `eval/full-validation.md` and the correction ledger. Promote a change only at its owning layer with a falsifiable check.
+
+| Observation or limit | Proposed improvement | Placement and completion evidence |
+| --- | --- | --- |
+| Reviewer yield schemas and transient tool arguments failed in prior runs, sometimes recovered and sometimes timed out | Compare native/provider versions and scoped handoff clarity on retained failing scenarios before another prompt change | Tooling/workflow; actual native tasks complete with valid output and no hidden aborted consultation; preserve failed history |
+| One model/scenario pass cannot establish routing/advice reliability | Add held-out real personal tasks and human scoring for options, evidence, constraints, finding disposition and approval judgment | Evaluation; repeated independent tasks with separate behavior/policy/reasoning scores |
+| Basic Tern keyboard/semantic/visual checks are not full accessibility or browser compatibility | Add explicitly authorized assistive-technology, zoom/contrast and supported cross-browser checks when project needs them | Verification; actual device/browser/manual evidence, never an automatic downloaded runner |
+| SQLite fixtures cannot establish PostgreSQL/MySQL locking, dialects, production backfills or large-data recovery | Add disposable engine-specific cases only when an existing or explicitly approved environment is available | Database/evaluation; actual migration/concurrency/rollback and representative-plan results |
+| Local lifecycle checks are not a production release or restored backup | Exercise a separately authorized disposable deployment and restore path using the project's existing infrastructure | Operations; real health, shutdown, interrupted rollout/restore evidence and explicit target approval |
+| Profiles/OVNFS do not contain hostile scripts or exfiltration | Specify a threat model before introducing OS/container/VM containment; do not imply prompt rules solve it | Architecture/security; explicit boundary decision and independently observed containment tests |
+| Runtime/model upgrades may change loading, schema and permission behavior | Rerun relevant existing probes and held-out cases on deliberate upgrades, comparing exact versions and failures | Tooling; effective context/approval tests plus actual workflows on the new versions |
+| Durable project files can drift when multiple independent sessions work on one task | Evaluate conflicting handoffs and explicit task ownership on disposable projects before any coordination mechanism | Context/workflow; conflicts are detected and reconciled without losing user work or historical evidence |
+| The actual narrow Tern viewport overflowed on long markup-like text; basic validation needed a stricter helper assertion | Add explicit long-text/viewport acceptance when relevant; validate field-associated errors instead of arbitrary status text | Frontend/verification; actual screenshot/geometry and keyboard/error state, not a source-style assertion |
+
+No automatic policy rewrite, new specialist, external memory service, custom orchestration infrastructure, or Tern plugin follows from this list. Require repeated material need and a simpler-native-alternative comparison first.
