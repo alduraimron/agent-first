@@ -1,0 +1,28 @@
+{
+  "schema_version": 2,
+  "cases": [
+    {
+      "id": "browser-task-ui",
+      "route": "feature-development",
+      "required_agents": [
+        "af-frontend"
+      ],
+      "forbid_delegation": false,
+      "report_patterns": [
+        "browser|Tern",
+        "NOT-RUN|unverified|not run"
+      ],
+      "protected_files": [
+        "server.js"
+      ],
+      "prompt": "Enhance this personal task UI without changing the existing server API. Make it a keyboard-usable accessible form with a visible associated label, Enter submission, clear empty-input errors, live status feedback, and sensible focus after success/error. Create tasks through the real API and reload existing tasks on page load. Render user text safely as text, including markup-like task names; remove the current unsafe rendering pattern. Keep it dependency-free and small, obtain focused UI/accessibility advice for the interaction design, and verify with installed project checks. Use Tern for actual browser behavior only if available and approved; honestly mark unavailable browser coverage NOT-RUN, not PASS. Do not install a DOM library/browser or widen the headless approval policy. This is a disposable personal fixture.",
+      "files": {
+        "package.json": "{\"name\":\"af-personal-fixture\",\"private\":true,\"type\":\"module\",\"scripts\":{\"test\":\"node --test\"}}\n",
+        "server.js": "import {createServer as httpServer} from 'node:http';\nimport {readFile} from 'node:fs/promises';\nimport {fileURLToPath} from 'node:url';\nexport function createServer(){const tasks=[];return httpServer(async(req,res)=>{const json=(status,data)=>{res.writeHead(status,{'content-type':'application/json'});res.end(JSON.stringify(data));};try{if(req.url==='/api/tasks'&&req.method==='GET')return json(200,tasks);if(req.url==='/api/tasks'&&req.method==='POST'){let body='';for await(const chunk of req){body+=chunk;if(body.length>4096)return json(413,{error:'Too large'});}let data;try{data=JSON.parse(body);}catch{return json(400,{error:'Invalid JSON'});}if(typeof data.text!=='string'||!data.text.trim())return json(400,{error:'Task text is required'});const task={id:tasks.length+1,text:data.text.trim()};tasks.push(task);return json(201,task);}if(req.url==='/'&&req.method==='GET'){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});return res.end(await readFile(new URL('./index.html',import.meta.url)));}json(404,{error:'Not found'});}catch{json(500,{error:'Unexpected failure'});}});}\nif(process.argv[1]===fileURLToPath(import.meta.url)){const s=createServer();s.listen(Number(process.env.PORT??0),'127.0.0.1',()=>console.log('http://127.0.0.1:'+s.address().port));process.on('SIGTERM',()=>s.close());}\n",
+        "index.html": "<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><title>Personal tasks</title><h1>Personal tasks</h1><input id=\"task\"><button id=\"add\">Add task</button><ul id=\"tasks\"></ul><script>\nasync function render(){const tasks=await fetch('/api/tasks').then(r=>r.json());document.querySelector('#tasks').innerHTML=tasks.map(t=>'<li>'+t.text+'</li>').join('');}\ndocument.querySelector('#add').onclick=async()=>{await fetch('/api/tasks',{method:'POST',body:JSON.stringify({text:document.querySelector('#task').value})});await render();};render();\n</script></html>\n",
+        "server.test.js": "import test from 'node:test';import assert from 'node:assert/strict';import {createServer} from './server.js';test('real task API',async()=>{const s=createServer();await new Promise(r=>s.listen(0,'127.0.0.1',r));try{const url='http://127.0.0.1:'+s.address().port;let r=await fetch(url+'/api/tasks',{method:'POST',body:JSON.stringify({text:'Example'})});assert.equal(r.status,201);r=await fetch(url+'/api/tasks');assert.deepEqual((await r.json()).map(t=>t.text),['Example']);r=await fetch(url+'/api/tasks',{method:'POST',body:JSON.stringify({text:'  '})});assert.equal(r.status,400);}finally{await new Promise(r=>s.close(r));}});\n"
+      },
+      "acceptance": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport {pathToFileURL} from 'node:url';\nimport {join} from 'node:path';\nconst root=process.env.AF_WORKSPACE;\nconst load=(name)=>import(pathToFileURL(join(root,name)));\ntest('API preserves arbitrary task text and state',async()=>{const {createServer}=await load('server.js');const s=createServer();await new Promise(r=>s.listen(0,'127.0.0.1',r));try{const base='http://127.0.0.1:'+s.address().port;const text='<img src=x onerror=\"document.body.dataset.exploited=1\">';const r=await fetch(base+'/api/tasks',{method:'POST',body:JSON.stringify({text})});assert.equal(r.status,201);const rows=await fetch(base+'/api/tasks').then(r=>r.json());assert.deepEqual(rows.map(x=>x.text),[text]);assert.equal((await fetch(base+'/')).status,200);}finally{await new Promise(r=>s.close(r));}});\n"
+    }
+  ]
+}
