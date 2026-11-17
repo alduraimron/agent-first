@@ -1,54 +1,45 @@
 ---
 name: af-engineering
-description: Engineering workflow selection for ordinary fixes and features, architecture-impacting changes, or design consultations; inspect repository evidence, scale planning and advisory use to risk, and define acceptance criteria before main-agent implementation.
+description: Route ordinary engineering requests automatically across initialization, fixes, features, architecture, debugging, refactoring, review, and optimization; derive acceptance criteria and proportional plans before main-session implementation.
 ---
 
 # Adaptive engineering
 
-Apply the shared Agent-First RULES.md. The workflow below is for the main session. Advisory sessions use only the inspection, design-evaluation, and consultation guidance relevant to their assignment, then return advice under their agent contract.
+Apply shared RULES.md. This router serves the main session; advisors use the relevant domain procedure and their own read-only contract.
 
-## Classify from evidence
+## Route from evidence
 
-Inspect enough task context to identify the requested observable outcome, affected area, and existing conventions. Consider all three dimensions: complexity, risk, and architectural impact. Choose the smallest adequate route; file count alone is not a classifier.
+1. Inspect the request, affected code, immediate callers, and existing commands. Identify observable intent, complexity, risk, and architectural impact. File count is not a classifier.
+2. Start the first visible prose with the selected row's exact literal prefix below, followed by a concise rationale covering intent, complexity, risk and architectural impact. Inspection tools may precede it. Choose the smallest adequate procedure automatically, without asking the user to choose.
+3. Read the selected procedure before acting. Reclassify visibly when evidence changes the route. Architecture-impacting takes precedence over implementation routes when changing ownership, public contracts, persistence/schema design, trust boundaries, dependency direction, or cross-cutting design. Investigation and review remain read-only unless modification is authorized.
 
-After the required inspection, start the first prose report with one of these exact prefixes and a rationale covering those dimensions. Tool intents can describe inspection before that report:
+| Intent | Route and procedure |
+| --- | --- |
+| Local understood low-risk edit; verification-only request | `Workflow: quick-change`: [procedure](skill://af-engineering/workflows/quick-change.md) |
+| Add behavior within existing boundaries | `Workflow: feature-development`: [procedure](skill://af-engineering/workflows/feature-development.md) |
+| Change an architectural boundary or contract | `Workflow: architecture-impacting`: [procedure](skill://af-engineering/workflows/architecture-impacting.md) |
+| Initialize a personal project or recover missing project setup | `Workflow: project-initialization`: [procedure](skill://af-engineering/workflows/project-initialization.md) |
+| Explain or fix unexpected behavior with an uncertain cause | `Workflow: bug-investigation`: [procedure](skill://af-engineering/workflows/bug-investigation.md) |
+| Restructure code while preserving behavior and boundaries | `Workflow: refactoring`: [procedure](skill://af-engineering/workflows/refactoring.md) |
+| Assess a patch or code for defects without implementing | `Workflow: code-review`: [procedure](skill://af-engineering/workflows/code-review.md) |
+| Measure or improve latency, throughput, resource use, or scalability | `Workflow: performance-optimization`: [procedure](skill://af-engineering/workflows/performance-optimization.md) |
 
-- `Workflow: quick-change` for a localized, understood, low-risk change with no boundary or contract redesign.
-- `Workflow: feature-development` for a behavior addition or multi-step change requiring acceptance criteria and a plan, without architectural impact.
-- `Workflow: architecture-impacting` for a change to module/service ownership, public contracts, persistence/schema, security/trust boundaries, major dependency direction, or cross-cutting design.
+## Requirements and proportional planning
 
-Do not ask the user to select a workflow. If the initial route is provisional, say so. Reclassify visibly when inspection reveals different complexity, risk, or architectural impact; perform any newly required consultation before implementing the affected design. Do not inflate a trivial task into a design exercise.
+Before implementation, translate each requested outcome into an observable acceptance criterion, including relevant failure cases, compatibility, and non-goals. Separate facts from unresolved intent; inspect repository evidence before asking about the latter. A trivial task needs a narrow check, not a formal plan. Multi-step work needs an ordered path from entry point through dependencies to consumer-visible behavior, with a check for every criterion and explicit blockers.
 
-A verification-only request uses quick-change with inspection and verification only. Make no modification when none was requested; do not invent another workflow category.
+Use `skill://af-context` when meaningful work needs durable requirements, decisions, recovery, or handoff. Load domain procedures only for touched concerns: `af-design` for boundaries/APIs; `af-database` for data; `af-frontend` for UI; `af-testing` for diagnosis/tests; `af-security` for trust; `af-performance` for measurement; `af-operations` for runtime delivery. Main owns edits and verification through `skill://af-verification`; shared safety and reporting remain in RULES.md.
 
-## Quick Change: Inspect -> Modify -> Verify
+## Proportional consultation
 
-1. **Inspect**: read the affected code and immediate callers/tests; identify expected behavior and the narrow acceptance check. Exit when the change can be explained without a material unknown.
-2. **Modify**: make the smallest complete main-agent change consistent with the local pattern. Skip delegation and formal plans for trivial work.
-3. **Verify**: use `skill://af-verification`; finish only with evidence for the changed behavior or an explicit blocked/unverified requirement.
+Trivial quick changes have no delegation. Consult only for a material domain question or uncertainty, or an explicit request for independent domain assessment: `af-architect` for architecture, `af-database` for persistence, `af-security` for trust, `af-frontend` for UI/accessibility, `af-performance` for measured bottlenecks, `af-devops` for deployment/observability. Architecture-impacting requires actual returned architect advice before affected implementation. Other consultations are conditional, not a six-agent checklist. Keep at most two concurrent consultations, recursion one, and no child spawning.
 
-## Feature Development: Understand -> Plan -> Implement -> Verify
+Supply the specific question, scope/non-goals, paths, observed evidence, acceptance criteria, alternatives, constraints, and requested advisory output. Use native `task` with the exact `agent` name. Omit per-task `tools` or leave it empty: it forwards eval functions, not built-in permissions. Agent frontmatter controls built-ins. Preserve native output schemas. Evaluate returned advice against source evidence and document adoption or rejection with reasons; an announced delegation is not consultation.
 
-1. **Understand**: trace the current user-visible path and integration points. Record acceptance criteria including relevant failure/boundary behavior. Exit when every requested outcome has a concrete observable criterion; ask only about unresolved intent that repository context cannot answer.
-2. **Plan**: give a short implementation sequence tied to those criteria and affected paths. Identify the installed verification commands and whether concrete risk warrants independent review. Reclassify if the plan changes architecture.
-3. **Implement**: complete the end-to-end path in the main session, including callers and appropriate tests. Match existing conventions rather than adding a second mechanism. Exit when every acceptance criterion has an implementation and a planned check.
-4. **Verify**: use `skill://af-verification`, including a consumer-visible/runtime check where applicable.
+## Bundled reviewer protocol
 
-## Architecture-Impacting Change: Inspect -> Consult -> Evaluate -> Approval when needed -> Implement -> Verify
+Use native `reviewer` for a concrete independent-review question such as migration/data loss, authorization, concurrency, or compatibility risk, or when independent review is explicitly requested; routine edits do not require it. For an implemented authorization, private cross-tenant isolation, destructive migration, or shared-state concurrency invariant whose failure exposes or corrupts data, obtain a bundled review of the actual completed patch before declaring completion. Pre-implementation architect/security advice does not inspect the later patch.
 
-1. **Inspect**: trace affected boundaries, consumers, compatibility requirements, and existing design choices. Establish the design question and acceptance criteria before consulting.
-2. **Consult af-architect**: request a native `task` consultation with `agent: af-architect`. Supply the question, paths, known evidence, alternatives under consideration, and scoped acceptance criteria. Ask for facts, assumptions, recommendations, and enforceable constraints. Complete this step on actual returned advice, not an announced intention to delegate. If consultation is denied or unavailable, report the exact blocker and leave the affected architectural change pending rather than claiming consultation occurred.
+Main supplies actual patch content, including new-file content, changed paths, relevant contracts, acceptance criteria, and available evidence. Explicitly require the reviewer to read the relevant complete source files and immediate contract context before yielding; a verdict-only response without that inspection is incomplete. Scope the assignment to read/grep/glob and native yield; the supplied patch replaces its Git-command procedure. Evaluate findings and verify any resulting implementation edits before the final handoff.
 
-   Native task API: omit the per-task `tools` field or leave it empty. It forwards eval-defined functions, not built-in tool permissions; `read`, `grep`, and `glob` belong in agent frontmatter and the advisory assignment, not that field. Do not override the native agent output schema.
-3. **Evaluate trade-offs**: compare advice to source evidence and the simpler viable alternative. State the chosen approach, important rejected alternative, compatibility/migration implications, and unresolved risks. Treat recommendations as proposals; retain, adapt, or reject them with a reason.
-4. **Approval when needed**: apply the shared escalation boundary. A safe, reversible design inside the authorized request does not require ceremonial approval. Resolve required approval before the affected action.
-5. **Implement**: the main agent implements the chosen design and its complete caller/migration path, then checks that the adopted constraints are represented in code and acceptance criteria.
-6. **Verify**: use `skill://af-verification`; cover adopted invariants, changed contracts, and failure/rollback behavior relevant to the design.
-
-## Conditional independent review
-
-Use the bundled native `reviewer` only when a concrete unresolved risk benefits from independent inspection, such as authorization/data exposure, data loss/migration, subtle concurrency, or compatibility-sensitive behavior. State that risk in the task assignment. Routine edits do not need a reviewer, and architecture consultation alone does not imply a second review.
-
-Provide the reviewer with the actual patch obtained by the main agent, changed paths, relevant contracts, acceptance criteria, the main agent's evidence, and a focused read-only question. In the assignment itself, explicitly limit inspection to `read`, `grep`, and `glob` and request native `yield` for its report; the supplied patch replaces its Git-command procedure. Its broader listed tools are not authorization to use them. Request evidence-backed findings with severity, location, failure scenario, and recommended checks. Resolve substantive findings yourself or explain, with evidence, why they do not apply. Run any required verification in the main session. No findings is not proof of correctness.
-
-For the native reviewer handoff, each incremental `type: ["findings"]` yield contains one finding object, not an array. After any findings, request one terminal yield without `type`, with `data` containing `overall_correctness`, `explanation`, and `confidence`; do not repeat incremental findings. Successful yields omit `error` (or leave it empty if the provider requires the field). This uses the bundled schema rather than replacing it.
+Each incremental `type: ["findings"]` yield contains one finding object, not an array. Request a terminal yield without `type`, whose `data` contains `overall_correctness`, `explanation`, and `confidence`, without repeating findings. Successful yields omit `error`, or leave it empty when required by the provider. Never replace the bundled schema. Main resolves substantive findings or records evidence for rejecting them; absence of findings is not verification.
