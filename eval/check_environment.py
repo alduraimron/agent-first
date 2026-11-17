@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import selectors
 import shutil
 import subprocess
@@ -17,6 +18,51 @@ SKILLS = ['af-engineering', 'af-design', 'af-database', 'af-frontend', 'af-testi
           'af-security', 'af-performance', 'af-operations', 'af-context',
           'af-verification', 'af-isolation', 'af-principles']
 LEAVES = ['principle-' + name for name in PRINCIPLES]
+
+# These are policy observations only. No command below is submitted or executed.
+PROMPT_RULES = ('git *commit*', 'git *push*', 'git *fetch*', 'git *pull*',
+                'git *clone*', 'git *reset*', 'rm *', 'rmdir *', 'unlink *',
+                'chmod *', 'chown *', 'npm install*', 'npm exec*', 'pnpm dlx*',
+                'yarn add*', 'bun install*', 'pip* install*', 'cargo install*',
+                'go install*', 'uv run*', 'npx*', 'sudo *', 'doas *',
+                'curl *', 'wget *', 'scp *', 'ssh *', 'aws *', 'terraform *',
+                'kubectl *', 'docker run*', 'docker *system prune*', 'ovnfs *apply*')
+DENY_RULES = ('dd *', 'mkfs*', 'shred *', 'truncate *', 'wipefs *', 'fdisk *', 'parted *',
+              'pkill *', 'killall *', 'shutdown*', 'reboot*', 'poweroff*', 'halt*',
+              'ssh-keygen *', 'ssh-add *', 'nc *', 'socat *',
+              'git *config *--global*', 'git *config *--system*', 'git *update-ref*',
+              'git *push*--force*', 'git *push -f*',
+              'omp *auth*', 'omp *token*', 'omp *login*', 'omp *config*',
+              'curl *.ssh/*', 'curl *.aws/credentials*')
+DENY_COMMANDS = ('dd --help', 'mkfs --help', 'git push --force --help',
+                 'git push --force-with-lease --help', 'git push -f --help',
+                 'git push -vf --help', 'git push --delete --help',
+                 'git push -d --help', 'git push --mirror --help',
+                 'git push origin +HEAD:refs/heads/probe', 'git push origin :probe',
+                 'rm -rf /', 'rm -- ../probe', 'rm -- ~/probe',
+                 'rm -- $HOME/probe')
+READ_ONLY_GIT = {'git branch --show-current', 'git branch --list', 'git branch -a',
+                 'git branch -r', 'git branch -v', 'git branch -vv',
+                 'git tag --list', 'git tag -l', 'git remote -v'}
+
+
+def pattern_policy(command, patterns):
+    """Native single-command matching: normalized whitespace, anchored '*' only."""
+    normalized = ' '.join(command.split())
+    for rule in patterns:
+        match = ' '.join(str(rule.get('match', '')).split())
+        expression = '.*'.join(re.escape(part) for part in match.split('*'))
+        if re.fullmatch(expression, normalized):
+            return rule.get('approval')
+    return None
+
+
+def source_patterns():
+    """Read this profile's inline YAML rules without adding a YAML dependency."""
+    source = (ROOT / 'profile/config.yml').read_text()
+    return [{'match': match, 'approval': approval} for _, match, approval in re.findall(
+        r"""^\s*-\s*\{\s*match:\s*(['"])(.*?)\1,\s*approval:\s*(allow|prompt|deny)\s*\}\s*$""",
+        source, re.M)]
 
 
 def hashes():
@@ -186,12 +232,24 @@ def main():
             'explicit-tool-denies-preserved': all(policies.get(name) == 'deny' for name in (
                 'debug', 'github', 'checkpoint', 'rewind', 'security_scan',
                 'manage_skill', 'computer.control')),
-            'explicit-pattern-denies-preserved': all(
+            'explicit-prompt-families-preserved': all(
+                any(rule.get('match') == match and rule.get('approval') == 'prompt'
+                    for rule in patterns) for match in PROMPT_RULES),
+            'explicit-hard-deny-rules-preserved': all(
                 any(rule.get('match') == match and rule.get('approval') == 'deny'
-                    for rule in patterns)
-                for match in ('git *commit*', 'git *push*', 'rm *', 'npm install*',
-                              'sudo *', 'curl *', 'ovnfs *apply*')),
-            'no-profile-command-allow-grants': all(rule.get('approval') != 'allow' for rule in patterns),
+                    for rule in patterns) for match in DENY_RULES),
+            'stronger-hard-denies-precede-prompts': all(
+                pattern_policy(command, patterns) == 'deny' for command in DENY_COMMANDS),
+            'help-probes-require-native-prompt': all(
+                pattern_policy(command, patterns) == 'prompt' for command in (
+                    'rm --help', 'git push --help', 'git commit --help',
+                    'npm install --help', 'sudo --help', 'curl --help',
+                    'terraform --help', 'ovnfs apply --help', 'rmdir -- approved-empty')),
+            'profile-patterns-match-effective-source': bool(source_patterns()) and patterns == source_patterns(),
+            'only-exact-readonly-git-allow-grants': all(
+                '*' not in str(rule.get('match', '')) and rule.get('match') in READ_ONLY_GIT
+                for rule in patterns if rule.get('approval') == 'allow'),
+            'native-git-guard-preserved': values.get('bash.gitGuard') is True,
             'bounded-delegation': values.get('task.maxConcurrency') == 2 and values.get('task.maxRecursionDepth') == 1,
             'automatic-isolation-and-apply-disabled': values.get('task.isolation.enabled') is False and values.get('task.isolation.apply') is False,
             'automatic-provisioning-disabled': values.get('eval.autoProvision') is False,
