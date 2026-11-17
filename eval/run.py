@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Sequential native OMP evaluations. Python standard library only."""
 import argparse
+import contextlib
 import datetime as dt
 import hashlib
 import json
@@ -19,6 +20,11 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 READ_ONLY = {"read", "grep", "glob", "yield"}
 MUTATING = {"edit", "write", "ast_edit", "delete", "move"}
+AGENTS = {"af-architect", "af-database", "af-security", "af-frontend",
+          "af-performance", "af-devops", "reviewer"}
+ROUTES = {"quick-change", "feature-development", "architecture-impacting",
+          "project-initialization", "bug-investigation", "refactoring",
+          "code-review", "performance-optimization"}
 
 
 def save_json(path, value):
@@ -149,12 +155,25 @@ def journal_evidence(path, records):
             "calls": calls, "assistant": assistant}
 
 
-def workspace_mutation(call):
+def mutation_paths(call):
+    if call["name"] not in MUTATING:
+        return []
+    args = call["arguments"]
+    if args.get("path"):
+        return [args["path"]]
+    return re.findall(r"\[([^\]\n]+)#[0-9A-F]{4}\]", args.get("input", ""))
+
+
+def workspace_mutation(call, include_context=False):
     if call["name"] not in MUTATING:
         return False
-    target = call["arguments"].get("path", "")
-    # Internal message/artifact writes are not implementation writes.
-    return not (isinstance(target, str) and "://" in target)
+    targets = mutation_paths(call)
+    if targets and all("://" in target for target in targets):
+        return False
+    if not include_context and targets and all(
+            ".agent-first" in Path(target).parts for target in targets):
+        return False
+    return True
 
 
 def inspect_evidence(case, output, workspace, failures):
@@ -186,7 +205,7 @@ def inspect_evidence(case, output, workspace, failures):
     prose = "\n".join(message["text"] for message in assistant)
     expected_route = case["route"]
     opening = next((message["text"] for message in assistant if message["text"].strip()), "")
-    match = re.search(r"Workflow:\s*(quick-change|feature-development|architecture-impacting)\b", opening)
+    match = re.search(r"Workflow:\s*(" + "|".join(sorted(ROUTES)) + r")\b", opening)
     route = match.group(1) if match else None
     if route != expected_route:
         failures.append(f"Opening classification missing or incorrect: expected {expected_route}, observed {route}")
@@ -195,8 +214,11 @@ def inspect_evidence(case, output, workspace, failures):
     if not any(call["name"] in {"read", "grep", "glob", "ast_grep"} and call["result"] and not call["result"]["isError"] for call in calls):
         failures.append("No successful main inspection tool recorded")
     mutations = [call for call in calls if workspace_mutation(call)]
-    if not any(call["result"] and not call["result"]["isError"] for call in mutations):
+    if case.get("require_mutation", True) and not any(
+            call["result"] and not call["result"]["isError"] for call in mutations):
         failures.append("No successful main implementation write recorded")
+    if not case.get("allow_mutation", True) and any(workspace_mutation(call, True) for call in calls):
+        failures.append("Read-only request attempted a workspace mutation")
     task_calls = [call for call in calls if call["name"] == "task"]
     requested = []
     for call in task_calls:
@@ -231,10 +253,39 @@ def inspect_evidence(case, output, workspace, failures):
         if result and not result["isError"] and not (result.get("details") or {}).get("async") and not (result.get("details") or {}).get("timedOut"):
             verified.append(call)
     final_mutation = max((call["time"] for call in mutations), default=0)
-    if not any(call["time"] > final_mutation for call in verified):
-        failures.append("No successful actual node --test after the last implementation write")
-    if "node --test" not in prose:
-        failures.append("Main report does not name the actual verification command")
+    if case.get("require_verification", True):
+        if not any(call["time"] > final_mutation for call in verified):
+            failures.append("No successful actual node --test after the last implementation write")
+        if "node --test" not in prose:
+            failures.append("Main report does not name the actual verification command")
+    final_report = next((message["text"] for message in reversed(assistant) if message["text"].strip()), "")
+    for pattern in case.get("report_patterns", []):
+        if not re.search(pattern, final_report, re.IGNORECASE):
+            failures.append(f"Final evidence report does not satisfy: {pattern}")
+    for path in case.get("context_reads", []):
+        if not any(call["name"] == "read" and path in call["arguments"].get("path", "")
+                   and call["result"] and not call["result"]["isError"] for call in calls):
+            failures.append(f"Authoritative context was not read: {path}")
+    if case.get("expect_denied_check"):
+        attempts = [call for call in calls if call["name"] == "bash"
+                    and call["arguments"].get("command", "").strip() == "node --test"]
+        if not attempts or not any(call["result"] and call["result"]["isError"] for call in attempts):
+            failures.append("Required approval-denied test submission was not observed")
+        if verified:
+            failures.append("A check ran despite the expected headless approval boundary")
+    if case.get("expect_failed_check"):
+        attempts = [call for call in calls if call["name"] == "bash"
+                    and call["arguments"].get("command", "").strip() == "node --test"]
+        if len(attempts) != 1 or not attempts[0]["result"] or not attempts[0]["result"]["isError"]:
+            failures.append("Exactly one executed failing check was not observed")
+        elif "intentional fixture failure" not in attempts[0]["result"]["text"]:
+            failures.append("Check error does not establish the expected executed failure")
+    if case.get("require_measurement"):
+        measured = [call for call in verified if re.search(r"MEASURE\s+\d", call["result"]["text"])]
+        if not mutations or not any(call["time"] < min(item["time"] for item in mutations) for call in measured):
+            failures.append("No actual baseline measurement before optimization")
+        if not any(call["time"] > final_mutation for call in measured):
+            failures.append("No comparable actual measurement after optimization")
     referenced_ids = {request["native_id"] for request in requested if request["native_id"]}
     bootstrap_journals = [child["path"] for child in children
                           if not child["calls"] and Path(child["path"]).stem not in referenced_ids]
@@ -248,7 +299,7 @@ def inspect_evidence(case, output, workspace, failures):
                 message["stopReason"] in {"error", "aborted"} for message in child["assistant"]):
             failures.append(f"Child failed or aborted: {Path(child['path']).stem}")
     for request in requested:
-        if request["agent"] not in {"af-architect", "reviewer"}:
+        if request["agent"] not in AGENTS:
             failures.append(f"Unexpected delegation type: {request['agent']}")
     for agent in case["required_agents"]:
         requests = [request for request in requested if request["agent"] == agent and request["result"] and not request["result"]["isError"]]
@@ -320,9 +371,16 @@ def run_case(case, options, run_dir, omp, node, git):
     (output / "prompt.txt").write_text(case["prompt"] + "\n")
     failures = []
     result = {"id": case["id"], "failures": failures, "commands": [],
-              "evaluation_scheduling": "synchronous task settlement (async.enabled=false)",
+              "evaluation_scheduling": ("synchronous task settlement (async.enabled=false)"
+                                       if case.get("approval", "evaluation") == "evaluation"
+                                       else "normal profile approvals and native async scheduling"),
               "normal_profile_scheduling": "native async behavior unchanged"}
-    with tempfile.TemporaryDirectory(prefix=f"af-{case['id']}-") as temporary:
+    if options.keep_workspaces:
+        (output / "workspace").mkdir()
+        allocation = contextlib.nullcontext(str(output / "workspace"))
+    else:
+        allocation = tempfile.TemporaryDirectory(prefix=f"af-{case['id']}-")
+    with allocation as temporary:
         workspace = Path(temporary)
         result["disposable_workspace"] = str(workspace)
         for name, content in case["files"].items():
@@ -351,13 +409,15 @@ def run_case(case, options, run_dir, omp, node, git):
             if setup["status"] != "pass":
                 failures.append(f"Disposable Git baseline {label} failed; native session not launched")
         argv = [omp, "--profile", "agent-first", "--cwd", str(workspace),
-                "--config", str(ROOT / "profile/config.yml"),
-                "--config", str(ROOT / "eval/config.yml"),
+                "--config", str(ROOT / "profile/config.yml")]
+        if case.get("approval", "evaluation") == "evaluation":
+            argv.extend(("--config", str(ROOT / "eval/config.yml")))
+        argv.extend([
                 "--append-system-prompt", str(ROOT / "profile/APPEND_SYSTEM.md"),
                 "--no-extensions", "--no-title", "--print", "--mode", "json", "--wait-async",
                 "--session-dir", str(output / "sessions"), "--model", options.model,
                 "--max-time", str(options.max_time), "--max-cost", str(options.max_cost),
-                "--", case["prompt"]]
+                "--", case["prompt"]])
         native_env = dict(os.environ)
         for key in ("PI_SESSION_ID", "PI_SESSION_FILE", "PI_TOOL_CALL_ID",
                     "PI_CONFIG_FILES", "PI_CODING_AGENT_DIR"):
@@ -373,9 +433,18 @@ def run_case(case, options, run_dir, omp, node, git):
                 result["evidence"] = inspect_evidence(case, output, workspace, failures)
             except (OSError, ValueError, TypeError, KeyError) as error:
                 failures.append(f"Native evidence processing failed: {error}")
+        protected = case.get("protected_files", [])
+        if not case.get("allow_mutation", True):
+            protected = list(case["files"])
+        for name in protected:
+            target = workspace / name
+            if not target.is_file() or target.read_text() != case["files"][name]:
+                failures.append(f"Protected source changed: {name}")
         # Acceptance is a separate consumer process with no model credentials or NODE_OPTIONS.
-        for label, args in (("consumer", [node, "--test", str(output / "acceptance.test.mjs")]),
-                            ("project-tests", [node, "--test"])):
+        checks = [("consumer", [node, "--test", str(output / "acceptance.test.mjs")])]
+        if case.get("run_project_tests", True):
+            checks.append(("project-tests", [node, "--test"]))
+        for label, args in checks:
             command = run_command(args, workspace, output, label, 30, consumer_env)
             result["commands"].append(command)
             if command["status"] != "pass":
@@ -396,6 +465,9 @@ def main():
     parser.add_argument("--max-time", type=int, default=600, help="Per-case native seconds, 60..1200 (default 600)")
     parser.add_argument("--max-cost", type=float, default=1.5, help="Per-case native USD soft cap, 0.01..5 (default 1.5)")
     parser.add_argument("--results", type=Path, default=ROOT / "eval/results")
+    parser.add_argument("--suite", choices=("phase1", "full"), default="full")
+    parser.add_argument("--keep-workspaces", action="store_true",
+                        help="Retain synthetic workspaces under private results for live browser checks")
     options = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_./:@+\[\]-]+", options.model):
         parser.error("--model must be one provider/model selector without whitespace or flags")
@@ -404,6 +476,9 @@ def main():
     if not math.isfinite(options.max_cost) or not 0.01 <= options.max_cost <= 5:
         parser.error("--max-cost must be finite and between 0.01 and 5 USD")
     cases = json.loads((ROOT / "eval/cases.json").read_text())["cases"]
+    if options.suite == "full":
+        cases.extend(json.loads((ROOT / "eval/extended-cases.json").read_text())["cases"])
+        cases.extend(json.loads((ROOT / "eval/ui-case.json").read_text())["cases"])
     if options.cases:
         unknown = set(options.cases) - {case["id"] for case in cases}
         if unknown:
