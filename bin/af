@@ -83,7 +83,7 @@ def arguments():
     parser.add_argument("--activate", action="store_true", help="register profile links without starting a model session")
     parser.add_argument("--cwd", type=Path, default=Path.cwd(), help="explicit personal project directory")
     parser.add_argument("--model", help="native OMP model selector")
-    parser.add_argument("--print", dest="print_mode", action="store_true", help="one-shot native OMP run; exec approvals fail closed without UI")
+    parser.add_argument("--print", dest="print_mode", action="store_true", help="one-shot Controlled YOLO run; explicit prompts still fail closed without UI")
     parser.add_argument("--json", action="store_true", help="native print-mode JSON events")
     parser.add_argument("--max-cost", type=positive_cost, help="stop sending requests at this USD cost")
     parser.add_argument("--max-time", help="native OMP duration limit, for example 5m")
@@ -114,7 +114,7 @@ def main():
             "--cwd", str(directory),
             "--config", str(ROOT / "profile" / "config.yml"),
             "--append-system-prompt", str(ROOT / "profile" / "APPEND_SYSTEM.md"),
-            "--approval-mode", "write", "--no-extensions", "--no-title",
+            "--no-extensions", "--no-title",
         ]
         if args.model:
             command.extend(("--model", args.model))
