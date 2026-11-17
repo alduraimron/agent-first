@@ -16,9 +16,11 @@ Prerequisites: an existing OMP installation, Python 3.9+ for the launcher/evalua
   "Add the requested feature and verify its real behavior"
 ```
 
-The target directory must already exist. Choose a personal project, not a team/production repository. Replace the model selector with an authorized native OMP selector; `opencode-go/gpt-6-luna` was used in recorded evaluations. For a new machine, authenticate separately with `omp --profile agent-first login`. The launcher never copies credentials; the historical Phase 1 credential transfer is documented in its validation record.
+The target directory must already exist. Choose a personal project, not a team/production repository. Replace the model selector with an authorized native OMP selector; current-policy probes use `opencode-go/gpt-5.6-luna`, while earlier results record their own models. For a new machine, authenticate separately with `omp --profile agent-first login`. The launcher never copies credentials; the historical Phase 1 credential transfer is documented in its validation record.
 
 Use `bin/af` for the complete boundary, not merely `omp --profile agent-first`. Activation registers the five profile assets as symlinks under `~/.omp/profiles/agent-first/agent/`, refuses conflicting entries, and preserves the default profile. Keep this checkout at a stable path. Native persistent settings writes can update the linked personal config, so review operator changes.
+
+Use a fresh `bin/af` launch for the updated policy. Current-policy evidence covers fresh launches, not hot-reload of an already running session.
 
 Describe the desired result. Normal work does not require `/plan`, `/build`, `/review`, a workflow selector, or an agent name. Existing command definitions are not overwritten.
 
@@ -82,25 +84,26 @@ Resume file paths must exist inside the named profile. If a session is unavailab
 
 Main selects installed project checks for relevant static/type/lint/build, regression/integration/consumer, API/database, security, performance, deployment, and browser/accessibility boundaries. Reports use **PASS**, **FAIL**, **NOT-RUN**, and **NOT-APPLICABLE**, with exact command/cwd/result, real runtime evidence, uncovered requirements, and remaining risks. Missing dependencies and denied checks are NOT-RUN, not success or irrelevance.
 
-Browser checks use the existing native eval browser API inside Tern: observe, act through the UI, inspect resulting state/errors, exercise keyboard/semantic checks, and capture visual proof. Confirm the actual native backend; unsupported/manual assistive-technology and browser capabilities remain gaps. No fallback engine installation is authorized.
+Browser checks use the existing native eval browser API inside Tern: preflight the existing host, observe, act through the UI, inspect resulting state/errors, exercise keyboard/semantic checks, and capture visual proof. Confirm the actual native backend; unsupported/manual assistive-technology and browser capabilities remain gaps. No fallback engine installation or fallback acceptance is authorized. Native Tern hosting can fall back to an owned engine, so this procedure is not a native fail-closed or no-download guarantee.
 
-Main approval remains `write`; bash/eval/task require native approval. Headless runs fail closed when approval is unavailable:
+`profile/config.yml` is the settings authority and selects native **YOLO** autonomy. Routine scoped reads, edits, shell/eval verification, advisory task calls, and Tern interaction proceed without routine approval, including headless execution. YOLO auto-approves native read/write/exec tiers, not explicit denies or prompts. Restricted-folder gates and stricter explicit overlays still require native approval and refuse without an interactive approver. For bounded ordinary headless work:
 
 ```sh
 ./bin/af --cwd /absolute/path/to/personal-project --model PROVIDER/MODEL \
   --json --max-time 5m --max-cost 1 "Inspect the requested behavior"
 ```
 
-Headless mode is not an unattended implementation grant. Use the interactive launcher to approve normal execution. The synthetic evaluation overlay is not an operating policy.
+Autonomy covers the authorized outcome, not permission to widen scope. Main asks at the point of risk for consequential actions outside that authorization; instructions carry this behavioral boundary, not a native semantic classifier. Explicit denies remain operator-only even after chat approval. The synthetic restrictive evaluation overlay is not an operating policy.
 
 Safety defaults:
 
 - Maximum two concurrent consultations, one delegation level; no implementation workers or nested spawning.
-- Explicit denies for restricted Git/destructive/install/privileged/download operations and OVNFS apply; native commit/checkpoint helpers remain off.
+- Preserved explicit denies plus protected command families in `profile/config.yml`; denied operations, including Git publication, installations and OVNFS apply, require reviewed operator-terminal actions. Native commit/checkpoint helpers remain off.
 - No automatic OVNFS task isolation/application, extension discovery, project MCP, foreign tool/agent/skill discovery, automatic memory learning, analysis backends or tool provisioning.
 - Known native additive project tools and agent-shadowing definitions are refused. Existing project instructions remain loaded; native profile isolation does not isolate every external configuration source.
-- Child headless tier handling is yolo, but explicit prompts/denies still apply. The bundled reviewer has broader native metadata than its advisory scope; actual activity matters.
-- Approved shell/eval/project scripts retain ambient filesystem/network/process authority. Neither profiles nor OVNFS are OS security sandboxes. Use trusted personal projects and inspect commands before approval.
+- Child native tiers also use yolo; explicit prompts/denies and advisory read-only scope still apply. The bundled reviewer has broader native metadata than its advisory scope; actual activity matters.
+- Restricted folders gate path-tool targets, including symlink resolution, but gate shell/eval/browser by cwd rather than paths embedded in code. Ordered command patterns are not arbitrary-code inspection.
+- Shell, eval, browser runtimes and trusted project scripts retain ambient filesystem/network/process authority. Inspect script definitions and bootstrap behavior before execution; tests/builds can fetch packages themselves. Use installed/cached/vendor/offline execution where appropriate and stop for missing dependencies. Never use code, wrappers or children to bypass policy. Neither profiles nor OVNFS provide OS containment. Use trusted personal projects, not hostile repositories.
 
 ## Optional OVNFS
 
@@ -112,17 +115,20 @@ The normal profile denies `ovnfs apply`, including dry-run. Main presents review
 
 ```sh
 python3 -B eval/check_environment.py
+python3 -B eval/check_controlled_yolo.py --model PROVIDER/MODEL
 python3 -B eval/run.py --suite full --keep-workspaces \
   --model PROVIDER/MODEL --max-time 600 --max-cost 1.5
 # Original cases remain available:
 python3 -B eval/run.py --suite phase1 --model PROVIDER/MODEL
+# Same original cases under normal permissions, without synthetic tool grants:
+python3 -B eval/run.py --suite phase1 --policy profile --model PROVIDER/MODEL
 ```
 
 The sequential native-session harness evaluates natural prompts and actual task/tool journals, then runs independent consumer and project checks. It preserves failed runs, private journals, workspace archives, and intermediate errors. Read-only, approval-denied, recovered-context and measured-optimization cases have explicit contracts instead of pretending every task must edit files.
 
-Recorded verification covers all thirteen scenarios across explicit runs and two authorized models, all eight routes, the six advisors plus bundled reviewer, actual Tern interaction, and approved disposable OVNFS apply/restore/cleanup. It is not a clean single-model full-suite result; native reviewer timeouts and recovered tool/schema errors remain documented. Full source functionality is implemented; unrun production/manual/cross-engine checks and native fallback limitations are explicit in the validation record.
+Historical verification covers thirteen scenarios across explicit runs and two authorized models, all eight routes, the six advisors plus bundled reviewer, actual Tern interaction, and approved disposable OVNFS apply/restore/cleanup under the earlier policy. It is not a clean single-model full-suite result or evidence for the current YOLO policy; native reviewer timeouts and recovered tool/schema errors remain documented.
 
-See [evaluation instructions](eval/README.md), [full validation](eval/full-validation.md), [Phase 1 history](eval/validation.md), [architecture](docs/architecture.md), [correction ledger](docs/corrections.md), and [improvement backlog](docs/backlog.md). The ledger records recurrence, root cause, smallest correction placement and actual validation; it does not automatically rewrite global policy after one failure.
+Current-policy probe results and limitations belong in [Controlled YOLO validation](eval/controlled-yolo-validation.md), separately from [historical full validation](eval/full-validation.md) and [Phase 1 history](eval/validation.md). See also [evaluation instructions](eval/README.md), [architecture](docs/architecture.md), [correction ledger](docs/corrections.md), and [improvement backlog](docs/backlog.md). The ledger records recurrence, root cause, smallest correction placement and actual validation; it does not automatically rewrite global policy after one failure.
 
 ## Source layout
 
@@ -131,9 +137,9 @@ bin/af
 profile/{config.yml,APPEND_SYSTEM.md,RULES.md}
 profile/agents/             # Six native domain definitions; no reviewer copy
 profile/skills/             # Eleven skills, eight workflows, context templates
-eval/{run.py,check_environment.py,browser-check.mjs}
-eval/{cases.json,extended-cases.json,ui-case.json,config.yml}
-eval/{README.md,validation.md,full-validation.md}
+eval/{run.py,check_environment.py,check_controlled_yolo.py,browser-check.mjs}
+eval/{cases.json,extended-cases.json,ui-case.json,config.yml,profile.yml,prompt-check.yml}
+eval/{README.md,controlled-yolo-validation.md,validation.md,full-validation.md}
 eval/results/              # Private, gitignored execution evidence
 docs/{architecture.md,implementation-plan.md,corrections.md,backlog.md}
 ```
