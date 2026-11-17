@@ -1,6 +1,6 @@
 # Loaded only by the explicitly activated agent-first profile.
-# Controlled YOLO: ordinary tiers are autonomous; explicit policies still apply.
-# Bash patterns and restricted-folder prompts are not OS or eval containment.
+# YOLO + Ask When Needed: routine tiers are autonomous; consequential commands prompt.
+# Ordered command rules are approval controls, not filesystem/process/network containment.
 tools:
   approvalMode: yolo
   approval:
@@ -31,26 +31,9 @@ bash:
   gitGuard: true
   allowCompoundCommands: false
   patterns:
-    - { match: 'git *commit*', approval: deny }
-    - { match: 'git *push*', approval: deny }
-    - { match: 'git *reset*', approval: deny }
-    - { match: 'git *clean*', approval: deny }
-    - { match: 'git *stash*', approval: deny }
-    - { match: 'git *checkout*', approval: deny }
-    - { match: 'git *switch*', approval: deny }
-    - { match: 'git *restore*', approval: deny }
-    - { match: 'git *rebase*', approval: deny }
-    - { match: 'git *revert*', approval: deny }
-    - { match: 'git *cherry-pick*', approval: deny }
     - { match: 'git *update-ref*', approval: deny }
-    - { match: 'git *branch *-D*', approval: deny }
-    - { match: 'git *branch *-d*', approval: deny }
-    - { match: 'git *worktree *remove*', approval: deny }
     - { match: 'git *config *--global*', approval: deny }
     - { match: 'git *config *--system*', approval: deny }
-    - { match: 'rm *', approval: deny }
-    - { match: 'rmdir *', approval: deny }
-    - { match: 'unlink *', approval: deny }
     - { match: 'shred *', approval: deny }
     - { match: 'truncate *', approval: deny }
     - { match: 'dd *', approval: deny }
@@ -58,100 +41,18 @@ bash:
     - { match: 'wipefs *', approval: deny }
     - { match: 'fdisk *', approval: deny }
     - { match: 'parted *', approval: deny }
-    - { match: 'chown *', approval: deny }
-    - { match: 'chmod *', approval: deny }
     - { match: 'pkill *', approval: deny }
     - { match: 'killall *', approval: deny }
     - { match: 'shutdown*', approval: deny }
     - { match: 'reboot*', approval: deny }
     - { match: 'poweroff*', approval: deny }
     - { match: 'halt*', approval: deny }
-    - { match: 'systemctl *', approval: deny }
-    - { match: 'sudo *', approval: deny }
-    - { match: 'doas *', approval: deny }
-    - { match: 'npm install*', approval: deny }
-    - { match: 'npm i *', approval: deny }
-    - { match: 'npm i', approval: deny }
-    - { match: 'npm add*', approval: deny }
-    - { match: 'npm ci*', approval: deny }
-    - { match: 'npm update*', approval: deny }
-    - { match: 'npm upgrade*', approval: deny }
-    - { match: 'npm uninstall*', approval: deny }
-    - { match: 'npm exec*', approval: deny }
-    - { match: 'npm create*', approval: deny }
-    - { match: 'npm init*', approval: deny }
-    - { match: 'npm publish*', approval: deny }
-    - { match: 'npm run deploy*', approval: deny }
-    - { match: 'npm run release*', approval: deny }
-    - { match: 'npm run publish*', approval: deny }
-    - { match: 'pnpm', approval: deny }
-    - { match: 'pnpm i*', approval: deny }
-    - { match: 'pnpm install*', approval: deny }
-    - { match: 'pnpm add*', approval: deny }
-    - { match: 'pnpm update*', approval: deny }
-    - { match: 'pnpm remove*', approval: deny }
-    - { match: 'pnpm dlx*', approval: deny }
-    - { match: 'pnpm create*', approval: deny }
-    - { match: 'pnpm publish*', approval: deny }
-    - { match: 'pnpm *deploy*', approval: deny }
-    - { match: 'pnpm *release*', approval: deny }
-    - { match: 'yarn', approval: deny }
-    - { match: 'yarn upgrade*', approval: deny }
-    - { match: 'yarn global*', approval: deny }
-    - { match: 'yarn set version*', approval: deny }
-    - { match: 'yarn install*', approval: deny }
-    - { match: 'yarn add*', approval: deny }
-    - { match: 'yarn up*', approval: deny }
-    - { match: 'yarn remove*', approval: deny }
-    - { match: 'yarn dlx*', approval: deny }
-    - { match: 'yarn create*', approval: deny }
-    - { match: 'yarn publish*', approval: deny }
-    - { match: 'yarn deploy*', approval: deny }
-    - { match: 'yarn release*', approval: deny }
-    - { match: 'bun install*', approval: deny }
-    - { match: 'bun i', approval: deny }
-    - { match: 'bun i *', approval: deny }
-    - { match: 'bun add*', approval: deny }
-    - { match: 'bun update*', approval: deny }
-    - { match: 'bun remove*', approval: deny }
-    - { match: 'bun create*', approval: deny }
-    - { match: 'bun publish*', approval: deny }
-    - { match: 'bun run deploy*', approval: deny }
-    - { match: 'bun run release*', approval: deny }
-    - { match: 'pip* install*', approval: deny }
-    - { match: 'python* -m pip install*', approval: deny }
-    - { match: 'pip* uninstall*', approval: deny }
-    - { match: 'python* -m pip uninstall*', approval: deny }
-    - { match: 'cargo install*', approval: deny }
-    - { match: 'cargo update*', approval: deny }
-    - { match: 'cargo publish*', approval: deny }
-    - { match: 'go install*', approval: deny }
-    - { match: 'go get*', approval: deny }
-    - { match: 'rustup *', approval: deny }
-    - { match: 'corepack*', approval: deny }
-    - { match: 'apt*', approval: deny }
-    - { match: 'dnf *', approval: deny }
-    - { match: 'yum *', approval: deny }
-    - { match: 'pacman *', approval: deny }
-    - { match: 'brew *', approval: deny }
-    - { match: 'uv *', approval: deny }
-    - { match: 'npx*', approval: deny }
-    - { match: 'bunx*', approval: deny }
-    - { match: 'curl *', approval: deny }
-    - { match: 'wget *', approval: deny }
-    - { match: 'scp *', approval: deny }
-    - { match: 'sftp *', approval: deny }
-    - { match: 'rsync *', approval: deny }
-    - { match: 'ssh *', approval: deny }
     - { match: 'ssh-keygen *', approval: deny }
     - { match: 'ssh-add *', approval: deny }
     - { match: 'nc *', approval: deny }
     - { match: 'ncat *', approval: deny }
     - { match: 'netcat *', approval: deny }
     - { match: 'socat *', approval: deny }
-    - { match: 'omp *install*', approval: deny }
-    - { match: 'omp *setup*', approval: deny }
-    - { match: 'omp *update*', approval: deny }
     - { match: 'omp *auth*', approval: deny }
     - { match: 'omp *token*', approval: deny }
     - { match: 'omp *login*', approval: deny }
@@ -160,33 +61,318 @@ bash:
     - { match: 'omp *share*', approval: deny }
     - { match: 'omp *stream*', approval: deny }
     - { match: 'omp *clip*', approval: deny }
-    - { match: 'aws *', approval: deny }
-    - { match: 'gcloud *', approval: deny }
-    - { match: 'az *', approval: deny }
-    - { match: 'kubectl *', approval: deny }
-    - { match: 'terraform *', approval: deny }
-    - { match: 'tofu *', approval: deny }
-    - { match: 'pulumi *', approval: deny }
-    - { match: 'helm *', approval: deny }
-    - { match: 'ansible*', approval: deny }
-    - { match: 'vercel *', approval: deny }
-    - { match: 'netlify *', approval: deny }
-    - { match: 'fly *', approval: deny }
-    - { match: 'flyctl *', approval: deny }
-    - { match: 'railway *', approval: deny }
-    - { match: 'heroku *', approval: deny }
-    - { match: 'wrangler *', approval: deny }
-    - { match: 'serverless *', approval: deny }
-    - { match: 'sls *', approval: deny }
-    - { match: 'docker *push*', approval: deny }
-    - { match: 'docker *login*', approval: deny }
-    - { match: 'docker *system prune*', approval: deny }
-    - { match: 'docker *volume rm*', approval: deny }
-    - { match: 'ovnfs *apply*', approval: deny }
-    - { match: 'ovnfs *update*', approval: deny }
-    - { match: 'ovnfs *send*', approval: deny }
-    - { match: 'ovnfs *attach*', approval: deny }
-    - { match: 'ovnfs *share*', approval: deny }
+    # DENY before ASK: known unscopable destruction, remote history and policy bypass.
+    - { match: 'git *push*--force*', approval: deny }
+    - { match: 'git *push -f*', approval: deny }
+    - { match: 'git *push * -f*', approval: deny }
+    - { match: 'git *push -vf*', approval: deny }
+    - { match: 'git *push * -vf*', approval: deny }
+    - { match: 'git *push -uf*', approval: deny }
+    - { match: 'git *push * -uf*', approval: deny }
+    - { match: 'git *push*--delete*', approval: deny }
+    - { match: 'git *push -d*', approval: deny }
+    - { match: 'git *push * -d*', approval: deny }
+    - { match: 'git *push*--mirror*', approval: deny }
+    - { match: 'git *push*--prune*', approval: deny }
+    - { match: 'git *push +*', approval: deny }
+    - { match: 'git *push * +*', approval: deny }
+    - { match: 'git *push :*', approval: deny }
+    - { match: 'git *push * :*', approval: deny }
+    - { match: 'git *send-pack*', approval: deny }
+    - { match: 'git *receive-pack*', approval: deny }
+    - { match: 'git *http-push*', approval: deny }
+    - { match: 'git *reflog*delete*', approval: deny }
+    - { match: 'git *reflog*expire*', approval: deny }
+    - { match: 'rm /*', approval: deny }
+    - { match: 'rm * /*', approval: deny }
+    - { match: 'rm ..*', approval: deny }
+    - { match: 'rm * ..*', approval: deny }
+    - { match: 'rm ~*', approval: deny }
+    - { match: 'rm * ~*', approval: deny }
+    - { match: 'rm *$*', approval: deny }
+    - { match: 'rm *--no-preserve-root*', approval: deny }
+    - { match: 'rmdir /*', approval: deny }
+    - { match: 'rmdir * /*', approval: deny }
+    - { match: 'unlink /*', approval: deny }
+    - { match: 'unlink * /*', approval: deny }
+    - { match: 'chmod * /*', approval: deny }
+    - { match: 'chown * /*', approval: deny }
+    - { match: 'cryptsetup*', approval: deny }
+    - { match: 'sfdisk*', approval: deny }
+    - { match: 'kill -9 1', approval: deny }
+    - { match: 'kill -KILL 1', approval: deny }
+    - { match: 'init 0*', approval: deny }
+    - { match: '*curl*|*sh*', approval: deny }
+    - { match: '*wget*|*sh*', approval: deny }
+    - { match: '*fetch*|*sh*', approval: deny }
+    - { match: '*sh*<(*curl*', approval: deny }
+    - { match: '*sh*<(*wget*', approval: deny }
+    - { match: '*eval*curl*', approval: deny }
+    - { match: '*eval*wget*', approval: deny }
+    - { match: 'sudo *rm *', approval: deny }
+    - { match: 'sudo *dd *', approval: deny }
+    - { match: 'sudo *mkfs*', approval: deny }
+    - { match: 'sudo *wipefs*', approval: deny }
+    - { match: 'sudo *fdisk*', approval: deny }
+    - { match: 'sudo *parted*', approval: deny }
+    - { match: 'sudo *cryptsetup*', approval: deny }
+    - { match: 'sudo *shutdown*', approval: deny }
+    - { match: 'sudo *reboot*', approval: deny }
+    - { match: 'sudo *poweroff*', approval: deny }
+    - { match: 'doas *rm *', approval: deny }
+    - { match: 'doas *dd *', approval: deny }
+    - { match: 'doas *mkfs*', approval: deny }
+    - { match: 'doas *wipefs*', approval: deny }
+    - { match: 'doas *shutdown*', approval: deny }
+    - { match: 'doas *fdisk*', approval: deny }
+    - { match: 'doas *parted*', approval: deny }
+    - { match: 'doas *cryptsetup*', approval: deny }
+    - { match: 'sudo *chmod * /*', approval: deny }
+    - { match: 'sudo *chown * /*', approval: deny }
+    - { match: 'doas *chmod * /*', approval: deny }
+    - { match: 'doas *chown * /*', approval: deny }
+    - { match: 'omp *--approval-mode*', approval: deny }
+    - { match: 'omp *--auto-approve*', approval: deny }
+    - { match: 'omp *--yolo*', approval: deny }
+    - { match: '*PI_GIT_GUARD=*', approval: deny }
+    - { match: '*PI_CONFIG_FILES=*', approval: deny }
+    - { match: '*PI_CODING_AGENT_DIR=*', approval: deny }
+    - { match: 'doas *reboot*', approval: deny }
+    - { match: 'curl *.ssh/*', approval: deny }
+    - { match: 'curl *id_rsa*', approval: deny }
+    - { match: 'curl *id_ed25519*', approval: deny }
+    - { match: 'curl *.aws/credentials*', approval: deny }
+    - { match: 'scp *.ssh/*', approval: deny }
+    - { match: 'scp *.aws/credentials*', approval: deny }
+    - { match: 'rsync *.ssh/*', approval: deny }
+    - { match: 'rsync *.aws/credentials*', approval: deny }
+    # Exact inspection exceptions only; no wildcard allow can mask later mutations.
+    - { match: 'git branch --show-current', approval: allow }
+    - { match: 'git branch --list', approval: allow }
+    - { match: 'git branch -a', approval: allow }
+    - { match: 'git branch -r', approval: allow }
+    - { match: 'git branch -v', approval: allow }
+    - { match: 'git branch -vv', approval: allow }
+    - { match: 'git tag --list', approval: allow }
+    - { match: 'git tag -l', approval: allow }
+    - { match: 'git remote -v', approval: allow }
+    # ASK on each consequential invocation; yolo never suppresses explicit prompts.
+    - { match: 'git *commit*', approval: prompt }
+    - { match: 'git *push*', approval: prompt }
+    - { match: 'git *reset*', approval: prompt }
+    - { match: 'git *clean*', approval: prompt }
+    - { match: 'git *stash*', approval: prompt }
+    - { match: 'git *checkout*', approval: prompt }
+    - { match: 'git *switch*', approval: prompt }
+    - { match: 'git *restore*', approval: prompt }
+    - { match: 'git *rebase*', approval: prompt }
+    - { match: 'git *revert*', approval: prompt }
+    - { match: 'git *cherry-pick*', approval: prompt }
+    - { match: 'git *branch *-D*', approval: prompt }
+    - { match: 'git *branch *-d*', approval: prompt }
+    - { match: 'git *worktree *remove*', approval: prompt }
+    - { match: 'rm *', approval: prompt }
+    - { match: 'rmdir *', approval: prompt }
+    - { match: 'unlink *', approval: prompt }
+    - { match: 'chown *', approval: prompt }
+    - { match: 'chmod *', approval: prompt }
+    - { match: 'systemctl *', approval: prompt }
+    - { match: 'sudo *', approval: prompt }
+    - { match: 'doas *', approval: prompt }
+    - { match: 'npm install*', approval: prompt }
+    - { match: 'npm i *', approval: prompt }
+    - { match: 'npm i', approval: prompt }
+    - { match: 'npm add*', approval: prompt }
+    - { match: 'npm ci*', approval: prompt }
+    - { match: 'npm update*', approval: prompt }
+    - { match: 'npm upgrade*', approval: prompt }
+    - { match: 'npm uninstall*', approval: prompt }
+    - { match: 'npm exec*', approval: prompt }
+    - { match: 'npm create*', approval: prompt }
+    - { match: 'npm init*', approval: prompt }
+    - { match: 'npm publish*', approval: prompt }
+    - { match: 'npm run deploy*', approval: prompt }
+    - { match: 'npm run release*', approval: prompt }
+    - { match: 'npm run publish*', approval: prompt }
+    - { match: 'pnpm', approval: prompt }
+    - { match: 'pnpm i*', approval: prompt }
+    - { match: 'pnpm install*', approval: prompt }
+    - { match: 'pnpm add*', approval: prompt }
+    - { match: 'pnpm update*', approval: prompt }
+    - { match: 'pnpm remove*', approval: prompt }
+    - { match: 'pnpm dlx*', approval: prompt }
+    - { match: 'pnpm create*', approval: prompt }
+    - { match: 'pnpm publish*', approval: prompt }
+    - { match: 'pnpm deploy*', approval: prompt }
+    - { match: 'pnpm run deploy*', approval: prompt }
+    - { match: 'pnpm release*', approval: prompt }
+    - { match: 'pnpm run release*', approval: prompt }
+    - { match: 'yarn', approval: prompt }
+    - { match: 'yarn upgrade*', approval: prompt }
+    - { match: 'yarn global*', approval: prompt }
+    - { match: 'yarn set version*', approval: prompt }
+    - { match: 'yarn install*', approval: prompt }
+    - { match: 'yarn add*', approval: prompt }
+    - { match: 'yarn up*', approval: prompt }
+    - { match: 'yarn remove*', approval: prompt }
+    - { match: 'yarn dlx*', approval: prompt }
+    - { match: 'yarn create*', approval: prompt }
+    - { match: 'yarn publish*', approval: prompt }
+    - { match: 'yarn deploy*', approval: prompt }
+    - { match: 'yarn release*', approval: prompt }
+    - { match: 'bun install*', approval: prompt }
+    - { match: 'bun i', approval: prompt }
+    - { match: 'bun i *', approval: prompt }
+    - { match: 'bun add*', approval: prompt }
+    - { match: 'bun update*', approval: prompt }
+    - { match: 'bun remove*', approval: prompt }
+    - { match: 'bun create*', approval: prompt }
+    - { match: 'bun publish*', approval: prompt }
+    - { match: 'bun run deploy*', approval: prompt }
+    - { match: 'bun run release*', approval: prompt }
+    - { match: 'pip* install*', approval: prompt }
+    - { match: 'python* -m pip install*', approval: prompt }
+    - { match: 'pip* uninstall*', approval: prompt }
+    - { match: 'python* -m pip uninstall*', approval: prompt }
+    - { match: 'cargo install*', approval: prompt }
+    - { match: 'cargo update*', approval: prompt }
+    - { match: 'cargo publish*', approval: prompt }
+    - { match: 'go install*', approval: prompt }
+    - { match: 'go get*', approval: prompt }
+    - { match: 'rustup *', approval: prompt }
+    - { match: 'corepack*', approval: prompt }
+    - { match: 'apt*', approval: prompt }
+    - { match: 'dnf *', approval: prompt }
+    - { match: 'yum *', approval: prompt }
+    - { match: 'pacman *', approval: prompt }
+    - { match: 'brew *', approval: prompt }
+    - { match: 'uv add*', approval: prompt }
+    - { match: 'uv remove*', approval: prompt }
+    - { match: 'uv sync*', approval: prompt }
+    - { match: 'uv lock*', approval: prompt }
+    - { match: 'uv init*', approval: prompt }
+    - { match: 'uv pip install*', approval: prompt }
+    - { match: 'uv pip uninstall*', approval: prompt }
+    - { match: 'uv pip sync*', approval: prompt }
+    - { match: 'uv pip compile*', approval: prompt }
+    - { match: 'uv tool *', approval: prompt }
+    - { match: 'uv python install*', approval: prompt }
+    - { match: 'uv python uninstall*', approval: prompt }
+    - { match: 'uv self update*', approval: prompt }
+    - { match: 'uv cache clean*', approval: prompt }
+    - { match: 'uv cache prune*', approval: prompt }
+    - { match: 'uv run*', approval: prompt }
+    - { match: 'uvx*', approval: prompt }
+    - { match: 'npx*', approval: prompt }
+    - { match: 'bunx*', approval: prompt }
+    - { match: 'curl *', approval: prompt }
+    - { match: 'wget *', approval: prompt }
+    - { match: 'scp *', approval: prompt }
+    - { match: 'sftp *', approval: prompt }
+    - { match: 'rsync *', approval: prompt }
+    - { match: 'ssh *', approval: prompt }
+    - { match: 'omp *install*', approval: prompt }
+    - { match: 'omp *setup*', approval: prompt }
+    - { match: 'omp *update*', approval: prompt }
+    - { match: 'aws *', approval: prompt }
+    - { match: 'gcloud *', approval: prompt }
+    - { match: 'az *', approval: prompt }
+    - { match: 'kubectl *', approval: prompt }
+    - { match: 'terraform *', approval: prompt }
+    - { match: 'tofu *', approval: prompt }
+    - { match: 'pulumi *', approval: prompt }
+    - { match: 'helm *', approval: prompt }
+    - { match: 'ansible*', approval: prompt }
+    - { match: 'vercel *', approval: prompt }
+    - { match: 'netlify *', approval: prompt }
+    - { match: 'fly *', approval: prompt }
+    - { match: 'flyctl *', approval: prompt }
+    - { match: 'railway *', approval: prompt }
+    - { match: 'heroku *', approval: prompt }
+    - { match: 'wrangler *', approval: prompt }
+    - { match: 'serverless *', approval: prompt }
+    - { match: 'sls *', approval: prompt }
+    - { match: 'docker *push*', approval: prompt }
+    - { match: 'docker *login*', approval: prompt }
+    - { match: 'docker *system prune*', approval: prompt }
+    - { match: 'docker *volume rm*', approval: prompt }
+    - { match: 'ovnfs *apply*', approval: prompt }
+    - { match: 'ovnfs *update*', approval: prompt }
+    - { match: 'ovnfs *send*', approval: prompt }
+    - { match: 'ovnfs *attach*', approval: prompt }
+    - { match: 'ovnfs *share*', approval: prompt }
+    - { match: 'ovnfs *rm*', approval: prompt }
+    - { match: 'git *add *', approval: prompt }
+    - { match: 'git *apply*', approval: prompt }
+    - { match: 'git *am *', approval: prompt }
+    - { match: 'git *merge*', approval: prompt }
+    - { match: 'git *fetch*', approval: prompt }
+    - { match: 'git *pull*', approval: prompt }
+    - { match: 'git *clone*', approval: prompt }
+    - { match: 'git branch *', approval: prompt }
+    - { match: 'git * branch *', approval: prompt }
+    - { match: 'git tag *', approval: prompt }
+    - { match: 'git * tag *', approval: prompt }
+    - { match: 'git remote *', approval: prompt }
+    - { match: 'git * remote *', approval: prompt }
+    - { match: 'git config *', approval: prompt }
+    - { match: 'git * config *', approval: prompt }
+    - { match: 'docker run*', approval: prompt }
+    - { match: 'docker * run*', approval: prompt }
+    - { match: 'docker create*', approval: prompt }
+    - { match: 'docker * create*', approval: prompt }
+    - { match: 'docker start*', approval: prompt }
+    - { match: 'docker * start*', approval: prompt }
+    - { match: 'docker stop*', approval: prompt }
+    - { match: 'docker * stop*', approval: prompt }
+    - { match: 'docker restart*', approval: prompt }
+    - { match: 'docker * restart*', approval: prompt }
+    - { match: 'docker kill*', approval: prompt }
+    - { match: 'docker * kill*', approval: prompt }
+    - { match: 'docker pause*', approval: prompt }
+    - { match: 'docker * pause*', approval: prompt }
+    - { match: 'docker unpause*', approval: prompt }
+    - { match: 'docker * unpause*', approval: prompt }
+    - { match: 'docker rm*', approval: prompt }
+    - { match: 'docker * rm*', approval: prompt }
+    - { match: 'docker build*', approval: prompt }
+    - { match: 'docker * build*', approval: prompt }
+    - { match: 'docker pull*', approval: prompt }
+    - { match: 'docker * pull*', approval: prompt }
+    - { match: 'docker load*', approval: prompt }
+    - { match: 'docker * load*', approval: prompt }
+    - { match: 'docker import*', approval: prompt }
+    - { match: 'docker * import*', approval: prompt }
+    - { match: 'docker tag*', approval: prompt }
+    - { match: 'docker * tag*', approval: prompt }
+    - { match: 'docker commit*', approval: prompt }
+    - { match: 'docker * commit*', approval: prompt }
+    - { match: 'docker logout*', approval: prompt }
+    - { match: 'docker * logout*', approval: prompt }
+    - { match: 'docker update*', approval: prompt }
+    - { match: 'docker * update*', approval: prompt }
+    - { match: 'docker exec*', approval: prompt }
+    - { match: 'docker * exec*', approval: prompt }
+    - { match: 'docker attach*', approval: prompt }
+    - { match: 'docker * attach*', approval: prompt }
+    - { match: 'docker cp*', approval: prompt }
+    - { match: 'docker * cp*', approval: prompt }
+    - { match: 'docker * prune*', approval: prompt }
+    - { match: 'docker compose*', approval: prompt }
+    - { match: 'docker * compose*', approval: prompt }
+    - { match: 'docker-compose *', approval: prompt }
+    - { match: 'docker * connect*', approval: prompt }
+    - { match: 'docker * disconnect*', approval: prompt }
+    - { match: 'docker * enable*', approval: prompt }
+    - { match: 'docker * disable*', approval: prompt }
+    - { match: 'docker * install*', approval: prompt }
+    - { match: 'docker * upgrade*', approval: prompt }
+    - { match: 'docker * init*', approval: prompt }
+    - { match: 'docker * join*', approval: prompt }
+    - { match: 'docker * leave*', approval: prompt }
+    - { match: 'docker * deploy*', approval: prompt }
+    - { match: 'docker * rollback*', approval: prompt }
+    - { match: 'docker * scale*', approval: prompt }
 task:
   batch: true
   structured: true
