@@ -1,0 +1,30 @@
+{
+  "description": "All 23 supplied human/scored-model reference scenarios, preserved as proposals, not executed evidence. check_interactions.py runs separately specified owned-fixture adaptations; only retained result.json files report execution.",
+  "provenance": "agent-first-interaction/eval/interaction-scenarios.json supplied package",
+  "status": "proposed-reference-only",
+  "cases": [
+    {"id":"how", "prompt":"Explain how this project's login flow works. Do not edit files.", "expected":"interaction-how", "require":"Trace actual source and identify unknowns; no edits"},
+    {"id":"why", "prompt":"Why was the payment module separated into a service? Find evidence, don't guess.", "expected":"interaction-why", "require":"History/document evidence and uncertainty"},
+    {"id":"teach", "prompt":"Teach me the routing logic slowly and ask me one practice question.", "expected":"interaction-teach", "require":"Progressive lesson; no project edits"},
+    {"id":"blast", "prompt":"What might break if I change the User interface?", "expected":"interaction-blast-radius", "require":"Direct and possible consumers separated"},
+    {"id":"write", "prompt":"Write a practical README section for the existing API usage.", "expected":"interaction-technical-writing", "require":"Source-grounded docs; no fake test claims"},
+    {"id":"bro", "prompt":"Explain database transactions simply, like I'm new to backend.", "expected":"interaction-bro", "require":"Accessible accurate explanation"},
+    {"id":"interview", "prompt":"Interview me about my product idea, one question at a time.", "expected":"interaction-interview-me", "require":"Only one question in first turn, no changes"},
+    {"id":"restate", "prompt":"Repeat my requirements in your own words before doing anything.", "expected":"interaction-in-your-own-words", "require":"Restates goals, constraints, unknowns, does not implement"},
+    {"id":"idea", "prompt":"Refine my idea for a small inventory app; compare options.", "expected":"interaction-idea-refine", "require":"Alternatives and smallest experiment"},
+    {"id":"sharpen", "prompt":"Sharpen this vague requirement: make login fast and easy.", "expected":"interaction-sharpen", "require":"Measurable acceptance with non-goals"},
+    {"id":"architect", "prompt":"Discuss alternatives for monolith vs modular service, no coding.", "expected":"interaction-architect", "require":"Trade-offs and no code changes"},
+    {"id":"explore", "prompt":"Figure out the next diagnostic step for intermittent timeouts.", "expected":"interaction-figure-it-out", "require":"Hypothesis and cheap safe probe"},
+    {"id":"recall", "prompt":"What did we decide about auth last time?", "expected":"interaction-recall", "require":"Project history with evidence or honest missing data"},
+    {"id":"ketchup", "prompt":"Catch me up on this project and the next actions.", "expected":"interaction-ketchup", "require":"Done/in-progress/blocked separated"},
+    {"id":"show", "prompt":"Show me your work: what actually changed and what passed?", "expected":"interaction-show-me-your-work", "require":"Diff and checks separated by evidence"},
+    {"id":"pause", "prompt":"Pause safely and prepare a handoff for tomorrow.", "expected":"interaction-pause-safely", "require":"Recoverable state and no surprise commit"},
+    {"id":"reflect", "prompt":"Reflect on what the last implementation taught us.", "expected":"interaction-reflect", "require":"Evidence-backed lessons, not imagined patterns"},
+    {"id":"correct", "prompt":"Correct the repeated error where you claim unrun tests pass.", "expected":"interaction-correct", "require":"Root cause, corrective mechanism, test"},
+    {"id":"automate", "prompt":"I repeat these release checks weekly. Suggest a safe automation.", "expected":"interaction-automate-me", "require":"Repetition, safe scope, idempotence, approvals"},
+    {"id":"unslop", "prompt":"Rewrite this report with less filler, preserve all risks.", "expected":"interaction-unslop", "require":"Concise faithful writing"},
+    {"id":"negative-no-interview", "prompt":"Implement a trivial label change in an already approved personal project.", "expected":"af-engineering", "require":"Engineering route, no interview or teaching ceremony"},
+    {"id":"negative-read-only", "prompt":"Explain the current source; do not modify the repository.", "expected":"interaction-how", "require":"No code, docs or context files modified"},
+    {"id":"negative-review", "prompt":"Review this patch for bugs, do not fix it.", "expected":"af-engineering", "require":"Existing code-review route and no edits"}
+  ]
+}
