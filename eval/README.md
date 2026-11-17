@@ -61,6 +61,20 @@ It tests live native RPC UI approval state for actual model-native bash calls, n
 
 `profile/config.yml` is the sole normal settings authority. AUTO is routine scoped work; ASK covers reviewed consequential operations such as ordinary Git publication, installs/deploys and OVNFS apply; stronger DENY and `bash.gitGuard: true` remain. Approval does not override shared-checkout branch/stash guards. Readonly advisors remain headless. ASK refusal leaves dependent work pending while independent safe work continues without bypass. Patterns do not prove deletion containment, config ownership or general credential/exfiltration control: local edit REM has no operation-specific gate, and eval/scripts/browser/network retain ambient authority rather than sandboxing. Current evidence belongs in [Ask-policy validation](ask-policy-validation.md); these commands do not claim success.
 
+## Interaction package checks
+
+```sh
+# No model requests: native parsing, exact discovery, visibility and full URI bodies.
+python3 -B eval/check_principles.py
+python3 -B eval/check_environment.py
+# Focused real-model behavior, normal permissions and disposable owned fixtures.
+python3 -B eval/check_interactions.py --model PROVIDER/MODEL --max-time 600 --max-cost 1.5
+```
+
+`interaction-scenarios.json` preserves the 23 supplied positive/negative scenarios as proposed coverage. The focused probe defaults to nine owned-fixture adaptations: how, why, teach, interview, catch-up, evidence report, README writing, trivial implementation and defect review. A tenth explicit read-only explanation case is selectable. Use repeatable `--case` for subsets. Default per-case bounds are 300 seconds and a USD 0.50 native soft cap; nine cases have a nominal USD 4.50 total soft cap, not a hard billing bound because in-flight requests can exceed it. A successful full native leaf read is required; name mentions, catalog entries and missing tool results do not count. Read-only cases include unchanged context files; documentation writes are limited to the requested artifact. Clear implementation and defect review retain engineering routes.
+
+Exact prompts, commands, journals, policy snapshots, fixture state and failures remain private under `results/`. Tests make no dependency installation, profile-policy change, commit or push. No automatic paid retry occurs. Record actual commands, pass/fail and unexecuted limits in [Interaction validation](interaction-validation.md). These checks do not establish safety for hostile projects or all-model routing reliability.
+
 ## Authorization and bounds
 
 The runner invokes `omp` with fixed `profile/config.yml`, appended main contract, named profile, disabled extensions, native print JSON, external session output, and explicit model/time/cost limits. The base config owns the normal yolo approval mode; the runner passes no approval-mode override, arbitrary flags or alternate profile.
@@ -117,7 +131,7 @@ Child provenance uses the ID in native synchronous `task` results, not a request
 
 ### Principle-layer evidence
 
-The [skills catalog](../docs/skills-catalog.md) lists the preserved eleven skills, `af-principles` and 24 independent leaves. The [selector](../profile/skills/af-principles/SKILL.md) remains the activation authority. OMP 18.22.0 registers 36 exact names while showing 12 catalog entries: native `skills.manualSkills: [principle-*]` hides leaf metadata, not `skill://` access. Exact `includeSkills` entries matter. Use fresh sessions after changes; a stale session is not a loading probe.
+The [skills catalog](../docs/skills-catalog.md) preserves eleven domain/support skills, two selectors, 24 principle leaves and 20 interaction leaves. The [principle selector](../profile/skills/af-principles/SKILL.md) remains the engineering activation authority; [af-interaction](../profile/skills/af-interaction/SKILL.md) owns conversational intent. OMP 18.22.0 registers 57 exact names while showing 13 catalog entries: `skills.manualSkills: [principle-*, interaction-*]` hides leaf metadata, not URI access. Exact `includeSkills` entries matter. Use fresh sessions; a stale session is not a loading probe.
 
 The `principles` suite adds these cases without replacing the original route, safety, chronology or consumer contracts:
 
@@ -154,7 +168,7 @@ Read actual advice and main disposition for decision quality. Automated chronolo
 
 ## Environment, browser and isolation follow-through
 
-`python3 -B eval/check_environment.py` makes no model requests. It exercises launcher guards in a temporary HOME, inspects actual native RPC context/skill discovery and effective settings in a fresh project, checks the pinned policy against a conflicting synthetic project configuration, verifies delegation/isolation/provisioning settings, and compares default configuration hashes. Principle-layer loading checks must distinguish all 36 registered skills from the 12 visible entries and establish direct leaf URI access; catalog hiding alone proves neither removal nor read success. `python3 -B eval/check_principles.py` is the companion principle-layer check. Raw RPC/settings results are private local evidence. This synthetic team-config check never opens or changes a real team repository.
+`python3 -B eval/check_environment.py` makes no model requests. It exercises launcher guards in a temporary HOME, actual native RPC context and discovery, the pinned policy against conflicting synthetic project configuration, and delegation/isolation/provisioning settings plus default hashes. Distinguish 57 registered skills from 13 visible entries and directly read all 44 leaf bodies; hiding alone proves neither removal nor successful loading. `check_principles.py` covers both selectors' native bodies and exact settings; its optional pre-change baseline compares all non-skill settings, launcher/default hashes and existing profile assets. Raw evidence stays private. No real team repository is opened or changed.
 
 After the UI case, start its retained `workspace/server.js` on a task-owned localhost port using installed Node. Perform browser follow-through in a normal-profile session, not the strict overlay that denies eval. Read `xd://eval/browser` and preflight the existing Tern host without downloading or deliberately opening fallback engines. In a normal-profile OMP JavaScript eval, open the owned tab first:
 

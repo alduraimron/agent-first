@@ -58,9 +58,19 @@ Use installed `af` (the same `bin/af` entry point), not a bare `omp --profile ag
 
 Describe the desired result. Normal work does not require `/plan`, `/build`, `/review`, a workflow selector, or an agent name.
 
+## Interaction & Reasoning Skills
+
+For explanations, learning, interviews, idea/design discussion, context recovery, reflection and communication, main reads `af-interaction` and only the relevant `interaction-*` leaf. Ask naturally: "How does this work?", "Why was enrollment introduced?", "Teach me the context system", "Interview me about this feature", or "Catch me up". Ordinary use remains `af`, without manual skill commands or a coding workflow for every question.
+
+The 20 leaves cover `how`, `why`, `teach`, `blast-radius`, `technical-writing`, `bro`, `interview-me`, `in-your-own-words`, `idea-refine`, `sharpen`, `architect`, `figure-it-out`, `recall`, `ketchup`, `show-me-your-work`, `pause-safely`, `reflect`, `correct`, `automate-me` and `unslop`. The [interaction selector](profile/skills/af-interaction/SKILL.md) defines triggers and composition. Its leaves are hidden from the always-visible catalog, not from native URI access.
+
+Conversations default to read-only. Explicitly requested documentation or handoff writes authorize only those artifacts, not code changes or external effects. Defect review, diagnosis, verification and implementation retain their engineering routes; a clear change needs no mandatory interview or teaching. Design discussion does not replace the architect consultation required for architecture-changing implementation.
+
+The supplied package adds procedures, not permissions, plugins, agents or runtime dependencies. [Provenance](profile/skills/af-interaction/SOURCES.md) is separate from the existing principle-layer MIT attribution. Start a fresh `af` session after updating.
+
 ## Adaptive workflow library
 
-Main inspects intent, complexity, risk, and architectural impact, announces the selected exact route prefix (for example, `Workflow: quick-change`) with a rationale, and reads the relevant procedure. New evidence can change the route; consequential changes follow the approval boundary.
+For engineering execution, main inspects intent, complexity, risk, and architectural impact, announces the selected exact route prefix (for example, `Workflow: quick-change`) with a rationale, and reads the relevant procedure. New evidence can change the route; consequential changes follow the approval boundary.
 
 | Intent | Procedure |
 | --- | --- |
@@ -88,9 +98,9 @@ Each procedure specifies inputs, steps/decision points, consultation criteria, v
 
 Custom advisors expose only read/grep/glob, cannot spawn, and hand advice to main through native yield. All six autoload their domain skill plus `af-principles`. Main passes only selected leaf URIs, their observed triggers and the decision question; each child reads those leaves directly before advice. Children do not inherit main's append text or leaf-read history. Shared report and handoff rules live in `profile/RULES.md`. Main evaluates advice, owns implementation, and performs checks. The bundled native `reviewer` receives the same explicit principle handoff and actual patch, without a cloned definition. Routine work stays inline; implemented data-exposure/corruption invariants require independent review of the actual patch, not just pre-design consultation.
 
-The eleven original domain/support skills remain: `af-engineering` owns requirements, planning, routing and consultation; domain skills own their engineering procedures; `af-testing` owns diagnosis/test design; `af-verification`, `af-context`, and `af-isolation` own evidence, project records and optional checkout lifecycle. Adding the `af-principles` selector and 24 independent leaves gives **36 native registry entries, with 12 visible catalog entries**. See the [skills catalog](docs/skills-catalog.md) for all names and pointers.
+The eleven original domain/support skills remain: `af-engineering` owns requirements, planning, routing and consultation; domain skills own their engineering procedures; `af-testing` owns diagnosis/test design; `af-verification`, `af-context`, and `af-isolation` own evidence, project records and optional checkout lifecycle. Together with `af-principles`, its 24 leaves, `af-interaction` and its 20 leaves, the profile has **57 native registry entries, with 13 visible catalog entries**. See the [skills catalog](docs/skills-catalog.md) for all names and pointers.
 
-The [selector](profile/skills/af-principles/SKILL.md) is the authoritative activation map, not a fixed checklist. Usually one to three leaves inform a decision; a trivial understood edit normally needs only `prove-it-works`, with at most one other relevant leaf. Main reads selected leaves in full before applying them. No manual skill commands, new planning ceremony, agent or runtime are required. In OMP 18.22.0, `skills.manualSkills: [principle-*]` hides leaf metadata from the visible catalog, not native `skill://` access; exact `includeSkills` entries keep all leaves registered. Start a fresh session after profile changes.
+The [principle selector](profile/skills/af-principles/SKILL.md) is the authoritative activation map for engineering judgment, not a fixed checklist. Usually one to three leaves inform a decision; a trivial understood edit normally needs only `prove-it-works`, with at most one other relevant leaf. Main reads selected leaves in full before applying them. No manual skill commands, new planning ceremony, agent or runtime are required. In OMP 18.22.0, `skills.manualSkills: [principle-*, interaction-*]` hides leaf metadata from the visible catalog, not native `skill://` access; exact `includeSkills` entries retain all leaves. Start a fresh session after profile changes.
 
 The principles adapt [pstack at revision `2f87c854fe3e2fcda44ca86b46ede35aad3c46b7`](https://github.com/cursor/plugins/tree/2f87c854fe3e2fcda44ca86b46ede35aad3c46b7/pstack), Copyright (c) 2026 Lauren Tan, MIT. [Source attribution](profile/skills/af-principles/SOURCES.md) and the [preserved license](profile/skills/af-principles/LICENSE) cover those adaptations, not unrelated Agent-First files.
 
@@ -167,6 +177,8 @@ python3 -B eval/check_controlled_yolo.py --model PROVIDER/MODEL
 python3 -B eval/check_ask_policy.py --model PROVIDER/MODEL
 # Principle-layer checks; commands are not recorded results:
 python3 -B eval/check_principles.py
+# Interaction routing/behavior with an explicitly authorized model:
+python3 -B eval/check_interactions.py --model PROVIDER/MODEL
 python3 -B eval/run.py --suite principles --keep-workspaces \
   --model PROVIDER/MODEL --max-time 600 --max-cost 1.5
 python3 -B eval/run.py --suite full --keep-workspaces \
@@ -183,17 +195,19 @@ Historical verification covers thirteen scenarios across explicit runs and two a
 
 Current policy evidence belongs in [Ask-policy validation](eval/ask-policy-validation.md). The adapted controlled-YOLO probe separates headless ASK refusals from hard DENY rejections; the focused ASK probe checks live native RPC approval state and actual disposable `rmdir` effects, not direct operator RPC bash. Commands listed here are not passing results. [Principles validation](eval/principles-validation.md), [Controlled YOLO validation](eval/controlled-yolo-validation.md), [historical full validation](eval/full-validation.md) and [Phase 1 history](eval/validation.md) retain their original scope and failures. See also [evaluation instructions](eval/README.md), [architecture](docs/architecture.md), [correction ledger](docs/corrections.md), and [improvement backlog](docs/backlog.md). The ledger records recurrence, root cause, smallest correction placement and actual validation; it does not automatically rewrite global policy after one failure.
 
+Interaction-package checks, adaptations and retained results belong in [Interaction validation](eval/interaction-validation.md). The focused interaction probe checks actual full leaf reads and source-grounded responses, no changes for read-only requests, explicitly scoped artifact writes, and ordinary implementation/review routing. Its 23 supplied scenarios are candidate evaluations, not a claim that every scenario or model was tested.
+
 ## Source layout
 
 ```text
 bin/af
 profile/{config.yml,APPEND_SYSTEM.md,RULES.md}
 profile/agents/             # Six native domain definitions; no reviewer copy
-profile/skills/             # 11 original skills + selector + 24 leaves; 8 workflows
-eval/{run.py,check_environment.py,check_cli.py,check_controlled_yolo.py,check_ask_policy.py,check_principles.py,browser-check.mjs}
-eval/{cases.json,extended-cases.json,ui-case.json,principle-cases.json,principle-expectations.json}
+profile/skills/             # 11 original skills + 2 selectors + 44 leaves; 8 workflows
+eval/{run.py,check_environment.py,check_cli.py,check_controlled_yolo.py,check_ask_policy.py,check_principles.py,check_interactions.py,browser-check.mjs}
+eval/{cases.json,extended-cases.json,ui-case.json,principle-cases.json,principle-expectations.json,interaction-scenarios.json}
 eval/{config.yml,profile.yml,prompt-check.yml}
-eval/{README.md,ask-policy-validation.md,principles-validation.md,controlled-yolo-validation.md,validation.md,full-validation.md}
+eval/{README.md,interaction-validation.md,ask-policy-validation.md,principles-validation.md,controlled-yolo-validation.md,validation.md,full-validation.md}
 eval/results/              # Private, gitignored execution evidence
 docs/{architecture.md,skills-catalog.md,implementation-plan.md,corrections.md,backlog.md}
 ```

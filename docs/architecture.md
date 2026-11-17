@@ -9,7 +9,10 @@ flowchart TD
     U[Developer outcome] --> L[Explicit personal-profile launcher]
     L --> M[Native OMP main session]
     C[Project source and durable context] --> M
-    M --> R[Engineering router]
+    M --> Q[Requested output]
+    Q -->|Engineering execution| R[Engineering router]
+    Q -->|Explanation or discussion| S[Interaction selector and relevant leaf]
+    S --> H
     R --> W[Selected workflow and domain skills]
     W --> P[Principle selector and relevant leaves]
     P --> M
@@ -20,10 +23,18 @@ flowchart TD
     I --> V[Main verification]
     V --> E[Actual evidence and limitations]
     E --> C
-    E --> H[Developer handoff]
+    E --> H[Developer response or handoff]
 ```
 
-Shared safety is authoritative in `profile/RULES.md`. Main-only orchestration is appended by `APPEND_SYSTEM.md`. Workflow ordering and consultation API belong to `af-engineering`; domain procedures belong to focused skills; `af-principles` supplies decision criteria, not a replacement procedure; actual check execution/status belongs to `af-verification`; project records belong to `af-context`; optional checkout lifecycle belongs to `af-isolation`. The sequence is workflow -> relevant domain procedure -> relevant principles -> main implementation and checks.
+Shared safety is authoritative in `profile/RULES.md`. Main-only intent routing is appended by `APPEND_SYSTEM.md`: `af-interaction` owns conversation procedures; `af-engineering` owns engineering workflows and consultation. Domain skills own their procedures; `af-principles` supplies engineering decision criteria; `af-verification` owns check execution/status; `af-context` owns project records; `af-isolation` owns optional checkout lifecycle. The engineering sequence remains workflow -> relevant domain procedure -> relevant principles -> main implementation and checks.
+
+## Interaction & Reasoning intent routing
+
+Explanation, learning, interviews, idea/design discussion, context recovery, reflection and writing requests use `af-interaction` and the relevant full `interaction-*` leaf. Its 20 independent leaves are native procedures, not agents or permission grants. Load one relevant leaf, with a second only for a distinct need; a complex request can sequence phases without eagerly loading the catalog.
+
+Default scope is read-only. Explicit documentation/context/handoff writes authorize only the requested artifacts. Actual diagnosis, defect review, verification and implementation retain their engineering workflows. Mixed requests move to engineering only for an authorized outcome; an ordinary clear change needs no mandatory interview or teaching. Interaction design discussion does not replace the existing architecture-changing consultation requirement.
+
+Both selectors stay visible; `manualSkills: [principle-*, interaction-*]` hides leaf metadata while exact inclusion retains native URI access. Children receive relevant interaction purpose/URI explicitly rather than inheriting main's appended prompt. Existing domain autoload definitions, approvals, specialist boundaries and launcher are unchanged. [Package provenance](../profile/skills/af-interaction/SOURCES.md) is separate from principle attribution.
 
 ## Native configuration boundaries
 
@@ -59,9 +70,9 @@ Existing explicit denies remain denies even after chat approval. Operator fallba
 
 ### Native index-and-leaf loading
 
-The eleven original domain/support skills remain intact. `af-principles` adds one selector and 24 independent `principle-*` leaves: **36 exact native registry entries, 12 visible catalog entries**. The [skills catalog](skills-catalog.md) lists names, purposes and pointers; the [selector](../profile/skills/af-principles/SKILL.md) is the authoritative trigger/workflow/domain activation map. Each leaf holds its own operational guidance rather than a title or an alias into one large document.
+The eleven original domain/support skills, two selectors, 24 `principle-*` leaves and 20 `interaction-*` leaves provide **57 exact native registry entries, 13 visible catalog entries**. The [skills catalog](skills-catalog.md) lists pointers. `af-principles` owns engineering judgment triggers and `af-interaction` owns conversational intent; leaf bodies stay independently readable, not appended to main's system prompt.
 
-OMP 18.22.0's `skills.manualSkills: [principle-*]` suppresses leaf catalog metadata while preserving native URI reads. `includeSkills` must include every exact name; hiding an included leaf is different from filtering it out. The model discovers the selector, matches observed decision triggers, then uses direct native `read` on the relevant `skill://principle-*` URIs in full before applying them. Leaf bodies are not appended to the main prompt. This index-and-leaf path limits always-loaded context without adding a runtime, manual commands or an eager all-leaf bundle. Use a fresh session after profile changes; hot-reload is not established.
+OMP 18.22.0's `skills.manualSkills: [principle-*, interaction-*]` suppresses leaf catalog metadata while preserving native URI reads. Every exact name remains in `includeSkills`; hiding differs from filtering a skill out. The model reads the relevant selector and directly reads selected full `skill://` leaves before applying them. This index-and-leaf path avoids an eager bundle, new runtime or manual command requirement. Use a fresh session after profile changes; hot-reload is not established.
 
 Usually one to three leaves suffice per decision; trivial understood work normally reads only `prove-it-works`, with at most one other leaf for an actual decision. Reassess when evidence changes, reuse already-read applicable material, and use existing task/decision records only when the choice warrants recording. This is proportional engineering judgment, not a new mandatory ceremony or permission grant. Compatibility, authorization, read-only advice, maximum concurrency two and recursion one remain unchanged.
 
@@ -102,5 +113,7 @@ The existing sequential evaluation harness remains an evaluation tool, not a run
 Principle evidence requires successful full native leaf reads before the relevant decision, explicit child URI handoff and child-read chronology, plus consumer-observable acceptance. Names in prose and catalog visibility are not evidence of application. Negative-selection cases check that trivial work avoids gratuitous exploration, toolmaking and delegation. Bounded manual assessment records the trigger, choice and evidence; chronology alone cannot establish reasoning quality or causal benefit from added prompts. FAIL and NOT-RUN remain visible.
 
 The adapted `check_controlled_yolo.py` separates harmless headless ASK probes (approval/no-UI refusal) from hard DENY probes (pattern rejection without a dialog). `check_ask_policy.py` drives actual model-native bash calls through live RPC UI approval state and checks disposable `rmdir` filesystem effects for Approve and Deny, plus independent safe work. Direct user RPC `bash` is operator execution, not an approval test. Proposed commands establish no pass; current observations belong in [Ask-policy validation](../eval/ask-policy-validation.md). Earlier validation reports preserve their original policy scope and failures.
+
+Interaction regressions use normal profile permissions, full successful native leaf reads, source-grounded answer checks and fixture snapshots that include context files. Requested artifact edits are checked separately from read-only answers; simple implementation and defect review must retain engineering routing. The 23 supplied scenarios are proposed coverage, not executed success. Current package results and review adaptations belong in [Interaction validation](../eval/interaction-validation.md).
 
 Environment probes do not send model prompts. Browser evaluation uses the actual model-produced UI and native Tern; OVNFS validation uses only disposable repositories and explicit application approval. Read actual advice for design quality: chronology/tool scores cannot grade reasoning. New principle-layer observations belong in [Principles validation](../eval/principles-validation.md), with commands and actual limits, not an assumed all-model pass. [Controlled YOLO validation](../eval/controlled-yolo-validation.md), [Full validation](../eval/full-validation.md) and [Phase 1 validation](../eval/validation.md) remain historical with their original scopes and failures. Hostile repositories, OS sandboxing, production deployment, all database dialects, complete accessibility/security certification, broader native versions/environments and unknown-skill failure handling are not established by these checks.
