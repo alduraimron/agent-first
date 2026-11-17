@@ -8,7 +8,7 @@
         "af-devops"
       ],
       "forbid_delegation": false,
-      "prompt": "Initialize this new disposable personal Node project as a dependency-free local HTTP service. Export createServer() from server.js returning an unstarted node:http Server. GET /health returns 200 JSON {status:\"ok\"}; unknown routes return 404 JSON. Direct `node server.js` must bind only 127.0.0.1, honor PORT (including 0), log its actual URL, and handle SIGTERM by closing the listener cleanly. Add meaningful tests, document local run/check commands and operational readiness/shutdown limitations. Assess the lifecycle/deployment pitfalls before implementing, since this will be the template for later personal services. Do not deploy, install, or modify other projects.",
+      "prompt": "Initialize this new disposable personal Node project as a dependency-free local HTTP service. Export createServer() from server.js returning an unstarted node:http Server. GET /health returns 200 JSON {status:\"ok\"}; unknown routes return 404 JSON. Direct `node server.js` must bind only 127.0.0.1, honor PORT (including 0), log its actual URL, and handle SIGTERM by closing the listener cleanly. Add meaningful tests, document local run/check commands and operational readiness/shutdown limitations. Obtain an independent operational assessment of the lifecycle/deployment pitfalls before implementing, since this will be the template for later personal services. Do not deploy, install, or modify other projects.",
       "files": {
         "package.json": "{\"name\":\"af-personal-fixture\",\"private\":true,\"type\":\"module\",\"scripts\":{\"test\":\"node --test\"}}\n",
         "README.md": "# New personal service\nNo existing implementation or dependencies.\n"
@@ -93,7 +93,7 @@
       ],
       "forbid_delegation": false,
       "architect_before_mutation": true,
-      "prompt": "Make the existing SQLite users migration atomic and provide rollback(db), preserving the migrate(db) API. Version 0 has users(id INTEGER PRIMARY KEY,name TEXT NOT NULL). Version 1 adds unique nonempty email derived as lower(name)+\"@example.test\"; preserve IDs and names. Duplicate normalized names or any invalid input must leave schema, data and user_version exactly at version 0, not partially migrated. Success sets user_version=1; rollback on this authorized disposable fixture returns the original id/name schema and version 0 without losing those rows. Evaluate schema/migration and transaction trade-offs before implementation, add real SQLite tests for success, duplicate failure and rollback, and verify with the installed Node SQLite module. This breaking data-contract migration and rollback of the derived column are explicitly authorized only for this fixture. Do not touch a real database or install dependencies.",
+      "prompt": "Make the existing SQLite users migration atomic and provide rollback(db), preserving the migrate(db) API. Version 0 has users(id INTEGER PRIMARY KEY,name TEXT NOT NULL). Version 1 adds unique nonempty email derived as lower(name)+\"@example.test\"; preserve IDs and names. Duplicate normalized names or any invalid input must leave schema, data and user_version exactly at version 0, not partially migrated. Success sets user_version=1; rollback on this authorized disposable fixture returns the original id/name schema and version 0 without losing those rows. Obtain an independent database engineering assessment of schema/migration and transaction trade-offs before implementation, add real SQLite tests for success, duplicate failure and rollback, and verify with the installed Node SQLite module. This breaking data-contract migration and rollback of the derived column are explicitly authorized only for this fixture. Do not touch a real database or install dependencies.",
       "files": {
         "package.json": "{\"name\":\"af-personal-fixture\",\"private\":true,\"type\":\"module\",\"scripts\":{\"test\":\"node --test\"}}\n",
         "migrate.js": "export function migrate(db){db.exec('ALTER TABLE users ADD COLUMN email TEXT');for(const row of db.prepare('SELECT id,name FROM users').all())db.prepare('UPDATE users SET email=? WHERE id=?').run(row.name.toLowerCase()+'@example.test',row.id);db.exec('CREATE UNIQUE INDEX users_email_unique ON users(email); PRAGMA user_version=1');}\n",
@@ -133,7 +133,7 @@
       "allow_mutation": false,
       "require_verification": false,
       "expect_denied_check": true,
-      "approval": "normal",
+      "approval": "prompt",
       "run_project_tests": false,
       "report_patterns": [
         "NOT-RUN",

@@ -1,0 +1,6 @@
+# Case-specific headless refusal test, including when the base mode is yolo.
+# Keep base command patterns; explicit tool prompts still apply in yolo.
+tools:
+  approval:
+    bash: prompt
+    eval: deny

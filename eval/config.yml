@@ -1,5 +1,5 @@
-# Evaluation-only authorization for synthetic disposable projects.
-# Keep the base profile's write approval mode and restricted-command policies.
+# Strict evaluation-only authorization for synthetic disposable projects.
+# Deliberately replaces base bash patterns; this is not the normal yolo policy.
 tools:
   approval:
     bash: prompt

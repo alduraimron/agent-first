@@ -1,0 +1,8 @@
+# Evaluation scheduling only; preserve every permission decision from the profile.
+async:
+  enabled: false
+task:
+  maxConcurrency: 2
+  maxRecursionDepth: 1
+  maxRuntimeMs: 300000
+  softRequestBudget: 60
