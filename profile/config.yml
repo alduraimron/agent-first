@@ -81,7 +81,18 @@ skills:
   enableClaudeUser: false
   enableClaudeProject: false
   enableCodexUser: false
-  includeSkills: [af-engineering, af-verification]
+  includeSkills:
+    - af-engineering
+    - af-design
+    - af-database
+    - af-frontend
+    - af-testing
+    - af-security
+    - af-performance
+    - af-operations
+    - af-context
+    - af-verification
+    - af-isolation
 enabledProviders: []
 disabledProviders:
   - omp-plugins
