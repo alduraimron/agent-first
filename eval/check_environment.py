@@ -49,7 +49,11 @@ def main():
             if not passed:
                 failures.append(name)
 
-        guard('reject-yolo', ['--yolo'], 'unrecognized arguments')
+        for flag, value in (('--yolo', None), ('--auto-approve', None),
+                            ('--approval-mode', 'yolo'), ('--config', 'foreign.yml'),
+                            ('--profile', 'default'), ('--extension', 'foreign.js')):
+            guard('reject-override-' + flag[2:], [flag, *([value] if value else [])],
+                  'unrecognized arguments')
         profile = home / '.omp/profiles/agent-first/agent'
         profile.mkdir(parents=True)
         conflict = profile / 'config.yml'
@@ -77,6 +81,12 @@ def main():
         # Native RPC is configuration inspection only: no prompt or model request is sent.
         native_project = fixture / 'native-project'
         native_project.mkdir()
+        # A project cannot replace the launcher's pinned scalar or deny-pattern array.
+        (native_project / '.omp').mkdir()
+        team_config = native_project / '.omp/config.yml'
+        team_content = ('tools:\n  approvalMode: always-ask\n'
+                        'bash:\n  patterns:\n    - { match: "*", approval: allow }\n')
+        team_config.write_text(team_content)
         (native_project / 'AGENTS.md').write_text('# AF_FULL_CONTEXT_PROBE\nPersonal synthetic fixture.\n')
         native_env = os.environ.copy()
         for key in ('PI_CONFIG_FILES', 'PI_CODING_AGENT_DIR', 'PI_SESSION_ID',
@@ -145,6 +155,39 @@ def main():
             if not passed:
                 failures.append(name)
         result['native_rpc_argv'] = argv
+        settings_argv = [shutil.which('omp'), '--profile', 'agent-first',
+                         '--cwd', str(native_project), '--config',
+                         str(ROOT / 'profile/config.yml'), 'config', 'list', '--json']
+        settings_run = subprocess.run(settings_argv, env=native_env, text=True,
+                                      capture_output=True, timeout=30)
+        (output / 'settings.stdout').write_text(settings_run.stdout)
+        (output / 'settings.stderr').write_text(settings_run.stderr)
+        settings = json.loads(settings_run.stdout) if settings_run.returncode == 0 else {}
+        values = {name: item.get('value') for name, item in settings.items()}
+        policies = values.get('tools.approval') or {}
+        patterns = values.get('bash.patterns') or []
+        settings_checks = {
+            'effective-yolo-despite-project-mode': values.get('tools.approvalMode') == 'yolo',
+            'routine-tools-without-overrides': all(name not in policies for name in ('bash', 'eval', 'task')),
+            'explicit-tool-denies-preserved': all(policies.get(name) == 'deny' for name in (
+                'debug', 'github', 'checkpoint', 'rewind', 'security_scan',
+                'manage_skill', 'computer.control')),
+            'explicit-pattern-denies-preserved': all(
+                any(rule.get('match') == match and rule.get('approval') == 'deny'
+                    for rule in patterns)
+                for match in ('git *commit*', 'git *push*', 'rm *', 'npm install*',
+                              'sudo *', 'curl *', 'ovnfs *apply*')),
+            'no-profile-command-allow-grants': all(rule.get('approval') != 'allow' for rule in patterns),
+            'bounded-delegation': values.get('task.maxConcurrency') == 2 and values.get('task.maxRecursionDepth') == 1,
+            'automatic-isolation-and-apply-disabled': values.get('task.isolation.enabled') is False and values.get('task.isolation.apply') is False,
+            'automatic-provisioning-disabled': values.get('eval.autoProvision') is False,
+            'project-configuration-unchanged': team_config.read_text() == team_content,
+        }
+        for name, passed in settings_checks.items():
+            result['checks'].append({'name': name, 'status': 'PASS' if passed else 'FAIL'})
+            if not passed:
+                failures.append(name)
+        result['settings_argv'] = settings_argv
         result['native_response_ids'] = list(responses)
     result['default_configuration_hashes_unchanged'] = hashes() == before
     if not result['default_configuration_hashes_unchanged']:
