@@ -1,11 +1,9 @@
 # Loaded only by the explicitly activated agent-first profile.
-# Bash patterns are approval controls, not process/filesystem containment.
+# Controlled YOLO: ordinary tiers are autonomous; explicit policies still apply.
+# Bash patterns and restricted-folder prompts are not OS or eval containment.
 tools:
-  approvalMode: write
+  approvalMode: yolo
   approval:
-    bash: prompt
-    eval: prompt
-    task: prompt
     debug: deny
     github: deny
     checkpoint: deny
@@ -14,12 +12,16 @@ tools:
     manage_skill: deny
     computer.control: deny
   restrictedFolders:
-    - ~/.omp/agent
-    - ~/.omp/profiles/agent-first/agent
+    - ~/.omp
     - ~/.pi
     - ~/.ssh
     - ~/.aws
     - ~/.gnupg
+    - ~/.config
+    - ~/.azure
+    - ~/.kube
+    - ~/.docker
+    - ~/.o2
     - ~/Documents/work
     - /etc
     - /usr
@@ -34,28 +36,157 @@ bash:
     - { match: 'git *reset*', approval: deny }
     - { match: 'git *clean*', approval: deny }
     - { match: 'git *stash*', approval: deny }
+    - { match: 'git *checkout*', approval: deny }
+    - { match: 'git *switch*', approval: deny }
+    - { match: 'git *restore*', approval: deny }
+    - { match: 'git *rebase*', approval: deny }
+    - { match: 'git *revert*', approval: deny }
+    - { match: 'git *cherry-pick*', approval: deny }
+    - { match: 'git *update-ref*', approval: deny }
+    - { match: 'git *branch *-D*', approval: deny }
+    - { match: 'git *branch *-d*', approval: deny }
+    - { match: 'git *worktree *remove*', approval: deny }
+    - { match: 'git *config *--global*', approval: deny }
+    - { match: 'git *config *--system*', approval: deny }
     - { match: 'rm *', approval: deny }
+    - { match: 'rmdir *', approval: deny }
+    - { match: 'unlink *', approval: deny }
+    - { match: 'shred *', approval: deny }
+    - { match: 'truncate *', approval: deny }
+    - { match: 'dd *', approval: deny }
+    - { match: 'mkfs*', approval: deny }
+    - { match: 'wipefs *', approval: deny }
+    - { match: 'fdisk *', approval: deny }
+    - { match: 'parted *', approval: deny }
+    - { match: 'chown *', approval: deny }
+    - { match: 'chmod *', approval: deny }
+    - { match: 'pkill *', approval: deny }
+    - { match: 'killall *', approval: deny }
+    - { match: 'shutdown*', approval: deny }
+    - { match: 'reboot*', approval: deny }
+    - { match: 'poweroff*', approval: deny }
+    - { match: 'halt*', approval: deny }
+    - { match: 'systemctl *', approval: deny }
     - { match: 'sudo *', approval: deny }
     - { match: 'doas *', approval: deny }
     - { match: 'npm install*', approval: deny }
     - { match: 'npm i *', approval: deny }
+    - { match: 'npm i', approval: deny }
+    - { match: 'npm add*', approval: deny }
+    - { match: 'npm ci*', approval: deny }
+    - { match: 'npm update*', approval: deny }
+    - { match: 'npm upgrade*', approval: deny }
+    - { match: 'npm uninstall*', approval: deny }
+    - { match: 'npm exec*', approval: deny }
+    - { match: 'npm create*', approval: deny }
+    - { match: 'npm init*', approval: deny }
+    - { match: 'npm publish*', approval: deny }
+    - { match: 'npm run deploy*', approval: deny }
+    - { match: 'npm run release*', approval: deny }
+    - { match: 'npm run publish*', approval: deny }
+    - { match: 'pnpm', approval: deny }
+    - { match: 'pnpm i*', approval: deny }
     - { match: 'pnpm install*', approval: deny }
     - { match: 'pnpm add*', approval: deny }
+    - { match: 'pnpm update*', approval: deny }
+    - { match: 'pnpm remove*', approval: deny }
+    - { match: 'pnpm dlx*', approval: deny }
+    - { match: 'pnpm create*', approval: deny }
+    - { match: 'pnpm publish*', approval: deny }
+    - { match: 'pnpm *deploy*', approval: deny }
+    - { match: 'pnpm *release*', approval: deny }
+    - { match: 'yarn', approval: deny }
+    - { match: 'yarn upgrade*', approval: deny }
+    - { match: 'yarn global*', approval: deny }
+    - { match: 'yarn set version*', approval: deny }
     - { match: 'yarn install*', approval: deny }
     - { match: 'yarn add*', approval: deny }
+    - { match: 'yarn up*', approval: deny }
+    - { match: 'yarn remove*', approval: deny }
+    - { match: 'yarn dlx*', approval: deny }
+    - { match: 'yarn create*', approval: deny }
+    - { match: 'yarn publish*', approval: deny }
+    - { match: 'yarn deploy*', approval: deny }
+    - { match: 'yarn release*', approval: deny }
     - { match: 'bun install*', approval: deny }
+    - { match: 'bun i', approval: deny }
+    - { match: 'bun i *', approval: deny }
     - { match: 'bun add*', approval: deny }
+    - { match: 'bun update*', approval: deny }
+    - { match: 'bun remove*', approval: deny }
+    - { match: 'bun create*', approval: deny }
+    - { match: 'bun publish*', approval: deny }
+    - { match: 'bun run deploy*', approval: deny }
+    - { match: 'bun run release*', approval: deny }
     - { match: 'pip* install*', approval: deny }
     - { match: 'python* -m pip install*', approval: deny }
+    - { match: 'pip* uninstall*', approval: deny }
+    - { match: 'python* -m pip uninstall*', approval: deny }
+    - { match: 'cargo install*', approval: deny }
+    - { match: 'cargo update*', approval: deny }
+    - { match: 'cargo publish*', approval: deny }
+    - { match: 'go install*', approval: deny }
+    - { match: 'go get*', approval: deny }
+    - { match: 'rustup *', approval: deny }
+    - { match: 'corepack*', approval: deny }
+    - { match: 'apt*', approval: deny }
+    - { match: 'dnf *', approval: deny }
+    - { match: 'yum *', approval: deny }
+    - { match: 'pacman *', approval: deny }
+    - { match: 'brew *', approval: deny }
     - { match: 'uv *', approval: deny }
     - { match: 'npx*', approval: deny }
     - { match: 'bunx*', approval: deny }
     - { match: 'curl *', approval: deny }
     - { match: 'wget *', approval: deny }
+    - { match: 'scp *', approval: deny }
+    - { match: 'sftp *', approval: deny }
+    - { match: 'rsync *', approval: deny }
+    - { match: 'ssh *', approval: deny }
+    - { match: 'ssh-keygen *', approval: deny }
+    - { match: 'ssh-add *', approval: deny }
+    - { match: 'nc *', approval: deny }
+    - { match: 'ncat *', approval: deny }
+    - { match: 'netcat *', approval: deny }
+    - { match: 'socat *', approval: deny }
     - { match: 'omp *install*', approval: deny }
     - { match: 'omp *setup*', approval: deny }
     - { match: 'omp *update*', approval: deny }
+    - { match: 'omp *auth*', approval: deny }
+    - { match: 'omp *token*', approval: deny }
+    - { match: 'omp *login*', approval: deny }
+    - { match: 'omp *config*', approval: deny }
+    - { match: 'omp *plugin*', approval: deny }
+    - { match: 'omp *share*', approval: deny }
+    - { match: 'omp *stream*', approval: deny }
+    - { match: 'omp *clip*', approval: deny }
+    - { match: 'aws *', approval: deny }
+    - { match: 'gcloud *', approval: deny }
+    - { match: 'az *', approval: deny }
+    - { match: 'kubectl *', approval: deny }
+    - { match: 'terraform *', approval: deny }
+    - { match: 'tofu *', approval: deny }
+    - { match: 'pulumi *', approval: deny }
+    - { match: 'helm *', approval: deny }
+    - { match: 'ansible*', approval: deny }
+    - { match: 'vercel *', approval: deny }
+    - { match: 'netlify *', approval: deny }
+    - { match: 'fly *', approval: deny }
+    - { match: 'flyctl *', approval: deny }
+    - { match: 'railway *', approval: deny }
+    - { match: 'heroku *', approval: deny }
+    - { match: 'wrangler *', approval: deny }
+    - { match: 'serverless *', approval: deny }
+    - { match: 'sls *', approval: deny }
+    - { match: 'docker *push*', approval: deny }
+    - { match: 'docker *login*', approval: deny }
+    - { match: 'docker *system prune*', approval: deny }
+    - { match: 'docker *volume rm*', approval: deny }
     - { match: 'ovnfs *apply*', approval: deny }
+    - { match: 'ovnfs *update*', approval: deny }
+    - { match: 'ovnfs *send*', approval: deny }
+    - { match: 'ovnfs *attach*', approval: deny }
+    - { match: 'ovnfs *share*', approval: deny }
 task:
   batch: true
   structured: true
