@@ -5,7 +5,7 @@ description: Evidence-based verification of fixes, features, designs, reviews, r
 
 # Evidence-based verification
 
-Apply the shared Agent-First RULES.md, including execution approval, child scope, browser backend, and no-install boundaries. This execution procedure is for the main agent; an advisory child may recommend checks but cannot perform them.
+Apply the shared Agent-First RULES.md, including scoped autonomy, point-of-risk authorization, explicit native prompts/denies, child scope, browser backend, and no-install boundaries. This execution procedure is for the main agent; an advisory child may recommend checks but cannot perform them.
 
 ## Establish the verification target
 
