@@ -1,8 +1,8 @@
 # Agent-First correction ledger
 
-This is the system's evidence-backed Phase 1 learning record, not an automatically applied policy or a claim that the expanded system has passed validation. Shared policy remains in `profile/RULES.md`; procedures belong to their skills. Project-specific learning belongs in `.agent-first/corrections.md` using `af-context`.
+This is the system's evidence-backed correction record, not an automatically applied policy or a claim that every model run passed. Shared policy remains in `profile/RULES.md`; procedures belong to their skills. Project-specific learning belongs in `.agent-first/corrections.md` using `af-context`.
 
-Sources: [recorded validation](../eval/validation.md), retained results linked below, and targeted parser replays. `eval/results/` is private/gitignored local evidence and may be absent in another checkout; portable observations remain in the validation record. All listed executions are historical. No checks were run while authoring this ledger or the expanded advisor/context assets.
+Sources: [Phase 1 validation](../eval/validation.md), [principles validation](../eval/principles-validation.md), retained results linked below, and explicitly scoped parser replays. `eval/results/` is private/gitignored local evidence and may be absent in another checkout; portable observations remain in the validation records. Each entry distinguishes observed execution, tooling replay, and unverified behavioral mitigation.
 
 ## Status and promotion
 
@@ -123,6 +123,38 @@ Preserve failed runs as failures. Count independent occurrences, not cascading e
 - **Placement/action:** Workflow (`af-engineering`): actual completed-patch bundled review is required for implemented authorization, private tenant isolation, destructive migration or concurrency invariants whose failure exposes/corrupts data. Routine changes remain inline. Require complete relevant source inspection and disposition of findings; keep the native reviewer definition/schema and all original assertions.
 - **Validation:** Focused run `20261117T040247Z-wtz8womn` dispatched the actual bundled reviewer after implementation/tests and the child read complete changed source/context. It timed out before a verdict, then main reached its deadline, so the case remains FAIL. This proves the dispatch/inspection correction only; it does not discharge completion or evidence-report criteria. Preserve earlier failures and evaluate the explicit same-provider model comparison separately.
 - **Completed comparison:** `20261117T041355Z-2n7s5t5e` passed the unchanged tenant case using explicitly selected `opencode-go/gpt-5.6-luna`: actual pre-design architect/security advice, inspected bundled patch review, main disposition and main/independent checks. No schema override, permission change, assertion removal or default model pin was used. Recoverable preflight errors remain recorded. This establishes that scoped workflow completion, not why GPT-6-Luna previously timed out.
+
+## C13: Principle names in main context do not establish child inheritance
+
+- **Status:** Observed across independent cases; handoff cue sharpened, fresh-model validation recorded separately.
+- **Occurrences:** The first principles batch `20261117T093231Z-1alrdxbi` omitted relevant leaf URIs from actual architect, security, source-reviewer and database assignments. Some custom children independently selected leaves, while bundled source/patch reviewers read none. In contrast, initialization and UI assignments did pass relevant URIs and their actual children read them.
+- **Root cause:** Confirmed missing assignment context, not missing native registry support. Children do not inherit main's appended prompt/read history. Why main omitted the existing requirement is unknown.
+- **Placement/action:** Shared handoff rule: make the per-assignment `Principles:` URI/trigger -> decision line explicit, including bundled review. Keep domain autoload limited to its domain plus selector; preserve child read-only tools and main ownership. Native-read assertions continue rejecting parent-only activation and actual missing child reads.
+- **Verification/limits:** Retained journals establish the omission and contrasting successful handoffs. Fresh targeted run `20261117T101415Z-_2nvr93v` completed actual URI/read handoffs for required architect/security/database/UI/reviewer sessions. New instructions remain a behavioral mitigation, not native enforcement; preflight errors and unrelated scoring failures remain retained separately.
+
+## C14: Preflight attempts and service readiness misclassified as completed work
+
+- **Status:** Fixed local evidence parsing; replay is not a new model pass.
+- **Occurrences:** The principles checker demanded child journals for rejected `task` preflights with no native ID, falsely failing initialization/performance despite later completed inspected consultations. The old test parser also counted a named service result with `isError: false` as passing even when its native state was `failed`; the deliberate-failure scenario exposed that defect.
+- **Root cause:** Parser conflated attempted dispatch with native spawn, and tool transport success with finite process completion. A `ready requires log or port` error occurs before execution.
+- **Placement/action:** Evaluation tooling matches actual successful native child IDs, retaining rejected calls as tool failures. Passing checks require finite completion, or a terminal `exited` service with actual zero-failure Node output; readiness, pending, timed-out and failed services do not count. The deliberate-failure case requires one actually executed failing check; an unexecuted readiness-schema rejection is not a rerun. Denied-operation one-submission checks remain strict.
+- **Verification:** Native evidence replay at `eval/results/principles-r6g3mlqk/replay-final.json` preserves the original batch and still rejects its genuine failures. Focused parser regressions cover absent child inheritance, failed-preflight recovery, and service readiness/failure versus completion. No tool policy, consumer assertion or read-only boundary was relaxed.
+
+## C15: Correct local tests conceal payload loss and excessive principle selection
+
+- **Status:** Observed local defects; scoped instruction corrections, not universal guarantees.
+- **Occurrences:** In the first principles batch, tenant `copyNote` projected records to `{id,body}` and silently discarded nested metadata; all model-authored project tests and the bundled patch verdict passed, but the independent consumer failed on lost `meta.labels`. Separately, the initial rounding investigation correctly repaired shared defaults but loaded `attack-the-premise` without prior failed approaches.
+- **Root cause:** Confirmed data projection instead of preservation, and a selection trigger broader in the leaf than its index description. Model/reviewer reasoning behind the missed consumer case is not established.
+- **Placement/action:** Boundary principle distinguishes validation from projection and preserves accepted payload/nested ownership contracts. Selector and premise leaf distinguish first uncertain diagnosis from failed shared-premise approaches. Verification requires actual `prove-it-works` reading before completion; route guidance covers first-prose final reports too.
+- **Verification/limits:** Fresh targeted tenant source preserves nested payloads with structured snapshots and passes the independent consumer that previously failed. The targeted rounding case passes its unchanged causal/negative-selection contract without premise loading. Original failures remain unchanged; these observations do not prove causal or model-wide improvement.
+
+## C16: Incidental selection caps and report wording obscure correct decisions
+
+- **Status:** Local evaluation contract corrected after actual source/advice assessment.
+- **Occurrences:** The targeted tenant and SQLite tasks each read six relevant leaves across design, cutover and verification, failing an incidental whole-task cap of five. A correct source review used the catalog's applicable reader-load lens, omitted from the hidden alternatives list. A truthful executed-failure report paraphrased the test title while reporting the exact command, exit one and assertion values.
+- **Root cause:** Evaluation metadata confused name/count/wording proxies with the requested engineering outcome. Those restrictions were not user safety or compatibility requirements.
+- **Placement/action:** Keep trivial maximum-two and concrete negative-selection tests. For the two larger architecture cases, replace the incidental cap with exclusions for demonstrably untriggered leaves. Admit the applicable source-review alternative. Delete only the report's exact-title pin, retaining FAIL/command reporting, actual failure output/marker, single execution, no edits and sentinel consumer evidence. New runs snapshot complete `case.json`.
+- **Verification/limits:** `targeted-replay.json` separately assesses retained journals under the corrected contract; original scores stay unchanged. The final focused native run fixes routing/selector/known-deny behavior. Its SQLite architect actually received/read cutover and idempotency URIs, revealing the same incomplete-alternatives defect in that role's list; corrected consistently with the existing task/database alternatives. `final-contract-replay.json` passes those retained checks without replacing the original FAIL/case snapshot. No permission, read-only, consumer or protected-operation assertion was relaxed.
 
 ## Expansion validation
 
