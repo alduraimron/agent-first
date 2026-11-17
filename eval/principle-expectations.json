@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "cases": {
+    "quick-duration": {
+      "max_principles": 2,
+      "forbidden_principles": [
+        "exhaust-the-design-space",
+        "build-the-lever",
+        "guard-the-context-window",
+        "attack-the-premise"
+      ],
+      "require_principle_index": true,
+      "require_native_principle_reads": true,
+      "principles_all": [
+        "prove-it-works"
+      ]
+    },
+    "feature-cli-summary": {
+      "principles_any": [
+        [
+          "boundary-discipline",
+          "experience-first",
+          "laziness-protocol"
+        ]
+      ],
+      "max_principles": 5,
+      "require_principle_index": true,
+      "require_native_principle_reads": true,
+      "principles_all": [
+        "prove-it-works"
+      ]
+    },
+    "architecture-tenant-notes": {
+      "principles_any": [
+        [
+          "foundational-thinking",
+          "model-the-domain",
+          "boundary-discipline"
+        ],
+        [
+          "migrate-callers-then-delete-legacy-apis",
+          "outcome-oriented-execution",
+          "subtract-before-you-add"
+        ]
+      ],
+      "principle_child_agents": {
+        "af-architect": [
+          "foundational-thinking",
+          "model-the-domain",
+          "boundary-discipline",
+          "migrate-callers-then-delete-legacy-apis"
+        ],
+        "reviewer": [
+          "prove-it-works",
+          "boundary-discipline",
+          "migrate-callers-then-delete-legacy-apis",
+          "test-behavior-not-implementation"
+        ]
+      },
+      "forbidden_principles": [
+        "attack-the-premise",
+        "build-the-lever",
+        "exhaust-the-design-space",
+        "guard-the-context-window"
+      ],
+      "require_principle_index": true,
+      "require_native_principle_reads": true,
+      "principles_all": [
+        "prove-it-works"
+      ]
+    },
+    "initialize-health-service": {
+      "principles_any": [
+        [
+          "foundational-thinking",
+          "boundary-discipline",
+          "experience-first"
+        ]
+      ],
+      "principle_child_agents": {
+        "af-devops": [
+          "foundational-thinking",
+          "boundary-discipline",
+          "experience-first",
+          "prove-it-works"
+        ]
+      },
+      "max_principles": 5,
+      "require_principle_index": true,
+      "require_native_principle_reads": true,
+      "principles_all": [
+        "prove-it-works"
+      ]
+    },
+    "investigate-bearer-auth": {
+      "principles_all": [
+        "fix-root-causes",
+        "prove-it-works"
+      ],
+      "principles_before_mutation": [
+        "fix-root-causes"
+      ],
+      "source_before_mutation": [
+        "auth.js"
+      ],
+      "principles_any": [
+        [
+          "boundary-discipline"
+        ]
+      ],
+      "principle_child_agents": {
+        "af-security": [
+          "boundary-discipline",
+          "fix-root-causes",
+          "prove-it-works"
+        ]
+      },
+      "max_principles": 5,
+      "require_principle_index": true,
+      "require_native_principle_reads": true
+    },
+    "refactor-invoice-format": {
+      "principles_any": [
+        [
+          "laziness-protocol",
+          "minimize-reader-load",
+          "subtract-before-you-add"
+        ]
+      ],
+      "max_principles": 4,
+      "require_principle_index": true,
+      "require_native_principle_reads": true,
+      "principles_all": [
+        "prove-it-works"
+      ]
+    },
+    "review-retry-errors": {
+      "principles_any": [
+        [
+          "fix-root-causes",
+          "boundary-discipline",
+          "test-behavior-not-implementation",
+          "minimize-reader-load"
+        ]
+      ],
+      "principle_child_agents": {
+        "reviewer": [
+          "fix-root-causes",
+          "boundary-discipline",
+          "test-behavior-not-implementation",
+          "prove-it-works"
+        ]
+      },
+      "max_principles": 4,
+      "require_principle_index": true,
+      "require_native_principle_reads": true,
+      "principles_all": [
+        "prove-it-works"
+      ]
+    },
+    "optimize-catalog-lookups": {
+      "principles_all": [
+        "explain-the-number",
+        "prove-it-works"
+      ],
+      "principles_before_mutation": [
+        "explain-the-number"
+      ],
+      "source_before_mutation": [
+        "catalog.js",
+        "benchmark.test.js"
+      ],
+      "principles_any": [
+        [
+          "foundational-thinking",
+          "model-the-domain",
+          "laziness-protocol"
+        ]
+      ],
+      "principle_child_agents": {
+        "af-performance": [
+          "explain-the-number",
+          "foundational-thinking",
+          "model-the-domain",
+          "prove-it-works"
+        ]
+      },
+      "max_principles": 5,
+      "require_principle_index": true,
+      "require_native_principle_reads": true
+    },
+    "sqlite-atomic-migration": {
+      "principles_any": [
+        [
+          "boundary-discipline",
+          "foundational-thinking",
+          "model-the-domain",
+          "make-operations-idempotent",
+          "outcome-oriented-execution",
+          "sequence-verifiable-units"
+        ]
+      ],
+      "principle_child_agents": {
+        "af-architect": [
+          "foundational-thinking",
+          "model-the-domain",
+          "boundary-discipline",
+          "sequence-verifiable-units",
+          "make-operations-idempotent",
+          "outcome-oriented-execution"
+        ],
+        "af-database": [
+          "boundary-discipline",
+          "foundational-thinking",
+          "sequence-verifiable-units",
+          "prove-it-works",
+          "make-operations-idempotent",
+          "outcome-oriented-execution"
+        ]
+      },
+      "forbidden_principles": [
+        "attack-the-premise",
+        "build-the-lever",
+        "exhaust-the-design-space",
+        "guard-the-context-window"
+      ],
+      "require_principle_index": true,
+      "require_native_principle_reads": true,
+      "principles_all": [
+        "prove-it-works"
+      ]
+    },
+    "recover-csv-task": {
+      "principles_any": [
+        [
+          "test-behavior-not-implementation",
+          "boundary-discipline",
+          "experience-first"
+        ]
+      ],
+      "max_principles": 4,
+      "require_principle_index": true,
+      "require_native_principle_reads": true,
+      "principles_all": [
+        "prove-it-works"
+      ]
+    },
+    "approval-denied-verification": {
+      "max_principles": 2,
+      "forbidden_principles": [
+        "exhaust-the-design-space",
+        "build-the-lever",
+        "guard-the-context-window",
+        "attack-the-premise"
+      ],
+      "require_principle_index": true,
+      "require_native_principle_reads": true,
+      "principles_all": [
+        "prove-it-works"
+      ]
+    },
+    "report-executed-test-failure": {
+      "max_principles": 2,
+      "forbidden_principles": [
+        "exhaust-the-design-space",
+        "build-the-lever",
+        "guard-the-context-window",
+        "attack-the-premise"
+      ],
+      "require_principle_index": true,
+      "require_native_principle_reads": true,
+      "principles_all": [
+        "prove-it-works"
+      ]
+    },
+    "browser-task-ui": {
+      "principles_any": [
+        [
+          "experience-first",
+          "boundary-discipline"
+        ]
+      ],
+      "principle_child_agents": {
+        "af-frontend": [
+          "experience-first",
+          "boundary-discipline",
+          "prove-it-works",
+          "test-behavior-not-implementation"
+        ]
+      },
+      "max_principles": 5,
+      "require_principle_index": true,
+      "require_native_principle_reads": true,
+      "principles_all": [
+        "prove-it-works"
+      ]
+    }
+  }
+}
