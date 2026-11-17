@@ -1,100 +1,141 @@
-# Agent-First OMP: Phase 1
+# Agent-First Coding System
 
-A personal, explicitly activated OMP profile. Native OMP remains the orchestrator: the main agent selects a workflow, consults advisory specialists only when justified, implements changes itself, and reports verification evidence. No extension, MCP server, Tern plugin, or parallel orchestration runtime is added.
+A reusable personal engineering environment built from native OMP profiles, skills, agents, approvals, sessions, and the existing Tern browser integration. Main selects the workflow and implements; specialists advise only when a concrete domain question warrants it. No separate orchestration runtime, extension, MCP server, Tern plugin, or memory database is added.
 
-## Files
+## Start in a personal project
 
-```text
-bin/af
-profile/config.yml
-profile/APPEND_SYSTEM.md
-profile/RULES.md
-profile/agents/af-architect.md
-profile/skills/af-engineering/SKILL.md
-profile/skills/af-verification/SKILL.md
-eval/cases.json
-eval/config.yml
-eval/run.py
-eval/README.md
-eval/validation.md
-README.md
-.gitignore
-```
-
-Generated `eval/results/` artifacts are private and gitignored. Authentication, sessions, and caches stay in the native named-profile state, outside this repository.
-
-## Activate and run
-
-Prerequisites: installed OMP 18.22.0, Python 3.9+, Node 18+ and Git for the evaluations, and Tern for browser verification. The launcher installs nothing.
+Prerequisites: an existing OMP installation, Python 3.9+ for the launcher/evaluations, authorized model access, and Tern for browser work. Full SQLite evaluations use an existing Node 24+; the original evaluations need Node 18+ and Git. Optional isolation needs an existing OVNFS. Nothing installs or updates dependencies automatically.
 
 ```sh
+# From this stable Agent-First checkout:
 ./bin/af --activate
 ./bin/af --cwd /absolute/path/to/personal-project --model PROVIDER/MODEL
-./bin/af --cwd /absolute/path/to/personal-project --model PROVIDER/MODEL "Implement the requested behavior"
+
+# Or supply an ordinary outcome immediately:
+./bin/af --cwd /absolute/path/to/personal-project --model PROVIDER/MODEL \
+  "Add the requested feature and verify its real behavior"
 ```
 
-Replace `PROVIDER/MODEL` with an authorized native OMP selector. Authenticate separately using OMP's native login in this profile, for example `omp --profile agent-first login`. The launcher does not copy credentials. During implementation, one existing `opencode-go` API credential was transferred using native auth export/import into this profile only; OAuth and MCP credentials were not copied.
+The target directory must already exist. Choose a personal project, not a team/production repository. Replace the model selector with an authorized native OMP selector; `opencode-go/gpt-6-luna` was used in recorded evaluations. For a new machine, authenticate separately with `omp --profile agent-first login`. The launcher never copies credentials; the historical Phase 1 credential transfer is documented in its validation record.
 
-`--activate` registers symlinks for the five authored profile assets under `~/.omp/profiles/agent-first/agent/`. Existing entries pointing elsewhere are refused, not overwritten. Keep this checkout at a stable location. Native persistent settings writes can update the linked personal `profile/config.yml`; review those changes like other configuration edits.
+Use `bin/af` for the complete boundary, not merely `omp --profile agent-first`. Activation registers the five profile assets as symlinks under `~/.omp/profiles/agent-first/agent/`, refuses conflicting entries, and preserves the default profile. Keep this checkout at a stable path. Native persistent settings writes can update the linked personal config, so review operator changes.
 
-Use `bin/af`, not just `omp --profile agent-first`, for the complete activation boundary. The launcher forces the named profile, base overlay, appended contract, non-yolo approval mode, and disabled extension discovery. It clears inherited profile-directory/config-overlay hints and does not forward arbitrary native flags, subcommands, alternate profiles, or safety-lowering options. Custom `PI_CONFIG_DIR` roots require a deliberate separate setup and are refused here.
+Describe the desired result. Normal work does not require `/plan`, `/build`, `/review`, a workflow selector, or an agent name. Existing command definitions are not overwritten.
 
-Only select personal projects. This setup does not edit any target repository configuration. Project instruction files remain relevant; native profile isolation is not a universal configuration or filesystem sandbox. To avoid additive execution capabilities or agent shadowing, the launcher refuses native project tools and project agent definitions, and refuses unexpected personal-profile tools/MCP files. Other foreign discovery providers and project MCP loading are disabled by the profile.
+## Adaptive workflow library
 
-### Sessions and headless runs
+Main inspects intent, complexity, risk, and architectural impact, announces the selected exact route prefix (for example, `Workflow: quick-change`) with a rationale, and reads the relevant procedure. New evidence can change the route; consequential changes follow the approval boundary.
+
+| Intent | Procedure |
+| --- | --- |
+| New personal project | [Project Initialization](profile/skills/af-engineering/workflows/project-initialization.md) |
+| New behavior within existing boundaries | [Feature Development](profile/skills/af-engineering/workflows/feature-development.md) |
+| Unexpected behavior or uncertain cause | [Bug Investigation](profile/skills/af-engineering/workflows/bug-investigation.md) |
+| Behavior-preserving restructuring | [Refactoring](profile/skills/af-engineering/workflows/refactoring.md) |
+| Changed architectural boundary/contract | [Architecture Change](profile/skills/af-engineering/workflows/architecture-impacting.md) |
+| Read-only defect assessment | [Code Review](profile/skills/af-engineering/workflows/code-review.md) |
+| Measured latency/resource problem | [Performance Optimization](profile/skills/af-engineering/workflows/performance-optimization.md) |
+| Local understood low-risk edit | [Quick Change](profile/skills/af-engineering/workflows/quick-change.md) |
+
+Each procedure specifies inputs, steps/decision points, consultation criteria, verification, exit, and failure/escalation behavior. Architecture-impacting implementation requires actual architect advice first. Trivial changes do not delegate; read-only requests do not authorize edits.
+
+## Domain consultation and skills
+
+| Native agent | Domain skill | Consultation question |
+| --- | --- | --- |
+| `af-architect` | `af-design` | Boundaries, public contracts, ownership, compatibility and alternatives |
+| `af-database` | `af-database` | Modeling, migrations, transaction integrity, query design |
+| `af-security` | `af-security` | Trust, authorization, secrets, input-to-sensitive-sink paths |
+| `af-frontend` | `af-frontend` | Interaction state, semantics, accessibility, responsive behavior |
+| `af-performance` | `af-performance` | Measured bottlenecks, algorithms, resources and experiment design |
+| `af-devops` | `af-operations` | Deployment ordering, health, observability, recovery |
+
+Custom advisors expose only read/grep/glob, cannot spawn, and hand advice to main through native yield. Shared report fields live in `profile/RULES.md`; domain files define distinct engineering questions and constraints. Main evaluates advice, owns implementation, and performs checks. The bundled native `reviewer` is reused without a replacement definition. Routine work stays inline; implemented data-exposure/corruption invariants require independent review of the actual patch, not just pre-design consultation.
+
+`af-engineering` owns requirements analysis, planning, routing and native consultation protocol. `af-testing` owns debugging/test design. `af-verification`, `af-context`, and `af-isolation` own execution evidence, durable project records, and optional checkout lifecycle. All eleven skills are model-discoverable; no manual skill invocation is required.
+
+## Context, decisions and handoff
+
+For meaningful work main creates only relevant ordinary files in the selected personal project:
+
+```text
+.agent-first/
+  context.md               # Project facts, commands, active task, session pointer
+  tasks/<task-id>.md        # Requirements, acceptance, plan, progress, advice disposition
+  decisions/<id>.md         # Options, accepted/pending decision, approval, constraints
+  verification.md          # Append-only attributable evidence
+  handoff.md               # Current state, blockers, next executable action
+  issues.md                # Unresolved defects and uncertainties
+  corrections.md           # Observed patterns, cause, action, validation and placement
+```
+
+Accepted repository decisions are authoritative; native OMP sessions retain execution history. Fresh/continued work reads the active task, relevant decisions and handoff, reconciles source changes, and treats old results as historical until applicability is established. Quick trivial work needs no empty paperwork tree. Read-only work proposes records rather than writing files. Templates and lifecycle: [af-context](profile/skills/af-context/SKILL.md).
 
 ```sh
 ./bin/af --cwd /absolute/path/to/personal-project --continue
 ./bin/af --cwd /absolute/path/to/personal-project --resume PERSONAL_SESSION_ID
-./bin/af --cwd /absolute/path/to/personal-project --model PROVIDER/MODEL --json --max-time 5m --max-cost 1 "Inspect this project"
 ```
 
-Resume file paths must already exist inside the personal profile. `--json` implies native print mode and waits for this run's asynchronous work. Headless execution does not grant approval: ordinary shell, eval, and task calls requiring confirmation fail closed without an interactive UI. Use the interactive launcher for normal implementation approvals. The evaluation harness has separate, narrowly scoped grants for its synthetic projects.
+Resume file paths must exist inside the named profile. If a session is unavailable, describe the outcome or ask to continue the active project task; recovery uses repository records. Keep secrets/customer data out of tracked context and inspect raw evidence before sharing.
 
-## Agent-driven behavior
+## Verification and approvals
 
-Users describe outcomes, not slash-command workflows. `af-engineering` selects and announces the smallest adequate route from project evidence:
+Main selects installed project checks for relevant static/type/lint/build, regression/integration/consumer, API/database, security, performance, deployment, and browser/accessibility boundaries. Reports use **PASS**, **FAIL**, **NOT-RUN**, and **NOT-APPLICABLE**, with exact command/cwd/result, real runtime evidence, uncovered requirements, and remaining risks. Missing dependencies and denied checks are NOT-RUN, not success or irrelevance.
 
-- Quick Change: Inspect -> Modify -> Verify, without delegation for trivial work.
-- Feature Development: Understand -> Plan -> Implement -> Verify.
-- Architecture-Impacting Change: Inspect -> Consult `af-architect` -> Evaluate trade-offs -> Approval when required -> Implement -> Verify.
+Browser checks use the existing native eval browser API inside Tern: observe, act through the UI, inspect resulting state/errors, exercise keyboard/semantic checks, and capture visual proof. Confirm the actual native backend; unsupported/manual assistive-technology and browser capabilities remain gaps. No fallback engine installation is authorized.
 
-The route can change when inspection reveals new risk. The architect returns facts, assumptions, recommendations, enforceable constraints, and proposed checks. It has only native `read`, `grep`, and `glob` tools and no spawn permission. The main agent evaluates the advice and implements the chosen approach.
-
-The bundled `reviewer` is reused without a replacement definition. Independent review is conditional on concrete risk, not required for every task. The main agent supplies the actual patch and context; children do not execute checks. Native structured task output is enabled for the reviewer's yield contract. Concurrency is capped at two and recursion at one level.
-
-Shared requirements live in `RULES.md`: native task children do not inherit the main append text or `AGENTS.md`. `af-verification` owns the completion report: actual commands/cwd, pass/fail/not-run, runtime evidence, unverified requirements, and remaining risks. Child opinions and screenshots alone are not proof that a change works.
-
-## Safety policy
-
-- Main approval mode is `write`, not yolo. Shell, eval, and task dispatch require interactive approval unless a more specific operator policy permits them.
-- Explicit denies cover commits/pushes, destructive Git/file commands, privilege escalation, package installers, transient package execution, remote shell downloads, and OVNFS apply. Native commit/checkpoint helpers are disabled. Chat instructions do not override a deny.
-- Headless children use native yolo tier handling, but explicit prompts and denies still fail closed. The architect's tool list, the reviewer's scoped assignment, shared rules, and observed child activity all matter; a parent task grant is not unrestricted child authority.
-- Automatic OVNFS isolation and automatic application are both disabled. No checkout, merge, or cleanup from the earlier Ghidra incident is performed.
-- Disassembler backend is `none`; binary analysis and desktop control are outside Phase 1. LSP startup, Python eval, managed eval provisioning, automatic memory capture, and extension discovery are disabled to avoid implicit tooling/provisioning paths. Use installed project checks; enable additional tooling only after a separate policy decision.
-- Browser work is main-only through the existing eval browser API with explicit `app: 'tern'`. Read its API guidance, observe and exercise the real page, retain evidence, and close only owned tabs. Do not silently fall back or download a browser when Tern is unavailable.
-- Approval patterns do not govern arbitrary code inside an approved eval or shell. They are not OS containment. Only approve code and project scripts you trust. Neither this profile nor its tests establish safety for hostile repositories.
-
-## Evaluate
-
-See [the evaluation procedure](eval/README.md) and [the executed validation record](eval/validation.md). The record distinguishes successful checks, retained failures, and unverified requirements.
+Main approval remains `write`; bash/eval/task require native approval. Headless runs fail closed when approval is unavailable:
 
 ```sh
-python3 -B eval/run.py --model PROVIDER/MODEL --max-time 600 --max-cost 1.5
+./bin/af --cwd /absolute/path/to/personal-project --model PROVIDER/MODEL \
+  --json --max-time 5m --max-cost 1 "Inspect the requested behavior"
 ```
 
-The runner creates fresh synthetic Git projects, stages initial files without committing, and runs three native OMP cases. Expected routes stay outside the user prompts. It checks actual delegation/tool journals and independent consumer behavior, retains failed runs, and exits nonzero on failure. Evaluation-only grants allow parent advisory tasks and exact test/diff commands; general eval and other shell commands are denied. Synchronous evaluation task settlement is explicitly recorded and does not change normal profile async behavior.
+Headless mode is not an unattended implementation grant. Use the interactive launcher to approve normal execution. The synthetic evaluation overlay is not an operating policy.
 
-Read retained advice and review disposition as well as automated scores: consultation chronology cannot establish reasoning quality. Artifacts may include synthetic source, model usage, and pseudonymous session/account metadata. Review them before sharing.
+Safety defaults:
 
-Executed results: all three routing scenarios passed across the recorded runs, including actual implementation and independent consumer checks. The architecture scenario used the custom architect and native bundled reviewer. Earlier failed batches and recovered tool errors remain documented; this is not a claim of error-free or deterministic model behavior.
+- Maximum two concurrent consultations, one delegation level; no implementation workers or nested spawning.
+- Explicit denies for restricted Git/destructive/install/privileged/download operations and OVNFS apply; native commit/checkpoint helpers remain off.
+- No automatic OVNFS task isolation/application, extension discovery, project MCP, foreign tool/agent/skill discovery, automatic memory learning, analysis backends or tool provisioning.
+- Known native additive project tools and agent-shadowing definitions are refused. Existing project instructions remain loaded; native profile isolation does not isolate every external configuration source.
+- Child headless tier handling is yolo, but explicit prompts/denies still apply. The bundled reviewer has broader native metadata than its advisory scope; actual activity matters.
+- Approved shell/eval/project scripts retain ambient filesystem/network/process authority. Neither profiles nor OVNFS are OS security sandboxes. Use trusted personal projects and inspect commands before approval.
 
-## Known limits and Phase 2 recommendations
+## Optional OVNFS
 
-- OMP/Tern versions are independently managed and may change. Revalidate the relevant native interfaces after upgrades; the discovery report observed background OVNFS version drift.
-- Tern WebKit lacks full Chromium/CDP parity. Report unsupported tracing, network, emulation, or platform behavior as gaps rather than switching or installing automatically.
-- Profile isolation retains project instructions and OMP's documented keybinding inheritance. It does not isolate host processes, network access, or all ambient filesystem paths.
-- Native bundled reviewer tool metadata is broader than the advisory policy. Normal headless exec prompts reject it; evaluation checks also flag attempted non-advisory tools. This is not a security boundary against a malicious model or project.
-- Evaluation grants are deliberately limited to synthetic projects. They must not be reused as a production approval policy. Generated tests themselves are executable code.
+Opt in explicitly for an experiment or isolated implementation. Use native `ovnfs new`, work in the printed checkout, inspect `ovnfs diff -p`, and obtain a dry-run result before integration. Approval of creation is not approval of apply.
 
-Phase 2 candidates, not implemented: expand real-task benchmarks and human reasoning assessment; investigate model/provider reliability from retained failures; evaluate explicitly approved, manual-apply OVNFS use; and separately design OS containment or deterministic policy gates if an actual requirement justifies them. Add specialists only when repeated evidence warrants them.
+The normal profile denies `ovnfs apply`, including dry-run. Main presents reviewed commands for the operator's own terminal rather than bypassing that deny. Integration requires exact patch/source approval and a recoverable baseline; reverify integrated source, and remove only owned checkouts. Full procedure and rollback limits: [af-isolation](profile/skills/af-isolation/SKILL.md). Automatic application stays disabled.
+
+## Evaluate and improve
+
+```sh
+python3 -B eval/check_environment.py
+python3 -B eval/run.py --suite full --keep-workspaces \
+  --model PROVIDER/MODEL --max-time 600 --max-cost 1.5
+# Original cases remain available:
+python3 -B eval/run.py --suite phase1 --model PROVIDER/MODEL
+```
+
+The sequential native-session harness evaluates natural prompts and actual task/tool journals, then runs independent consumer and project checks. It preserves failed runs, private journals, workspace archives, and intermediate errors. Read-only, approval-denied, recovered-context and measured-optimization cases have explicit contracts instead of pretending every task must edit files.
+
+Recorded verification covers all thirteen scenarios across explicit runs and two authorized models, all eight routes, the six advisors plus bundled reviewer, actual Tern interaction, and approved disposable OVNFS apply/restore/cleanup. It is not a clean single-model full-suite result; native reviewer timeouts and recovered tool/schema errors remain documented. Full source functionality is implemented; unrun production/manual/cross-engine checks and native fallback limitations are explicit in the validation record.
+
+See [evaluation instructions](eval/README.md), [full validation](eval/full-validation.md), [Phase 1 history](eval/validation.md), [architecture](docs/architecture.md), [correction ledger](docs/corrections.md), and [improvement backlog](docs/backlog.md). The ledger records recurrence, root cause, smallest correction placement and actual validation; it does not automatically rewrite global policy after one failure.
+
+## Source layout
+
+```text
+bin/af
+profile/{config.yml,APPEND_SYSTEM.md,RULES.md}
+profile/agents/             # Six native domain definitions; no reviewer copy
+profile/skills/             # Eleven skills, eight workflows, context templates
+eval/{run.py,check_environment.py,browser-check.mjs}
+eval/{cases.json,extended-cases.json,ui-case.json,config.yml}
+eval/{README.md,validation.md,full-validation.md}
+eval/results/              # Private, gitignored execution evidence
+docs/{architecture.md,implementation-plan.md,corrections.md,backlog.md}
+```
+
+Recorded checks are scoped evidence, not deterministic model guarantees, production certification, cross-database compatibility, full accessibility compliance, or OS containment. Independently managed OMP/Tern/OVNFS upgrades require revalidation of relevant interfaces.
