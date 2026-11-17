@@ -92,7 +92,7 @@ The eleven original domain/support skills remain: `af-engineering` owns requirem
 
 The [selector](profile/skills/af-principles/SKILL.md) is the authoritative activation map, not a fixed checklist. Usually one to three leaves inform a decision; a trivial understood edit normally needs only `prove-it-works`, with at most one other relevant leaf. Main reads selected leaves in full before applying them. No manual skill commands, new planning ceremony, agent or runtime are required. In OMP 18.22.0, `skills.manualSkills: [principle-*]` hides leaf metadata from the visible catalog, not native `skill://` access; exact `includeSkills` entries keep all leaves registered. Start a fresh session after profile changes.
 
-The principles adapt [pstack at revision `2f87c854fe3e2fcda44ca86b46ede35aad3c46b7`](https://github.com/cursor/plugins/tree/2f87c854fe3e2fcda44ca86b46ede35aad3c46b7/pstack), Copyright (c) 2026 Lauren Tan, MIT. [Source attribution](profile/skills/af-principles/SOURCES.md) and the [preserved license](profile/skills/af-principles/LICENSE) cover those adaptations, not unrelated Agent-First files. Launcher behavior and safety policy are unchanged.
+The principles adapt [pstack at revision `2f87c854fe3e2fcda44ca86b46ede35aad3c46b7`](https://github.com/cursor/plugins/tree/2f87c854fe3e2fcda44ca86b46ede35aad3c46b7/pstack), Copyright (c) 2026 Lauren Tan, MIT. [Source attribution](profile/skills/af-principles/SOURCES.md) and the [preserved license](profile/skills/af-principles/LICENSE) cover those adaptations, not unrelated Agent-First files.
 
 ## Context, decisions and handoff
 
@@ -124,30 +124,39 @@ Main selects installed project checks for relevant static/type/lint/build, regre
 
 Browser checks use the existing native eval browser API inside Tern: preflight the existing host, observe, act through the UI, inspect resulting state/errors, exercise keyboard/semantic checks, and capture visual proof. Confirm the actual native backend; unsupported/manual assistive-technology and browser capabilities remain gaps. No fallback engine installation or fallback acceptance is authorized. Native Tern hosting can fall back to an owned engine, so this procedure is not a native fail-closed or no-download guarantee.
 
-`profile/config.yml` is the settings authority and selects native **YOLO** autonomy. Routine scoped reads, edits, shell/eval verification, advisory task calls, and Tern interaction proceed without routine approval, including headless execution. YOLO auto-approves native read/write/exec tiers, not explicit denies or prompts. Restricted-folder gates and stricter explicit overlays still require native approval and refuse without an interactive approver. For bounded ordinary headless work:
+`profile/config.yml` is the sole settings authority and selects native **YOLO + Ask When Needed**. Representative categories, not a second command-pattern specification:
+
+| Decision | Scope |
+| --- | --- |
+| AUTO | Routine scoped inspection/content editing, trusted installed checks/debugging/server lifecycle, readonly consultation and authorized Tern/local runtime checks |
+| ASK | Ordinary Git mutation/publication and fetch/pull/clone, installation/provisioning, scoped deletion/permission changes, reviewed transfers/remote commands, Docker mutations, deploy/infrastructure, reviewed sudo/doas and OVNFS apply including dry-run |
+| DENY | System destruction, force push/destructive remote deletion, credential/auth management or known credential transmission, OMP permission/config management, unauthorized active configuration changes and policy bypass |
+
+YOLO honors explicit native prompts and denies; stronger Git guards and restricted-folder gates remain. ASK refuses without an interactive approval UI, including headless sessions; leave the dependent action pending and continue independent safe work without retrying through another tool. For bounded ordinary headless work:
 
 ```sh
 af --cwd /absolute/path/to/approved-personal-project \
   --json --max-time 5m --max-cost 1 "Inspect the requested behavior"
 ```
 
-Autonomy covers the authorized outcome, not permission to widen scope. Main asks at the point of risk for consequential actions outside that authorization; instructions carry this behavioral boundary, not a native semantic classifier. Explicit denies remain operator-only even after chat approval. The synthetic restrictive evaluation overlay is not an operating policy.
+Before an ASK call, main shows the short exact command, cwd, resolved target, impact/risk and rollback, then submits the native per-call prompt. Native command display is truncated and does not infer semantic risk or show cwd; split and review long consequential commands first. Explicit prompts offer Approve/Deny, not session approval. Chat approval alone cannot override a native deny or guard; operator fallback is for an actual deny/guard or unavailable approval, not the default route for supported prompts. Authorization covers the requested outcome, not permission to widen scope.
 
 Safety defaults:
 
 - Maximum two concurrent consultations, one delegation level; no implementation workers or nested spawning.
-- Preserved explicit denies plus protected command families in `profile/config.yml`; denied operations, including Git publication, installations and OVNFS apply, require reviewed operator-terminal actions. Native commit/checkpoint helpers remain off.
+- Native command prompts and stronger denies live in `profile/config.yml`; native commit/checkpoint helpers remain off. `bash.gitGuard` stays true: branch/stash operations can still refuse a shared main checkout after approval. Use reviewed operator action or explicitly opted-in private OVNFS, never absolute Git paths, wrappers or environment bypass.
 - No automatic OVNFS task isolation/application, extension discovery, project MCP, foreign tool/agent/skill discovery, automatic memory learning, analysis backends or tool provisioning.
 - Known native additive project tools and agent-shadowing definitions are refused. Existing project instructions remain loaded; native profile isolation does not isolate every external configuration source.
-- Child native tiers also use yolo; explicit prompts/denies and advisory read-only scope still apply. The bundled reviewer has broader native metadata than its advisory scope; actual activity matters.
+- Readonly advisors remain headless. Child native tiers also use yolo, but explicit prompts fail closed without an approver and denies/advisory scope still apply. The bundled reviewer has broader native metadata than its advisory scope; actual activity matters.
 - Restricted folders gate path-tool targets, including symlink resolution, but gate shell/eval/browser by cwd rather than paths embedded in code. Ordered command patterns are not arbitrary-code inspection.
+- Configuration ownership and credential/exfiltration restrictions include behavioral semantic denies, not a native per-path policy or network firewall. Scoped deletion requires resolved source/ancestors, symlink inspection and inventory; command patterns cannot prove arbitrary path containment. Local edit removal operations have no separate native gate: whole-file/directory deletion must use scoped native bash with approval, not edit REM, eval or scripts. Authorized line-level content edits remain AUTO.
 - Shell, eval, browser runtimes and trusted project scripts retain ambient filesystem/network/process authority. Inspect script definitions and bootstrap behavior before execution; tests/builds can fetch packages themselves. Use installed/cached/vendor/offline execution where appropriate and stop for missing dependencies. Never use code, wrappers or children to bypass policy. Neither profiles nor OVNFS provide OS containment. Use trusted personal projects, not hostile repositories.
 
 ## Optional OVNFS
 
-Opt in explicitly for an experiment or isolated implementation. Use native `ovnfs new`, work in the printed checkout, inspect `ovnfs diff -p`, and obtain a dry-run result before integration. Approval of creation is not approval of apply.
+Opt in explicitly for an experiment or isolated implementation. Use native `ovnfs new`, work in the printed checkout and inspect `ovnfs diff -p`. After reviewing the diff, request native per-call authorization for `ovnfs apply --dry-run`, then separate authorization for real source integration. Creation implies neither apply nor discard approval.
 
-The normal profile denies `ovnfs apply`, including dry-run. Main presents reviewed commands for the operator's own terminal rather than bypassing that deny. Integration requires exact patch/source approval and a recoverable baseline; reverify integrated source, and remove only owned checkouts. Full procedure and rollback limits: [af-isolation](profile/skills/af-isolation/SKILL.md). Automatic application stays disabled.
+Integration needs exact patch/source review, source-concurrency checks and a recoverable baseline; reverify integrated source. Cleanup/discard is consequential and ASK, limited to owned checkouts. Automatic application stays disabled. Use operator fallback only for an actual deny/guard or unavailable approval. Full procedure and rollback limits: [af-isolation](profile/skills/af-isolation/SKILL.md).
 
 ## Evaluate and improve
 
@@ -155,6 +164,7 @@ The normal profile denies `ovnfs apply`, including dry-run. Main presents review
 python3 -B eval/check_environment.py
 python3 -B eval/check_cli.py --native
 python3 -B eval/check_controlled_yolo.py --model PROVIDER/MODEL
+python3 -B eval/check_ask_policy.py --model PROVIDER/MODEL
 # Principle-layer checks; commands are not recorded results:
 python3 -B eval/check_principles.py
 python3 -B eval/run.py --suite principles --keep-workspaces \
@@ -171,7 +181,7 @@ The sequential native-session harness evaluates natural prompts and actual task/
 
 Historical verification covers thirteen scenarios across explicit runs and two authorized models, all eight routes, the six advisors plus bundled reviewer, actual Tern interaction, and approved disposable OVNFS apply/restore/cleanup under the earlier policy. It is not a clean single-model full-suite result or evidence for the current YOLO policy; native reviewer timeouts and recovered tool/schema errors remain documented.
 
-Observed principle-layer results belong in [Principles validation](eval/principles-validation.md); adding instructions alone establishes neither model compliance nor causal improvement. [Controlled YOLO validation](eval/controlled-yolo-validation.md), [historical full validation](eval/full-validation.md) and [Phase 1 history](eval/validation.md) retain their original scope and failures. See also [evaluation instructions](eval/README.md), [architecture](docs/architecture.md), [correction ledger](docs/corrections.md), and [improvement backlog](docs/backlog.md). The ledger records recurrence, root cause, smallest correction placement and actual validation; it does not automatically rewrite global policy after one failure.
+Current policy evidence belongs in [Ask-policy validation](eval/ask-policy-validation.md). The adapted controlled-YOLO probe separates headless ASK refusals from hard DENY rejections; the focused ASK probe checks live native RPC approval state and actual disposable `rmdir` effects, not direct operator RPC bash. Commands listed here are not passing results. [Principles validation](eval/principles-validation.md), [Controlled YOLO validation](eval/controlled-yolo-validation.md), [historical full validation](eval/full-validation.md) and [Phase 1 history](eval/validation.md) retain their original scope and failures. See also [evaluation instructions](eval/README.md), [architecture](docs/architecture.md), [correction ledger](docs/corrections.md), and [improvement backlog](docs/backlog.md). The ledger records recurrence, root cause, smallest correction placement and actual validation; it does not automatically rewrite global policy after one failure.
 
 ## Source layout
 
@@ -180,10 +190,10 @@ bin/af
 profile/{config.yml,APPEND_SYSTEM.md,RULES.md}
 profile/agents/             # Six native domain definitions; no reviewer copy
 profile/skills/             # 11 original skills + selector + 24 leaves; 8 workflows
-eval/{run.py,check_environment.py,check_cli.py,check_controlled_yolo.py,check_principles.py,browser-check.mjs}
+eval/{run.py,check_environment.py,check_cli.py,check_controlled_yolo.py,check_ask_policy.py,check_principles.py,browser-check.mjs}
 eval/{cases.json,extended-cases.json,ui-case.json,principle-cases.json,principle-expectations.json}
 eval/{config.yml,profile.yml,prompt-check.yml}
-eval/{README.md,principles-validation.md,controlled-yolo-validation.md,validation.md,full-validation.md}
+eval/{README.md,ask-policy-validation.md,principles-validation.md,controlled-yolo-validation.md,validation.md,full-validation.md}
 eval/results/              # Private, gitignored execution evidence
 docs/{architecture.md,skills-catalog.md,implementation-plan.md,corrections.md,backlog.md}
 ```
