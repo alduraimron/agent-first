@@ -1,0 +1,24 @@
+# Evaluation-only authorization for synthetic disposable projects.
+# Keep the base profile's write approval mode and restricted-command policies.
+tools:
+  approval:
+    bash: prompt
+    eval: deny
+    task: allow
+bash:
+  allowCompoundCommands: false
+  direnv: "off"
+  patterns:
+    - match: "node --test"
+      approval: allow
+    - match: "git diff --no-ext-diff --no-textconv"
+      approval: allow
+    - match: "*"
+      approval: deny
+async:
+  enabled: false
+task:
+  maxConcurrency: 2
+  maxRecursionDepth: 1
+  maxRuntimeMs: 300000
+  softRequestBudget: 60

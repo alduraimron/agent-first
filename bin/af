@@ -1,0 +1,149 @@
+#!/usr/bin/env python3
+"""Activate only the personal OMP profile and launch the native CLI."""
+
+import argparse
+import os
+from pathlib import Path
+import shutil
+import sys
+
+ROOT = Path(__file__).resolve().parent.parent
+PROFILE = "agent-first"
+ASSETS = ("config.yml", "APPEND_SYSTEM.md", "RULES.md", "agents", "skills")
+
+
+def profile_directory():
+    config_name = os.environ.get("PI_CONFIG_DIR") or ".omp"
+    if config_name != ".omp":
+        raise ValueError("PI_CONFIG_DIR must be unset or .omp; custom roots are not activated implicitly")
+    return Path.home() / ".omp" / "profiles" / PROFILE / "agent"
+
+
+def activate():
+    destination = profile_directory()
+    if destination.parent.is_symlink() or destination.is_symlink():
+        raise ValueError(f"Refusing a redirected named-profile directory: {destination}")
+    for name in ("tools", "mcp.json", ".mcp.json"):
+        target = destination / name
+        if os.path.lexists(target) and (not target.is_dir() or any(target.iterdir())):
+            raise ValueError(f"Unexpected executable configuration in personal profile: {target}")
+    for name in ASSETS:
+        source = ROOT / "profile" / name
+        target = destination / name
+        if not source.exists():
+            raise ValueError(f"Missing profile asset: {source}")
+        if os.path.lexists(target) and (not target.is_symlink() or target.resolve() != source.resolve()):
+            raise ValueError(f"Refusing to overwrite existing profile entry: {target}")
+    destination.mkdir(parents=True, exist_ok=True, mode=0o700)
+    for name in ASSETS:
+        target = destination / name
+        try:
+            target.symlink_to(ROOT / "profile" / name, target_is_directory=(ROOT / "profile" / name).is_dir())
+        except FileExistsError:
+            if not target.is_symlink() or target.resolve() != (ROOT / "profile" / name).resolve():
+                raise ValueError(f"Profile entry changed during activation: {target}") from None
+    return destination
+
+
+def check_project(directory):
+    """Reject native sources that can add tools or shadow the advisory agents."""
+    if not directory.is_dir():
+        raise ValueError(f"Project directory does not exist: {directory}")
+    tools = directory / ".omp" / "tools"
+    if tools.exists() and (not tools.is_dir() or any(tools.iterdir())):
+        raise ValueError(f"Native project tools are outside the Phase 1 trust boundary: {tools}")
+    home = Path.home().resolve()
+    for ancestor in (directory, *directory.parents):
+        agents = ancestor / ".omp" / "agents"
+        if agents.is_dir() and any(agents.glob("*.md")):
+            raise ValueError(f"Native project agents can shadow profile agents; use a clean personal project: {agents}")
+        if ancestor == home:
+            break
+
+
+def launch_environment():
+    environment = os.environ.copy()
+    for name in ("PI_CONFIG_FILES", "PI_CODING_AGENT_DIR", "PI_SESSION_ID",
+                 "PI_SESSION_FILE", "PI_TOOL_CALL_ID"):
+        environment.pop(name, None)
+    environment["OMP_PROFILE"] = PROFILE
+    environment["PI_PROFILE"] = PROFILE
+    return environment
+
+
+def positive_cost(value):
+    number = float(value)
+    if not 0 < number < float("inf"):
+        raise argparse.ArgumentTypeError("cost must be a finite positive number")
+    return number
+
+
+def arguments():
+    parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
+    parser.add_argument("--activate", action="store_true", help="register profile links without starting a model session")
+    parser.add_argument("--cwd", type=Path, default=Path.cwd(), help="explicit personal project directory")
+    parser.add_argument("--model", help="native OMP model selector")
+    parser.add_argument("--print", dest="print_mode", action="store_true", help="one-shot native OMP run; exec approvals fail closed without UI")
+    parser.add_argument("--json", action="store_true", help="native print-mode JSON events")
+    parser.add_argument("--max-cost", type=positive_cost, help="stop sending requests at this USD cost")
+    parser.add_argument("--max-time", help="native OMP duration limit, for example 5m")
+    history = parser.add_mutually_exclusive_group()
+    history.add_argument("--continue", dest="continue_session", action="store_true")
+    history.add_argument("--resume", metavar="SESSION", help="session ID or path from the personal profile")
+    parser.add_argument("prompt", nargs="*", help="ordinary task prompt; use -- before text starting with a dash")
+    result = parser.parse_args()
+    if result.activate and (result.prompt or result.print_mode or result.json or result.continue_session or result.resume):
+        parser.error("--activate cannot start or resume a session")
+    return result
+
+
+def main():
+    args = arguments()
+    try:
+        executable = shutil.which("omp")
+        if executable is None:
+            raise ValueError("omp is not on PATH; this launcher does not install it")
+        directory = args.cwd.expanduser().resolve()
+        check_project(directory)
+        destination = activate()
+        if args.activate:
+            print(destination)
+            return 0
+        command = [
+            executable, "--profile", PROFILE, "launch",
+            "--cwd", str(directory),
+            "--config", str(ROOT / "profile" / "config.yml"),
+            "--append-system-prompt", str(ROOT / "profile" / "APPEND_SYSTEM.md"),
+            "--approval-mode", "write", "--no-extensions", "--no-title",
+        ]
+        if args.model:
+            command.extend(("--model", args.model))
+        if args.max_cost is not None:
+            command.extend(("--max-cost", str(args.max_cost)))
+        if args.max_time:
+            command.extend(("--max-time", args.max_time))
+        if args.continue_session:
+            command.append("--continue")
+        if args.resume:
+            session = Path(args.resume).expanduser()
+            if "/" in args.resume or "\\" in args.resume or session.is_file():
+                if not session.is_file() or not session.resolve().is_relative_to(destination.resolve()):
+                    raise ValueError("Resume paths must be existing files in the agent-first profile")
+            command.extend(("--resume", args.resume))
+        if args.print_mode or args.json:
+            command.extend(("--print", "--wait-async"))
+        if args.json:
+            command.extend(("--mode", "json"))
+        if args.prompt:
+            command.extend(("--", " ".join(args.prompt)))
+        environment = launch_environment()
+        if not sys.stdin.isatty() and not args.prompt and not args.continue_session and not args.resume:
+            raise ValueError("Non-interactive launches require an explicit prompt; stdin is not read implicitly")
+        os.execve(executable, command, environment)
+    except (OSError, ValueError) as error:
+        print(f"af: {error}", file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

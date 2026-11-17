@@ -1,0 +1,150 @@
+# Loaded only by the explicitly activated agent-first profile.
+# Bash patterns are approval controls, not process/filesystem containment.
+tools:
+  approvalMode: write
+  approval:
+    bash: prompt
+    eval: prompt
+    task: prompt
+    debug: deny
+    github: deny
+    checkpoint: deny
+    rewind: deny
+    security_scan: deny
+    manage_skill: deny
+    computer.control: deny
+  restrictedFolders:
+    - ~/.omp/agent
+    - ~/.omp/profiles/agent-first/agent
+    - ~/.pi
+    - ~/.ssh
+    - ~/.aws
+    - ~/.gnupg
+    - ~/Documents/work
+    - /etc
+    - /usr
+    - /opt
+bash:
+  direnv: off
+  gitGuard: true
+  allowCompoundCommands: false
+  patterns:
+    - { match: 'git *commit*', approval: deny }
+    - { match: 'git *push*', approval: deny }
+    - { match: 'git *reset*', approval: deny }
+    - { match: 'git *clean*', approval: deny }
+    - { match: 'git *stash*', approval: deny }
+    - { match: 'rm *', approval: deny }
+    - { match: 'sudo *', approval: deny }
+    - { match: 'doas *', approval: deny }
+    - { match: 'npm install*', approval: deny }
+    - { match: 'npm i *', approval: deny }
+    - { match: 'pnpm install*', approval: deny }
+    - { match: 'pnpm add*', approval: deny }
+    - { match: 'yarn install*', approval: deny }
+    - { match: 'yarn add*', approval: deny }
+    - { match: 'bun install*', approval: deny }
+    - { match: 'bun add*', approval: deny }
+    - { match: 'pip* install*', approval: deny }
+    - { match: 'python* -m pip install*', approval: deny }
+    - { match: 'uv *', approval: deny }
+    - { match: 'npx*', approval: deny }
+    - { match: 'bunx*', approval: deny }
+    - { match: 'curl *', approval: deny }
+    - { match: 'wget *', approval: deny }
+    - { match: 'omp *install*', approval: deny }
+    - { match: 'omp *setup*', approval: deny }
+    - { match: 'omp *update*', approval: deny }
+    - { match: 'ovnfs *apply*', approval: deny }
+task:
+  batch: true
+  structured: true
+  maxConcurrency: 2
+  maxRecursionDepth: 1
+  maxRuntimeMs: 240000
+  autoParallel: off
+  perCallModel: off
+  prewalk: false
+  disabledAgents: [scout, security-reviewer, task, sonic]
+  isolation:
+    enabled: false
+    apply: false
+    merge: patch
+isolation:
+  backend: auto
+skills:
+  enabled: true
+  enablePiUser: true
+  enablePiProject: false
+  enableAgentsUser: false
+  enableAgentsProject: false
+  enableClaudeUser: false
+  enableClaudeProject: false
+  enableCodexUser: false
+  includeSkills: [af-engineering, af-verification]
+enabledProviders: []
+disabledProviders:
+  - omp-plugins
+  - skillshare
+  - claude
+  - claude-plugins
+  - agent-plugins
+  - codex
+  - gemini
+  - opencode
+  - cursor
+  - windsurf
+  - cline
+  - github
+  - vscode
+  - agents
+  - mcp-json
+  - ssh-json
+  - ssh-config
+extensions: []
+mcp:
+  enableProjectConfig: false
+commands:
+  enableClaudeUser: false
+  enableClaudeProject: false
+  enableOpencodeUser: false
+  enableOpencodeProject: false
+disassembler:
+  backend: none
+eval:
+  py: false
+  js: true
+  autoProvision: false
+browser:
+  enabled: true
+  tern: true
+  relay: false
+  webkit: false
+computer:
+  enabled: false
+lsp:
+  enabled: false
+memory:
+  backend: off
+autolearn:
+  enabled: false
+advisor:
+  enabled: false
+prewalk:
+  enabled: false
+  auto: off
+providers:
+  cacheWarming: off
+telemetry:
+  otlpExportEnabled: false
+startup:
+  checkUpdate: false
+  setupWizard: false
+update:
+  auto: false
+autoResume: false
+commit:
+  enabled: false
+checkpoint:
+  enabled: false
+defaultThinkingLevel: medium
