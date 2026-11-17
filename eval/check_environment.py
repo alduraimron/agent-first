@@ -10,10 +10,13 @@ import subprocess
 import tempfile
 import time
 
+from check_principles import PRINCIPLES
+
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ['af-engineering', 'af-design', 'af-database', 'af-frontend', 'af-testing',
           'af-security', 'af-performance', 'af-operations', 'af-context',
-          'af-verification', 'af-isolation']
+          'af-verification', 'af-isolation', 'af-principles']
+LEAVES = ['principle-' + name for name in PRINCIPLES]
 
 
 def hashes():
@@ -150,12 +153,16 @@ def main():
         commands = responses.get('af-commands', {})
         state_text = json.dumps(state)
         commands_text = json.dumps(commands)
+        system_prompt_text = json.dumps(state.get('data', {}).get('systemPrompt', []))
         native_checks = {
             'native-state-response': bool(state.get('success')),
             'main-orchestrator-loaded': 'Agent-First orchestration' in state_text,
             'shared-rules-loaded': 'Agent-First shared rules' in state_text,
             'project-context-loaded': 'AF_FULL_CONTEXT_PROBE' in state_text,
-            'all-skills-discovered': bool(commands.get('success')) and all(name in commands_text for name in SKILLS),
+            'all-skills-discovered': bool(commands.get('success')) and all(
+                name in commands_text for name in SKILLS + LEAVES),
+            'principle-selector-catalog-visible': 'af-principles' in system_prompt_text,
+            'principle-leaf-catalog-hidden': all(name not in system_prompt_text for name in LEAVES),
         }
         for name, passed in native_checks.items():
             result['checks'].append({'name': name, 'status': 'PASS' if passed else 'FAIL'})
