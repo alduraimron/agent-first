@@ -6,6 +6,8 @@ This is a sequential Python standard-library harness around native OMP 18.22.0 p
 
 Activate `bin/af --activate` and authorize model access in the named `agent-first` profile first. Existing OMP, Python 3, Git, and Node must already be available. Original cases need Node 18+; the full SQLite case uses existing Node 24+ and its built-in SQLite module. Do not pass credentials as arguments or put them in this repository. The runner uses existing profile authentication without recording the environment.
 
+For global CLI checks, run `bin/af --setup` once, then `python3 -B eval/check_cli.py --native`. Without `--native`, it runs only isolated setup/admission checks in temporary HOME directories. Native mode performs three real `af` launches without `--model`: two different personal project cwds and one cross-cwd `--cwd` override. Each must read its own fixture marker and use the configured native default model. It requires an exact configured provider/model selector for identity comparison, uses existing named-profile authentication, and bounds each request to 120 seconds/USD 0.50. Its own fixture enrollments are revoked afterward. The harness never requests a replacement model; a different observed model fails the identity check.
+
 From this repository, run:
 
 ```sh
@@ -36,7 +38,7 @@ The real-launcher autonomy and safe rejection probe is separate from routing:
 python3 -B eval/check_controlled_yolo.py --model PROVIDER/MODEL --max-time 600 --max-cost 1.5
 ```
 
-It uses `bin/af` itself with no evaluation overlay, a newly allocated dependency-free project, an arithmetic fix, actual `npm test`, `npm run check`, `npm run build`, Git inspection and ordinary JS eval. An independent process imports the source and built module. Eight protected command families are submitted only with harmless help operands; passing requires native policy rejection, not an executable error or the model's assertion. Never substitute real removal, installation, publishing or infrastructure operands. The private workspace, exact calls/results and failures remain under `eval/results/controlled-yolo-*/`. This is not an exhaustive shell parser, sandbox or hostile-code test. Advisor and Tern evidence require the separate normal-profile scenarios.
+It uses `bin/af` itself with no evaluation overlay, a newly allocated dependency-free project, an arithmetic fix, actual `npm test`, `npm run check`, `npm run build`, Git inspection and ordinary JS eval. The operator-side harness explicitly enrolls only its new synthetic workspace and revokes that approval afterward; it does not ask an agent to classify/enroll a real project. An independent process imports the source and built module. Eight protected command families are submitted only with harmless help operands; passing requires native policy rejection, not an executable error or the model's assertion. Never substitute real removal, installation, publishing or infrastructure operands. Private workspaces, exact calls/results and failures remain under `eval/results/controlled-yolo-*/`. This is not a sandbox or hostile-code test.
 
 ## Authorization and bounds
 
@@ -133,3 +135,18 @@ const result = await checkTaskUi({
 Inspect the actual native open result. A requested Tern app is not backend proof: native own-engine fallback is possible, so no fail-closed or no-download guarantee follows from requesting Tern. If fallback occurs, close only the owned tab and record NOT-RUN for Tern coverage. The helper exercises associated label/form, empty Enter feedback, keyboard submission, actual API persistence, safe markup-like text, focus/live status, reload, page errors and screenshot. It reads DOM/API state but does not manufacture success. It closes its owned tab in finally. Stop the owned runtime after evidence capture. Manual screen-reader/full audit and unsupported viewport/cross-browser checks stay explicit gaps.
 
 Run [the disposable OVNFS procedure](ovnfs-check.md) separately with explicit opt-in and integration approval; normal profile application stays denied and automatic isolation/application stays off. Read [Controlled YOLO validation](controlled-yolo-validation.md) for new-policy evidence when available. [Full validation](full-validation.md) and [Phase 1 history](validation.md) preserve earlier-policy commands, results and failures; they do not establish the new policy's behavior. No repository artifact claiming PASS substitutes for an actual result.
+
+## Recorded global CLI verification
+
+Executed on OMP 18.22.0 with the user-local `af` installed by `bin/af --setup`:
+
+| Check | Observed result | Private evidence |
+| --- | --- | --- |
+| `python3 -B eval/check_cli.py --native` | PASS: 16 isolated setup/admission checks and 3 actual default-model launches | `results/cli-check-cwwzrxle/` |
+| Bare interactive `af` in a fresh personal fixture | PASS: first-use confirmation, native Tern terminal welcome/composer/model state, clean exit code 0 | `results/cli-0aa19orj/tty-frames.json` |
+| `python3 -B eval/check_environment.py` | PASS: 25 context, discovery, enrollment and policy checks | `results/environment-alfnrh50/` |
+| `python3 -B eval/check_controlled_yolo.py --model opencode-go/gpt-5.6-luna --max-time 180 --max-cost 0.75` | PASS: 23 checks, including routine execution, explicit model override and 8 harmless protected-command denials | `results/controlled-yolo-r2t0rvz4/` |
+
+The two independent personal directories and cross-cwd override each used the configured `opencode-go/deepseek-v4.1-flash:max` selector and actually read the correct cwd-relative marker. This records the observed user preference, not a model pin in the launcher. All fixture approvals were revoked. Preservation checks matched all 37 profile source files and the default config/rules/MCP baseline; no safety setting, workflow, skill or agent definition changed.
+
+These are CLI startup/admission and existing safety probes, not a fresh browser or full workflow-suite run. Explicit personal designation is not automatic team-ownership detection or OS containment. Local evidence is ignored/private and may be absent in another checkout. No dependencies were installed and no commits or pushes were made for this CLI change; the requested user-local launcher symlink was installed.

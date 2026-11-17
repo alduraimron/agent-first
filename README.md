@@ -2,27 +2,61 @@
 
 A reusable personal engineering environment built from native OMP profiles, skills, agents, approvals, sessions, and the existing Tern browser integration. Main selects the workflow and implements; specialists advise only when a concrete domain question warrants it. No separate orchestration runtime, extension, MCP server, Tern plugin, or memory database is added.
 
-## Start in a personal project
+## One-time setup
 
-Prerequisites: an existing OMP installation, Python 3.9+ for the launcher/evaluations, authorized model access, and Tern for browser work. Full SQLite evaluations use an existing Node 24+; the original evaluations need Node 18+ and Git. Optional isolation needs an existing OVNFS. Nothing installs or updates dependencies automatically.
+Prerequisites: existing OMP, Python 3.9+, a configured default model and authorized model access. Git projects need existing Git. Tern is used for browser work; optional isolation needs existing OVNFS. Full SQLite evaluations need Node 24+, while original evaluations need Node 18+. No dependencies are installed or updated.
+
+From this checkout at a stable path:
 
 ```sh
-# From this stable Agent-First checkout:
-./bin/af --activate
-./bin/af --cwd /absolute/path/to/personal-project --model PROVIDER/MODEL
-
-# Or supply an ordinary outcome immediately:
-./bin/af --cwd /absolute/path/to/personal-project --model PROVIDER/MODEL \
-  "Add the requested feature and verify its real behavior"
+./bin/af --setup
 ```
 
-The target directory must already exist. Choose a personal project, not a team/production repository. Replace the model selector with an authorized native OMP selector; current-policy probes use `opencode-go/gpt-5.6-luna`, while earlier results record their own models. For a new machine, authenticate separately with `omp --profile agent-first login`. The launcher never copies credentials; the historical Phase 1 credential transfer is documented in its validation record.
+This creates `~/.local/bin/af` pointing to this guarded launcher and registers the five native profile assets under `~/.omp/profiles/agent-first/agent/`. Existing conflicting commands/profile entries are refused, never overwritten. It does not enroll the setup directory or edit shell startup files, team configuration, default OMP configuration, or existing commands.
 
-Use `bin/af` for the complete boundary, not merely `omp --profile agent-first`. Activation registers the five profile assets as symlinks under `~/.omp/profiles/agent-first/agent/`, refuses conflicting entries, and preserves the default profile. Keep this checkout at a stable path. Native persistent settings writes can update the linked personal config, so review operator changes.
+If `~/.local/bin` is not already on PATH, add it to your shell's PATH once. For bash/zsh:
 
-Use a fresh `bin/af` launch for the updated policy. Current-policy evidence covers fresh launches, not hot-reload of an already running session.
+```sh
+export PATH="$HOME/.local/bin:$PATH"
+# Keep that export in your own shell startup file if needed.
+```
 
-Describe the desired result. Normal work does not require `/plan`, `/build`, `/review`, a workflow selector, or an agent name. Existing command definitions are not overwritten.
+## Everyday use
+
+```sh
+cd /path/to/personal-project
+af
+
+# Or describe an outcome immediately:
+af "Add the requested feature and verify its real behavior"
+
+# Existing options remain available:
+af --cwd /another/personal-project
+af --model PROVIDER/MODEL "Use this model for this launch"
+```
+
+The current working directory is the project unless `--cwd` is supplied. No `--model` is required: fresh launches read native `modelRoles.default` from the `agent-first` profile, falling back to your ordinary OMP default role when the personal profile has none. Only the selector is reused, not other default-profile settings, extensions or credentials. The launcher does not hardcode or silently substitute a model. If neither role is configured, it explains the missing prerequisite instead of choosing another model. Explicit `--model` wins; continuation/resume keeps native saved-model behavior unless you override it.
+
+Keep this checkout in place because command/profile registration uses symlinks. On a new machine, authenticate separately with `omp --profile agent-first login`; credentials are never copied. `af --activate` remains available for profile-link registration without installing the PATH command or starting a session.
+
+## Personal-project enrollment
+
+The first interactive `af` in an unknown or changed project asks whether it is a **personal** project, defaulting to **No**. Declining starts no OMP session. A headless launch refuses unknown projects, even with `--cwd`. Setup never implicitly approves its cwd.
+
+For an operator's explicit non-interactive enrollment or revocation:
+
+```sh
+af --cwd /path/to/personal-project --trust-project
+af --cwd /path/to/personal-project --untrust-project
+```
+
+Approvals are private user-local records under `~/.config/agent-first/projects/`, not team/repository configuration. Git subdirectories reuse their repository's approval; nested repositories do not inherit it. Replaced directories/Git metadata and changed local remote URLs require new confirmation. Symlinks use the real target. Non-Git folders are approved individually, not recursively. Git context-redirection environment variables are cleared so the selected cwd is not silently redirected elsewhere.
+
+This is explicit project designation, **not automatic ownership detection or OS containment**. Never approve a team/production project. The launcher cannot discover every ownership change without changed metadata; human classification remains necessary. Do not have an agent enroll real projects automatically. There are no shell/cwd hooks: entering a directory does not activate Agent-First.
+
+Use installed `af` (the same `bin/af` entry point), not a bare `omp --profile agent-first` alias, to retain these guards and the pinned policy. Profile isolation still does not isolate every external configuration source. Use a fresh launch after changes; hot-reload of running sessions is not established.
+
+Describe the desired result. Normal work does not require `/plan`, `/build`, `/review`, a workflow selector, or an agent name.
 
 ## Adaptive workflow library
 
@@ -74,8 +108,8 @@ For meaningful work main creates only relevant ordinary files in the selected pe
 Accepted repository decisions are authoritative; native OMP sessions retain execution history. Fresh/continued work reads the active task, relevant decisions and handoff, reconciles source changes, and treats old results as historical until applicability is established. Quick trivial work needs no empty paperwork tree. Read-only work proposes records rather than writing files. Templates and lifecycle: [af-context](profile/skills/af-context/SKILL.md).
 
 ```sh
-./bin/af --cwd /absolute/path/to/personal-project --continue
-./bin/af --cwd /absolute/path/to/personal-project --resume PERSONAL_SESSION_ID
+af --cwd /absolute/path/to/personal-project --continue
+af --cwd /absolute/path/to/personal-project --resume PERSONAL_SESSION_ID
 ```
 
 Resume file paths must exist inside the named profile. If a session is unavailable, describe the outcome or ask to continue the active project task; recovery uses repository records. Keep secrets/customer data out of tracked context and inspect raw evidence before sharing.
@@ -89,7 +123,7 @@ Browser checks use the existing native eval browser API inside Tern: preflight t
 `profile/config.yml` is the settings authority and selects native **YOLO** autonomy. Routine scoped reads, edits, shell/eval verification, advisory task calls, and Tern interaction proceed without routine approval, including headless execution. YOLO auto-approves native read/write/exec tiers, not explicit denies or prompts. Restricted-folder gates and stricter explicit overlays still require native approval and refuse without an interactive approver. For bounded ordinary headless work:
 
 ```sh
-./bin/af --cwd /absolute/path/to/personal-project --model PROVIDER/MODEL \
+af --cwd /absolute/path/to/approved-personal-project \
   --json --max-time 5m --max-cost 1 "Inspect the requested behavior"
 ```
 
@@ -115,6 +149,7 @@ The normal profile denies `ovnfs apply`, including dry-run. Main presents review
 
 ```sh
 python3 -B eval/check_environment.py
+python3 -B eval/check_cli.py --native
 python3 -B eval/check_controlled_yolo.py --model PROVIDER/MODEL
 python3 -B eval/run.py --suite full --keep-workspaces \
   --model PROVIDER/MODEL --max-time 600 --max-cost 1.5
@@ -137,7 +172,7 @@ bin/af
 profile/{config.yml,APPEND_SYSTEM.md,RULES.md}
 profile/agents/             # Six native domain definitions; no reviewer copy
 profile/skills/             # Eleven skills, eight workflows, context templates
-eval/{run.py,check_environment.py,check_controlled_yolo.py,browser-check.mjs}
+eval/{run.py,check_environment.py,check_cli.py,check_controlled_yolo.py,browser-check.mjs}
 eval/{cases.json,extended-cases.json,ui-case.json,config.yml,profile.yml,prompt-check.yml}
 eval/{README.md,controlled-yolo-validation.md,validation.md,full-validation.md}
 eval/results/              # Private, gitignored execution evidence
