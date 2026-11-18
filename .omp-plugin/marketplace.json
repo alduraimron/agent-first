@@ -1,0 +1,17 @@
+{
+  "name": "agent-first",
+  "owner": { "name": "alduraimron" },
+  "metadata": {
+    "description": "Project-scoped engineering workflows, principles, interaction skills and read-only advisors for OMP"
+  },
+  "plugins": [
+    {
+      "name": "agent-first",
+      "description": "Adaptive main-agent engineering with evidence-based verification and durable project context",
+      "version": "2.0.0",
+      "source": "./plugins/agent-first",
+      "homepage": "https://github.com/alduraimron/agent-first",
+      "repository": "https://github.com/alduraimron/agent-first"
+    }
+  ]
+}
