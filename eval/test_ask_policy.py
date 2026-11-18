@@ -29,14 +29,14 @@ class ApprovalGuardTests(unittest.TestCase):
         target = self.workspace / TARGETS[0]
         self.handle({"type": "message_end", "message": {"role": "assistant", "content": [
             {"type": "text", "text": f"Command: {COMMANDS[0]}\nCwd: {self.workspace}\n"
-             f"Target: {target}\nRemove only this empty directory. Risk: low, non-recursive. "
+             f"Target: {target}\nRemove only this empty directory. Risk: low, bounded recursive spelling. "
              "Rollback: recreate the empty directory."}]}})
         self.handle({"type": "tool_execution_start", "toolCallId": "owned-call", "toolName": "bash",
                      "args": {"command": COMMANDS[0], "cwd": str(self.workspace)}})
 
     def dialog(self, command=COMMANDS[0]):
         return {"type": "extension_ui_request", "id": "owned-dialog", "method": "select",
-                "title": "Allow tool: bash\nReason: Prompt required by bash pattern: rmdir *\nCommand: " + command,
+                "title": "Allow tool: bash\nReason: Prompt required by bash pattern: rm *-r*\nCommand: " + command,
                 "options": ["Approve", "Deny"]}
 
     def assert_denied(self, frame):
@@ -52,7 +52,7 @@ class ApprovalGuardTests(unittest.TestCase):
 
     def test_different_target_cannot_reuse_a_valid_submission(self):
         self.submit()
-        self.assert_denied(self.dialog("rmdir -- another-directory"))
+        self.assert_denied(self.dialog("rm -r -- another-directory"))
         self.assertTrue(all((self.workspace / target).is_dir() for target in TARGETS))
 
     def test_symlink_replacement_before_approval_is_denied(self):
