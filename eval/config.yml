@@ -1,5 +1,5 @@
 # Strict evaluation-only authorization for synthetic disposable projects.
-# Deliberately replaces base bash patterns; this is not the normal yolo policy.
+# Explicit scenario controls, never installed by the Agent-First plugin.
 tools:
   approval:
     bash: prompt

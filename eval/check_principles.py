@@ -3,10 +3,9 @@
 import argparse
 import hashlib
 import json
-import os
 from pathlib import Path
 import shutil
-import subprocess
+from plugin_fixture import PLUGIN, PluginFixture
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -47,7 +46,7 @@ def default_hashes():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--baseline', type=Path,
-                        help='Optional pre-change settings/default-config/launcher snapshot')
+                        help='Optional historical default-configuration hash snapshot')
     options = parser.parse_args()
     results = ROOT / 'eval/results'
     results.mkdir(exist_ok=True)
@@ -62,11 +61,12 @@ def main():
     interaction_leaves = {'interaction-' + name for name in INTERACTIONS}
     hidden_leaves = expected_leaves | interaction_leaves
     visible_skills = ORIGINAL | {'af-principles', 'af-interaction'}
-    files = {path.parent.name: path for path in (ROOT / 'profile/skills').glob('*/SKILL.md')}
+    plugin = ROOT / 'plugins/agent-first'
+    files = {path.parent.name: path for path in (plugin / 'skills').glob('*/SKILL.md')}
     check('complete-skill-set', set(files) == visible_skills | hidden_leaves,
           sorted(files))
-    source = (ROOT / 'profile/skills/af-principles/SOURCES.md').read_text()
-    license_text = (ROOT / 'profile/skills/af-principles/LICENSE').read_text()
+    source = (plugin / 'skills/af-principles/SOURCES.md').read_text()
+    license_text = (plugin / 'skills/af-principles/LICENSE').read_text()
     check('upstream-mit-notice', 'Copyright (c) 2026 Lauren Tan' in license_text
           and 'Permission is hereby granted' in license_text
           and 'THE SOFTWARE IS PROVIDED "AS IS"' in license_text)
@@ -87,87 +87,95 @@ def main():
               and '\n## Output contract\n' in content)
         check('interaction-indexed-' + name, 'skill://' + name in interaction_selector)
     check('no-principle-bodies-in-main-prompt', all(
-        '## ' + section not in (ROOT / 'profile/APPEND_SYSTEM.md').read_text()
+        '## ' + section not in (plugin / 'rules/agent-first-orchestrator.md').read_text()
         for section in SECTIONS))
-    for path in (ROOT / 'profile/agents').glob('af-*.md'):
+    for path in (plugin / 'agents').glob('af-*.md'):
         content = path.read_text()
         check('advisor-index-only-' + path.stem,
               'tools: [read, grep, glob]' in content and 'spawns: []' in content
+              and 'structured: true' in content
               and 'autoloadSkills: [' in content and ', af-principles]' in content
               and 'autoloadSkills: [principle-' not in content)
 
     omp = shutil.which('omp')
     check('existing-omp', bool(omp))
-    env = dict(os.environ)
-    for key in ('PI_CONFIG_FILES', 'PI_CODING_AGENT_DIR', 'PI_SESSION_ID',
-                'PI_SESSION_FILE', 'PI_TOOL_CALL_ID'):
-        env.pop(key, None)
-    env.update(OMP_PROFILE='agent-first', PI_PROFILE='agent-first')
-    base = [omp, '--profile', 'agent-first', '--config', str(ROOT / 'profile/config.yml')] if omp else []
-
-    def native(label, args):
-        argv = [*base, *args]
-        record = {'argv': argv, 'status': 'NOT-RUN'}
-        try:
-            run = subprocess.run(argv, env=env, cwd=ROOT, text=True, capture_output=True, timeout=45)
-            (output / (label + '.stdout')).write_text(run.stdout)
-            (output / (label + '.stderr')).write_text(run.stderr)
-            record.update(status='PASS' if run.returncode == 0 else 'FAIL', exit_code=run.returncode)
-            return run
-        except (OSError, subprocess.TimeoutExpired) as error:
-            record.update(status='FAIL', error=str(error))
-            return None
-        finally:
-            (output / (label + '.command.json')).write_text(json.dumps(record, indent=2) + '\n')
-
-    settings = {}
     if omp:
-        listing = native('skill-list', ['skill', 'list', '--json'])
-        try:
-            skills = json.loads(listing.stdout)['skills'] if listing and listing.returncode == 0 else []
-            registered = {item['name']: item for item in skills}
-            check('native-discovery-exact-57', set(registered) == set(files))
-            check('native-hidden-leaves-only',
-                  {name for name, item in registered.items() if item.get('hide')} == hidden_leaves)
-            check('native-visible-catalog-13',
-                  {name for name, item in registered.items() if not item.get('hide')} == visible_skills)
-        except (ValueError, KeyError, TypeError) as error:
-            check('native-skill-list-readable', False, str(error))
+        workspace = output / 'workspace'
+        (workspace / '.omp').mkdir(parents=True)
+        project_config = workspace / '.omp/config.yml'
+        project_config.write_text('task:\n  maxConcurrency: 3\n  structured: false\n'
+                                  'tools:\n  approvalMode: always-ask\n')
+        instructions = workspace / 'AGENTS.md'
+        instructions.write_text('Synthetic discovery fixture. Preserve these project instructions.\n')
+        protected = {str(path): digest(path) for path in (project_config, instructions)}
+        fixture = PluginFixture(omp, workspace, output)
+
+        def native(label, args):
+            record = fixture.command(label, *args)
+            check('command-' + label, record['status'] == 'pass', record)
+            return (output / record['stdout']).read_text()
+
+        def settings(label):
+            text = native(label, ['config', 'list', '--json'])
+            try:
+                return {key: item.get('value') for key, item in json.loads(text).items()}
+            except (ValueError, TypeError, AttributeError) as error:
+                check(label + '-readable', False, str(error))
+                return {}
+
+        before_settings = settings('settings-before-install')
+        check('fixture-operator-policy-effective',
+              before_settings.get('tools.approvalMode') == 'always-ask'
+              and before_settings.get('task.maxConcurrency') == 3
+              and before_settings.get('task.structured') is False)
+        installed = fixture.install()
+        check('native-project-install', installed, fixture.evidence())
+        registry = workspace / '.omp/plugins/installed_plugins.json'
+        check('native-project-install-registry', registry.is_file())
+        after_settings = settings('settings-after-install')
+        check('plugin-inherits-native-settings',
+              bool(before_settings) and before_settings == after_settings,
+              {key: {'before': before_settings.get(key), 'after': after_settings.get(key)}
+               for key in before_settings.keys() | after_settings.keys()
+               if before_settings.get(key) != after_settings.get(key)})
+
+        def listing(label):
+            try:
+                return {item['name']: item for item in
+                        json.loads(native(label, ['skill', 'list', '--json']))['skills']}
+            except (ValueError, KeyError, TypeError) as error:
+                check(label + '-readable', False, str(error))
+                return {}
+
+        registered = listing('skill-list')
+        check('native-discovery-exact-57', set(registered) == set(files))
+        check('native-hidden-leaves-only',
+              {name for name, item in registered.items() if item.get('hide')} == hidden_leaves)
+        check('native-visible-catalog-13',
+              {name for name, item in registered.items() if not item.get('hide')} == visible_skills)
         for name in ['af-principles', 'af-interaction', *sorted(hidden_leaves)]:
-            run = native('read-' + name, ['read', 'skill://' + name])
+            text = native('read-' + name, ['read', 'skill://' + name])
             expected = files.get(name)
-            # Native output must contain the actual body, not just a registry entry.
             body = expected.read_text().split('---', 2)[-1].strip() if expected else ''
-            check('native-uri-' + name, bool(run and run.returncode == 0 and body and body in run.stdout))
-        run = native('effective-settings', ['config', 'list', '--json'])
-        try:
-            settings = json.loads(run.stdout) if run and run.returncode == 0 else {}
-        except ValueError as error:
-            check('native-settings-readable', False, str(error))
-    values = {key: item.get('value') for key, item in settings.items()}
-    check('effective-exact-inclusion', set(values.get('skills.includeSkills') or []) == set(files))
-    check('effective-leaf-hiding', values.get('skills.manualSkills') == ['principle-*', 'interaction-*'])
-    check('existing-safety-invariants', values.get('tools.approvalMode') == 'yolo'
-          and values.get('task.maxConcurrency') == 2 and values.get('task.maxRecursionDepth') == 1
-          and values.get('task.isolation.enabled') is False
-          and values.get('task.isolation.apply') is False
-          and values.get('eval.autoProvision') is False)
+            check('native-uri-' + name, bool(body and body in text))
+        # Discovery must track native enablement, not merely count source names.
+        native('disable-project-plugin', ['plugin', 'disable', PLUGIN, '--scope', 'project'])
+        disabled = listing('skills-disabled')
+        check('disabled-plugin-not-discovered', not (set(disabled) & set(files)))
+        native('enable-project-plugin', ['plugin', 'enable', PLUGIN, '--scope', 'project'])
+        restored = listing('skills-restored')
+        check('reenabled-plugin-discovered', set(restored) == set(files))
+        text = native('read-restored-selector', ['read', 'skill://af-principles'])
+        check('reenabled-plugin-uri-body', selector.split('---', 2)[-1].strip() in text)
+        check('native-settings-still-inherited', settings('settings-final') == before_settings)
+        check('unrelated-project-context-preserved',
+              all(Path(name).is_file() and digest(Path(name)) == value
+                  for name, value in protected.items()))
+        (output / 'plugin-fixture.json').write_text(json.dumps(fixture.evidence(), indent=2) + '\n')
     if options.baseline:
         baseline = json.loads(options.baseline.read_text())
-        old_values = {key: item.get('value') for key, item in baseline['effective_settings'].items()}
-        ignored = {'skills.includeSkills', 'skills.manualSkills'}
-        differences = {key: {'before': old_values.get(key), 'after': values.get(key)}
-                       for key in old_values.keys() | values.keys()
-                       if key not in ignored and old_values.get(key) != values.get(key)}
-        check('only-skill-settings-changed', not differences, differences)
-        check('launcher-unchanged', digest(ROOT / 'bin/af') == baseline['launcher_sha256'])
-        check('default-config-baseline-unchanged', default_hashes() == baseline['default_configuration_hashes'])
-        allowed = {'profile/config.yml', 'profile/APPEND_SYSTEM.md', 'profile/RULES.md',
-                   'profile/skills/af-engineering/SKILL.md', 'bin/af'}
-        preserved = {name: {'before': value, 'after': digest(ROOT / name) if (ROOT / name).is_file() else None}
-                     for name, value in baseline.get('source_hashes', {}).items()
-                     if name not in allowed and (not (ROOT / name).is_file() or digest(ROOT / name) != value)}
-        check('existing-profile-assets-unchanged', not preserved, preserved)
+        check('default-config-baseline-unchanged',
+              default_hashes() == baseline['default_configuration_hashes'])
     check('default-config-check-unchanged', default_hashes() == before)
     result = {'status': 'FAIL' if any(item['status'] != 'PASS' for item in checks) else 'PASS',
               'checks': checks, 'artifacts': str(output),

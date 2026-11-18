@@ -1,5 +1,5 @@
-# Case-specific headless refusal test, including when the base mode is yolo.
-# Keep base command patterns; explicit tool prompts still apply in yolo.
+# Case-specific headless refusal test layered over native settings.
+# Bash approval and eval denial are explicit operator-owned scenario controls.
 tools:
   approval:
     bash: prompt

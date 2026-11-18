@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bounded native-model interaction checks in retained, owned synthetic projects.
 
-Requires an explicit --model; never installs, retries, or overlays permissions.
+Requires an explicit --model; installs only this local project plugin, never retries.
 The 23 package scenarios are proposed references, not claims of execution. Nine
 fixture adaptations run by default; --case is repeatable. Other reference cases
 remain human/scored-model proposals. Results are constrained evidence, not a
@@ -20,14 +20,13 @@ import sys
 import tarfile
 import tempfile
 
-from run import ROOT, finite_check_passed, is_session_journal, journal_evidence
+from run import ROOT, is_session_journal, journal_evidence, passing_node_test
 from run import load_jsonl, mutation_paths, run_command, save_json
+from plugin_fixture import PluginFixture
 
 DEFAULT_CASES = ('how', 'why', 'teach', 'interview', 'ketchup', 'show', 'write',
                  'negative-no-interview', 'negative-review')
 CASES = (*DEFAULT_CASES, 'negative-read-only')
-CLEAR_ENV = ('PI_CONFIG_FILES', 'PI_CODING_AGENT_DIR', 'PI_SESSION_ID',
-             'PI_SESSION_FILE', 'PI_TOOL_CALL_ID')
 MUTATING = {'edit', 'write', 'ast_edit', 'delete', 'move'}
 
 BASE_FILES = {
@@ -272,34 +271,6 @@ def read_only_tool_violation(call):
     return False
 
 
-def passing_node_test(call, workspace):
-    """Accept real whole-project or scoped installed Node tests in the fixture."""
-    result = call.get('result')
-    if call['name'] != 'bash' or not finite_check_passed(result):
-        return False
-    try:
-        args = shlex.split(call['arguments'].get('command', ''))
-    except ValueError:
-        return False
-    if args[:2] != ['node', '--test']:
-        return False
-    workspace = workspace.resolve()
-    cwd = Path(call['arguments'].get('cwd') or '.')
-    if (cwd if cwd.is_absolute() else workspace / cwd).resolve() != workspace:
-        return False
-    for name in args[2:]:
-        if name.startswith('-') or not re.fullmatch(r'[A-Za-z0-9_./-]+', name):
-            return False
-        target = workspace / name
-        try:
-            target.resolve().relative_to(workspace)
-        except ValueError:
-            return False
-        if target.is_symlink() or not target.is_file():
-            return False
-    text = result.get('text', '')
-    return bool(re.search(r'(?:#|\u2139)\s+fail\s+0\b', text)
-                and re.search(r'(?:#|\u2139)\s+pass\s+[1-9]\d*\b', text))
 
 
 def unauthorized_mutation(call, workspace, allowed):
@@ -401,6 +372,9 @@ def answer_checks(case_id, text):
         require('import-example', r'import\s*\{\s*route\s*\}\s*from\s*[\'"][^\'\"]*src/routes\.mjs')
         require('call-example', r'route\(\s*[\'"]POST[\'"]\s*,\s*[\'"]/login[\'"]\s*,\s*[\'"]fixture-ok[\'"]\s*\)')
     if case_id == 'negative-review':
+        # Markdown formatting does not change labeled numeric evidence. Preserve
+        # arithmetic operators and actual/expected association while unwrapping it.
+        text = re.sub(r'(?m)^\s*[-*]\s+', '', text).replace('**', '').replace('`', '')
         require('defect-source', r'src/billing\.mjs')
         require('percentage-defect', r'percent|percentage|/\s*100')
         require('concrete-input', r'\b200\b.{0,100}\b20\b|\b20\b.{0,100}\b200\b')
@@ -499,21 +473,21 @@ def run_case(case_id, reference, options, output_root, omp, node, git):
         target = workspace / name
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(text)
-    native_env = dict(os.environ)
-    for key in CLEAR_ENV:
-        native_env.pop(key, None)
-    native_env.update(OMP_PROFILE='agent-first', PI_PROFILE='agent-first', GIT_OPTIONAL_LOCKS='0')
+    fixture = PluginFixture(omp, workspace, output)
+    if not fixture.install():
+        failures.append('Native project plugin installation failed; model not launched')
+    result['commands'].extend(fixture.commands)
+    result['plugin_fixture'] = fixture.evidence()
+    native_env = dict(fixture.env, GIT_OPTIONAL_LOCKS='0')
     consumer_env = {'PATH': os.environ.get('PATH', '/usr/bin:/bin'), 'LANG': 'C.UTF-8',
                     'GIT_CONFIG_GLOBAL': os.devnull, 'GIT_CONFIG_SYSTEM': os.devnull}
-    save_json(output / 'environment-policy.json', {'cleared': list(CLEAR_ENV),
-              'pinned': {key: native_env[key] for key in ('OMP_PROFILE', 'PI_PROFILE', 'GIT_OPTIONAL_LOCKS')},
-              'model_credentials': 'Inherited by native OMP only; not copied to artifacts or consumer'})
+    save_json(output / 'environment-policy.json', fixture.evidence())
     policies = output / 'policy-snapshots'
     policies.mkdir()
-    for relative in ('profile/config.yml', 'profile/RULES.md', 'profile/APPEND_SYSTEM.md'):
-        source = ROOT / relative
+    for source in (ROOT / 'plugins/agent-first/rules').glob('*.md'):
         (policies / source.name).write_bytes(source.read_bytes())
-    sources = {path.parent.name: path.read_text() for path in (ROOT / 'profile/skills').glob('*/SKILL.md')}
+    sources = {path.parent.name: path.read_text()
+               for path in (ROOT / 'plugins/agent-first/skills').glob('*/SKILL.md')}
     sources['_expected'] = reference['expected']
     save_json(policies / 'skill-sources.json', sources)
     for label, argv in (('git-init', [git, '-c', 'init.templateDir=', 'init', '--quiet']),
@@ -531,15 +505,13 @@ def run_case(case_id, reference, options, output_root, omp, node, git):
     save_json(output / 'before-manifest.json', before)
     with tarfile.open(output / 'before-workspace.tar.gz', 'w:gz', dereference=False) as archive:
         archive.add(workspace, arcname='workspace')
-    base = [omp, '--profile', 'agent-first', '--cwd', str(workspace),
-            '--config', str(ROOT / 'profile/config.yml')]
+    base = fixture.argv()
     settings_before = run_command([*base, 'config', 'list', '--json'], workspace, output,
                                   'settings-before', 30, native_env)
     result['commands'].append(settings_before)
     if settings_before['status'] != 'pass':
         failures.append('Could not capture effective native policy; model not launched')
-    argv = [*base, '--append-system-prompt', str(ROOT / 'profile/APPEND_SYSTEM.md'),
-            '--no-extensions', '--no-title', '--print', '--mode', 'json', '--wait-async',
+    argv = [*base, '--no-extensions', '--no-title', '--print', '--mode', 'json', '--wait-async',
             '--session-dir', str(output / 'sessions'), '--model', options.model,
             '--max-time', str(options.max_time), '--max-cost', str(options.max_cost),
             '--', PROMPTS[case_id]]
@@ -547,7 +519,9 @@ def run_case(case_id, reference, options, output_root, omp, node, git):
     journals = []
     if not failures:
         result['execution_status'] = 'executed-once'
-        command = run_command(argv, workspace, output, 'omp', options.max_time + 30, native_env)
+        with fixture.model_environment(options.auth_source) as model_env:
+            command = run_command(argv, workspace, output, 'omp', options.max_time + 30,
+                                  dict(model_env, GIT_OPTIONAL_LOCKS='0'))
         result['commands'].append(command)
         if command['status'] != 'pass':
             failures.append('Native OMP ended: ' + command['status'])
@@ -630,6 +604,8 @@ def main():
     parser.add_argument('--max-time', type=int, default=300, help='Per-case native seconds, 1..600')
     parser.add_argument('--max-cost', type=float, default=0.5,
                         help='Per-case native USD soft cap, (0, 1.5]; in-flight requests can exceed it')
+    parser.add_argument('--auth-source', type=Path,
+                        help='Opt-in operator agent.db read-only backup into disposable native state')
     options = parser.parse_args()
     if not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_./:@+\[\]-]+', options.model):
         parser.error('--model must be one provider/model selector without whitespace or flags')
@@ -653,7 +629,7 @@ def main():
               'nominal_native_cost_soft_caps_usd_total': options.max_cost * len(selected),
               'cost_limit_caveat': 'Native in-flight requests can exceed soft caps; this is not a hard billed-cost bound.',
               'retries': 0, 'permission_overlays': [],
-              'scope': 'Owned disposable fixtures only; normal native named-profile policy. '
+              'scope': 'Owned disposable fixtures only; inherited native policy, no named profile. '
                        'Regex/fact constraints are not a complete semantic quality judgment.'})
     results = []
     for case_id in selected:

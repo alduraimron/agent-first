@@ -1,4 +1,4 @@
-# Evaluation scheduling only; preserve every permission decision from the profile.
+# Evaluation scheduling only; no approval policy is supplied by the plugin.
 async:
   enabled: false
 task:

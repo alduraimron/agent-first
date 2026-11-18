@@ -2,9 +2,9 @@
 from pathlib import Path
 import unittest
 
-from run import finite_check_passed, full_skill_reads, inspect_principles
+from run import finite_check_passed, full_skill_reads, inspect_principles, post_evidence_report
 
-SKILLS = Path(__file__).resolve().parents[1] / 'profile/skills'
+SKILLS = Path(__file__).resolve().parents[1] / 'plugins/agent-first/skills'
 
 
 def read(name, at=1, path=None, error=False, text=None):
@@ -125,6 +125,28 @@ class PrincipleEvidenceTests(unittest.TestCase):
             'service': {'state': 'exited'}}, 'text': 'No test completion evidence'}))
         self.assertTrue(finite_check_passed({'isError': False, 'details': {
             'service': {'state': 'exited'}}, 'text': 'ℹ tests 4\nℹ pass 4\nℹ fail 0\n'}))
+
+    def test_cleanup_does_not_erase_completed_post_check_report(self):
+        calls = [{"name": "bash", "arguments": {"command": "node --test"},
+                  "result": {"time": 3}}]
+        report = "PASS: node --test. Browser NOT-RUN."
+        messages = [{"time": 4, "stopReason": "stop", "text": report},
+                    {"time": 5, "stopReason": "stop", "text": "Owned server stopped."}]
+        self.assertEqual(post_evidence_report(messages, calls, ["PASS", "NOT-RUN"]), report)
+
+    def test_predictions_and_aborts_are_not_post_evidence_reports(self):
+        calls = [{"name": "task", "arguments": {}, "result": {"time": 3}}]
+        messages = [{"time": 2, "stopReason": "stop", "text": "PASS after we finish."},
+                    {"time": 4, "stopReason": "aborted", "text": "PASS"}]
+        self.assertEqual(post_evidence_report(messages, calls, ["PASS"]), "")
+        self.assertEqual(post_evidence_report(
+            [{"time": 4, "stopReason": "stop", "text": "PASS"}], calls, ["PASS"], after=5), "")
+
+    def test_report_requirements_cannot_merge_unrelated_messages(self):
+        messages = [{"time": 4, "stopReason": "stop", "text": "PASS: node --test."},
+                    {"time": 5, "stopReason": "stop", "text": "Browser NOT-RUN."}]
+        report = post_evidence_report(messages, [], ["PASS", "NOT-RUN"])
+        self.assertFalse("PASS" in report and "NOT-RUN" in report)
 
 
 if __name__ == '__main__':

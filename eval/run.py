@@ -10,12 +10,12 @@ import os
 from pathlib import Path
 import re
 import shutil
-import signal
-import subprocess
+import shlex
 import sys
 import tarfile
 import tempfile
-import time
+
+from plugin_fixture import PluginFixture, run_command
 
 ROOT = Path(__file__).resolve().parents[1]
 READ_ONLY = {"read", "grep", "glob", "yield"}
@@ -35,7 +35,9 @@ def case_policy(case, requested="strict"):
 def policy_overlays(policy):
     if policy == "strict":
         return ["eval/config.yml"]
-    overlays = ["eval/profile.yml"]
+    if policy not in {"native", "prompt"}:
+        raise ValueError(f"Unknown evaluation policy: {policy}")
+    overlays = ["eval/native.yml"]
     if policy == "prompt":
         overlays.append("eval/prompt-check.yml")
     return overlays
@@ -43,38 +45,6 @@ def policy_overlays(policy):
 
 def save_json(path, value):
     path.write_text(json.dumps(value, indent=2, ensure_ascii=True) + "\n")
-
-
-def run_command(argv, cwd, output, label, timeout, env):
-    """Never use a shell; retain output even on timeout or launch failure."""
-    record = {"argv": [str(arg) for arg in argv], "cwd": str(cwd),
-              "timeout_seconds": timeout, "status": "not-run"}
-    start = time.monotonic()
-    with (output / f"{label}.stdout").open("wb") as stdout, (output / f"{label}.stderr").open("wb") as stderr:
-        try:
-            process = subprocess.Popen(record["argv"], cwd=cwd, env=env,
-                                       stdin=subprocess.DEVNULL, stdout=stdout, stderr=stderr,
-                                       start_new_session=True)
-            try:
-                record["returncode"] = process.wait(timeout=timeout)
-                record["status"] = "pass" if process.returncode == 0 else "fail"
-            except subprocess.TimeoutExpired:
-                record["status"] = "timeout"
-                os.killpg(process.pid, signal.SIGTERM)
-                try:
-                    process.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    os.killpg(process.pid, signal.SIGKILL)
-                    process.wait()
-                record["returncode"] = process.returncode
-        except OSError as error:
-            record["status"] = "launch-error"
-            record["error"] = str(error)
-    record["duration_seconds"] = round(time.monotonic() - start, 3)
-    record["stdout"] = f"{label}.stdout"
-    record["stderr"] = f"{label}.stderr"
-    save_json(output / f"{label}.command.json", record)
-    return record
 
 
 def load_jsonl(path, failures):
@@ -200,6 +170,58 @@ def finite_check_passed(result):
         return (service.get("state") == "exited" and not service.get("timedOut")
                 and bool(re.search(r"(?:#|ℹ)\s+fail\s+0\b", result["text"])))
     return True
+
+
+def passing_node_test(call, workspace):
+    """Accept real whole-project or scoped installed Node tests in the fixture."""
+    result = call.get('result')
+    if call['name'] != 'bash' or not finite_check_passed(result):
+        return False
+    try:
+        args = shlex.split(call['arguments'].get('command', ''))
+    except ValueError:
+        return False
+    if args[:2] != ['node', '--test']:
+        return False
+    workspace = workspace.resolve()
+    cwd = Path(call['arguments'].get('cwd') or '.')
+    if (cwd if cwd.is_absolute() else workspace / cwd).resolve() != workspace:
+        return False
+    for name in args[2:]:
+        if name.startswith('-') or not re.fullmatch(r'[A-Za-z0-9_./-]+', name):
+            return False
+        target = workspace / name
+        try:
+            target.resolve().relative_to(workspace)
+        except ValueError:
+            return False
+        if target.is_symlink() or not target.is_file():
+            return False
+    text = result.get('text', '')
+    return bool(re.search(r'(?:#|\u2139)\s+fail\s+0\b', text)
+                and re.search(r'(?:#|\u2139)\s+pass\s+[1-9]\d*\b', text))
+
+
+def post_evidence_report(assistant, calls, patterns, after=0):
+    """Keep a coherent completed report despite later service-cleanup messages."""
+    for call in calls:
+        evidence_call = call["name"] == "task"
+        if call["name"] == "bash":
+            try:
+                evidence_call = shlex.split(call["arguments"].get("command", ""))[:2] == ["node", "--test"]
+            except ValueError:
+                pass
+        if evidence_call and call.get("result"):
+            after = max(after, call["result"]["time"])
+    latest = ""
+    for message in reversed(assistant):
+        text = message.get("text", "")
+        if message.get("stopReason") != "stop" or message["time"] < after or not text.strip():
+            continue
+        latest = latest or text
+        if all(re.search(pattern, text, re.IGNORECASE) for pattern in patterns):
+            return text
+    return latest
 
 
 def full_skill_reads(journal):
@@ -357,7 +379,7 @@ def inspect_evidence(case, output, workspace, failures, policy="strict"):
     for call in calls:
         if call["result"] is None:
             failures.append(f"Main tool has no result: {call['name']} ({call['id']})")
-        if case_policy(case, policy) != "profile":
+        if case_policy(case, policy) != "native":
             if call["name"] == "eval":
                 failures.append("Main attempted forbidden general eval execution")
             if call["name"] == "bash" and call["arguments"].get("command", "").strip() not in {
@@ -365,15 +387,7 @@ def inspect_evidence(case, output, workspace, failures, policy="strict"):
                 failures.append(f"Main attempted a non-allowlisted shell command: {call['arguments'].get('command')}")
     verified = []
     for call in calls:
-        if call["name"] != "bash" or call["arguments"].get("command", "").strip() != "node --test":
-            continue
-        result = call["result"]
-        cwd = Path(call["arguments"].get("cwd") or workspace)
-        if not cwd.is_absolute():
-            cwd = workspace / cwd
-        if cwd.resolve() != workspace.resolve():
-            continue
-        if finite_check_passed(result):
+        if passing_node_test(call, workspace):
             verified.append(call)
     final_mutation = max((call["time"] for call in mutations), default=0)
     if case.get("require_verification", True):
@@ -381,7 +395,7 @@ def inspect_evidence(case, output, workspace, failures, policy="strict"):
             failures.append("No successful actual node --test after the last implementation write")
         if "node --test" not in prose:
             failures.append("Main report does not name the actual verification command")
-    final_report = next((message["text"] for message in reversed(assistant) if message["text"].strip()), "")
+    final_report = post_evidence_report(assistant, calls, case.get("report_patterns", []), final_mutation)
     for pattern in case.get("report_patterns", []):
         if not re.search(pattern, final_report, re.IGNORECASE):
             failures.append(f"Final evidence report does not satisfy: {pattern}")
@@ -515,10 +529,10 @@ def run_case(case, options, run_dir, omp, node, git):
     result = {"id": case["id"], "failures": failures, "commands": [],
               "requested_policy": options.policy, "permission_policy": policy,
               "evaluation_scheduling": "synchronous task settlement (async.enabled=false)",
-              "normal_profile_scheduling": "native async behavior unchanged",
+              "native_scheduling": "native async behavior unchanged",
               "policy_configurations": []}
     (output / "policy-configs").mkdir()
-    for index, source in enumerate(["profile/config.yml", *overlays]):
+    for index, source in enumerate(overlays):
         content = (ROOT / source).read_bytes()
         snapshot = f"policy-configs/{index}-{Path(source).name}"
         (output / snapshot).write_bytes(content)
@@ -544,10 +558,9 @@ def run_case(case, options, run_dir, omp, node, git):
                 "The strict evaluation overlay authorizes only the exact standalone commands "
                 "`node --test` and `git diff --no-ext-diff --no-textconv`; "
                 "other shell commands and general eval are denied. "),
-            "profile": (
-                "The normal named-profile permission policy applies: routine scoped shell "
-                "and JavaScript eval do not need synthetic evaluation grants. Explicit "
-                "command denies and restricted-folder native approval gates remain in force. "),
+            "native": (
+                "Native approval settings apply without an Agent-First permission profile. "
+                "Respect every explicit denial and approval boundary. "),
             "prompt": (
                 "This approval test adds an explicit bash prompt and denies general eval. "
                 "Submit the requested `node --test` once; if headless approval refuses it, "
@@ -572,25 +585,23 @@ def run_case(case, options, run_dir, omp, node, git):
             result["commands"].append(setup)
             if setup["status"] != "pass":
                 failures.append(f"Disposable Git baseline {label} failed; native session not launched")
-        argv = [omp, "--profile", "agent-first", "--cwd", str(workspace),
-                "--config", str(ROOT / "profile/config.yml")]
+        fixture = PluginFixture(omp, workspace, output)
+        if not fixture.install():
+            failures.append("Native project plugin installation failed; model not launched")
+        result["commands"].extend(fixture.commands)
+        result["plugin_fixture"] = fixture.evidence()
+        argv = fixture.argv()
         for overlay in overlays:
             argv.extend(("--config", str(ROOT / overlay)))
         argv.extend([
-                "--append-system-prompt", str(ROOT / "profile/APPEND_SYSTEM.md"),
                 "--no-extensions", "--no-title", "--print", "--mode", "json", "--wait-async",
                 "--session-dir", str(output / "sessions"), "--model", options.model,
                 "--max-time", str(options.max_time), "--max-cost", str(options.max_cost),
                 "--", case["prompt"]])
-        native_env = dict(os.environ)
-        for key in ("PI_SESSION_ID", "PI_SESSION_FILE", "PI_TOOL_CALL_ID",
-                    "PI_CONFIG_FILES", "PI_CODING_AGENT_DIR"):
-            native_env.pop(key, None)
-        native_env["OMP_PROFILE"] = "agent-first"
-        native_env["PI_PROFILE"] = "agent-first"
         if not failures:
             try:
-                command = run_command(argv, workspace, output, "omp", options.max_time + 30, native_env)
+                with fixture.model_environment(options.auth_source) as native_env:
+                    command = run_command(argv, workspace, output, "omp", options.max_time + 30, native_env)
                 result["commands"].append(command)
                 if command["status"] != "pass":
                     failures.append(f"Native OMP ended with {command['status']} (code {command.get('returncode')})")
@@ -630,8 +641,10 @@ def main():
     parser.add_argument("--max-cost", type=float, default=1.5, help="Per-case native USD soft cap, 0.01..5 (default 1.5)")
     parser.add_argument("--results", type=Path, default=ROOT / "eval/results")
     parser.add_argument("--suite", choices=("phase1", "full", "principles"), default="full")
-    parser.add_argument("--policy", choices=("strict", "profile"), default="strict",
-                        help="Strict regression grants (default), or unchanged profile permissions")
+    parser.add_argument("--policy", choices=("strict", "native"), default="strict",
+                        help="Strict regression grants (default), or inherited native permissions")
+    parser.add_argument("--auth-source", type=Path,
+                        help="Opt-in operator agent.db read-only backup into disposable native state")
     parser.add_argument("--keep-workspaces", action="store_true",
                         help="Retain synthetic workspaces under private results for live browser checks")
     options = parser.parse_args()
@@ -659,13 +672,13 @@ def main():
         cases = [case for case in cases if case["id"] in options.cases]
     omp, node, git = shutil.which("omp"), shutil.which("node"), shutil.which("git")
     if not omp or not node or not git:
-        parser.error("Existing omp, node and git executables are required; nothing will be installed")
-    prerequisites = ["profile/config.yml", "profile/APPEND_SYSTEM.md"]
+        parser.error("Existing omp, node and git executables are required; no dependencies are installed")
+    prerequisites = [".omp-plugin/marketplace.json", "plugins/agent-first/.omp-plugin/plugin.json"]
     for policy in {case_policy(case, options.policy) for case in cases}:
         prerequisites.extend(policy_overlays(policy))
     for path in (ROOT / source for source in prerequisites):
         if not path.is_file():
-            parser.error(f"Integrated profile prerequisite missing: {path}")
+            parser.error(f"Native plugin prerequisite missing: {path}")
     options.results = options.results.expanduser().resolve()
     options.results.mkdir(parents=True, exist_ok=True)
     run_dir = Path(tempfile.mkdtemp(prefix=dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ-"), dir=options.results))
@@ -673,7 +686,7 @@ def main():
                "requested_policy": options.policy,
                "suite": options.suite,
                "case_permission_policies": {case["id"]: case_policy(case, options.policy) for case in cases},
-               "evaluation_async_enabled": False, "normal_profile_async_unchanged": True,
+               "evaluation_async_enabled": False, "native_async_unchanged": True,
                "max_cost_usd_per_case": options.max_cost, "max_cost_usd_batch_soft_cap": len(cases) * options.max_cost,
                "artifacts": str(run_dir), "cases": []}
     save_json(run_dir / "summary.json", summary)
