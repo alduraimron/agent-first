@@ -5,13 +5,13 @@ description: Evidence-based verification of fixes, features, designs, reviews, r
 
 # Evidence-based verification
 
-Apply the shared Agent-First RULES.md, including AUTO/ASK/DENY scope, native prompts/denies, child scope, browser backend and dependency authorization. This execution procedure is for main; an advisory child may recommend checks but cannot perform them. Before an ASK operation use `approval.md`; ordinary installed checks remain AUTO.
+Apply shared RULES.md's minimal AUTO/ASK/DENY boundary, native prompts/denies, advisory scope and browser limits. This procedure is for main; advisors recommend checks but do not execute them. Use `approval.md` for high-risk effects. Ordinary checks and scoped task-required project dependencies are AUTO; missing global/runtime capabilities remain protected rather than triggering repeated routine questions.
 
 Read `skill://af-principles` if not already read, including verification-only or denied-check requests. Before a completion or blocked-check report, read `skill://principle-prove-it-works` in full unless already read. Select other triggered lenses through the selector, such as behavior-not-implementation for test oracles and explain-the-number for quantitative claims. Leaves guide the evidence decision; this skill remains the verification and final-report procedure.
 
 ## Establish the verification target
 
-Map every acceptance criterion and adopted constraint to observable evidence. Inspect project instructions, manifests, tests and CI; use installed project tools and existing conventions. Consult `checks.md` for the relevant static/type/lint/build, testing/debugging, API/database, security, performance, and deployment branches. For UI work, use `browser.md` before the actual Tern flow. Load the matching engineering skill when domain uncertainty affects check design.
+Map every acceptance criterion and adopted constraint to observable evidence. Inspect project instructions, manifests, tests and CI; prefer installed tools and existing conventions, resolving task-required project dependencies under RULES.md when needed. Consult `checks.md` for relevant static/type/lint/build, testing/debugging, API/database, security, performance and deployment branches. Use `browser.md` before the actual Tern flow. Load a domain skill only when uncertainty affects check design.
 
 Select the smallest set covering the change and affected consumer path. Existing failure/user reports are repro evidence, not a reason to rerun unchanged failures. Add a regression only when current coverage misses the consumer-visible bug. Separate source inspection from runtime/measurement proof; identify any required but unavailable check before execution.
 

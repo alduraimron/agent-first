@@ -11,9 +11,9 @@ Use `af-principles` only for an actual isolation decision, such as independently
 
 ## Opt in and capture scope
 
-1. Require an explicit request for isolation or obtain approval for the concrete source directory and experiment. Identify the source, native checkout name, intended change, permitted commands, verification, and retention/cleanup owner. Resolve project scripts and dependency/runtime availability first; opening an environment must not authorize provisioning.
+1. Require explicit isolation opt-in or approval for the concrete source and experiment. Identify source, checkout name, intended change, permitted commands, verification and retention/cleanup owner. Resolve project scripts and runtime availability first. Task-required project dependencies follow RULES.md inside the verified checkout; opening an environment does not authorize unrelated/global provisioning.
 2. Check installed `ovnfs version` and command help when the installed interface differs. No installation, update, remote `send`/`attach`, daemon-wide configuration, or unrelated checkout cleanup is implied.
-3. Inspect repository policy/configuration for setup commands and source/cache/secret rules. A checkout may expose ignored files, credentials, shared caches, sockets, host processes, network, and paths outside its mount. If source policy could execute setup/install steps or reach unauthorized data, stop for a specific decision before checkout creation. Isolation is not a trust boundary.
+3. Inspect repository setup scripts and source/cache/secret rules. A checkout may expose ignored files, credentials, shared caches, sockets, host processes, network and outside paths. Task-required project dependency setup follows RULES.md only within verified scope; global/unrelated provisioning, unauthorized access or unknown setup effects require a specific decision before checkout creation. Isolation is not a trust boundary.
 
 ## Create, work, inspect
 
