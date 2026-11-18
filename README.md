@@ -4,7 +4,7 @@ A reusable personal engineering environment built from native OMP profiles, skil
 
 ## One-time setup
 
-Prerequisites: existing OMP, Python 3.9+, a configured default model and authorized model access. Git projects need existing Git. Tern is used for browser work; optional isolation needs existing OVNFS. Full SQLite evaluations need Node 24+, while original evaluations need Node 18+. No dependencies are installed or updated.
+Prerequisites: existing OMP, Python 3.9+, a configured default model and authorized model access. Git projects need existing Git. Tern is used for browser work; optional isolation needs existing OVNFS. Full SQLite evaluations need Node 24+, while original evaluations need Node 18+. Setup installs or updates no dependencies.
 
 From this checkout at a stable path:
 
@@ -130,7 +130,7 @@ Resume file paths must exist inside the named profile. If a session is unavailab
 
 ## Verification and approvals
 
-Main selects installed project checks for relevant static/type/lint/build, regression/integration/consumer, API/database, security, performance, deployment, and browser/accessibility boundaries. Reports use **PASS**, **FAIL**, **NOT-RUN**, and **NOT-APPLICABLE**, with exact command/cwd/result, real runtime evidence, uncovered requirements, and remaining risks. Missing dependencies and denied checks are NOT-RUN, not success or irrelevance.
+Main verifies the exact project, runtime, database, Docker endpoint/volumes or remote target before effects, then selects relevant static/type/lint/build, regression/integration/consumer, API/database, security, performance, deployment and browser/accessibility checks. Reports use **PASS**, **FAIL**, **NOT-RUN**, and **NOT-APPLICABLE**, with exact command/cwd/result, real runtime evidence, uncovered requirements, and remaining risks. Unavailable dependencies or denied checks are NOT-RUN, not success or irrelevance.
 
 Browser checks use the existing native eval browser API inside Tern: preflight the existing host, observe, act through the UI, inspect resulting state/errors, exercise keyboard/semantic checks, and capture visual proof. Confirm the actual native backend; unsupported/manual assistive-technology and browser capabilities remain gaps. No fallback engine installation or fallback acceptance is authorized. Native Tern hosting can fall back to an owned engine, so this procedure is not a native fail-closed or no-download guarantee.
 
@@ -138,9 +138,13 @@ Browser checks use the existing native eval browser API inside Tern: preflight t
 
 | Decision | Scope |
 | --- | --- |
-| AUTO | Routine scoped inspection/content editing, trusted installed checks/debugging/server lifecycle, readonly consultation and authorized Tern/local runtime checks |
-| ASK | Ordinary Git mutation/publication and fetch/pull/clone, installation/provisioning, scoped deletion/permission changes, reviewed transfers/remote commands, Docker mutations, deploy/infrastructure, reviewed sudo/doas and OVNFS apply including dry-run |
-| DENY | System destruction, force push/destructive remote deletion, credential/auth management or known credential transmission, OMP permission/config management, unauthorized active configuration changes and policy bypass |
+| AUTO | Scoped inspection/content edits and ordinary authorized obsolete/generated-file cleanup; checks/debugging/owned services, readonly advisors and Tern; scoped project dependencies/pinned runners, workspace downloads without script execution, local owned Docker development without persistent-volume deletion, and normal Git operations subject to Git guards |
+| ASK | Recursive/mass/data-loss deletion; hard Git reset/clean/discard, branch/stash/worktree deletion or history rewrite; global/system installs or settings, privilege/services, SSH/transfers, cloud/deploy/infrastructure, package/container publication, Docker volume deletion/prune/remote contexts/cluster operations, destructive database utilities and OVNFS integration/discard |
+| DENY | Existing system/disk destruction, force/destructive remote history, credential transmission/control/auth bypass, protected configuration and tool denies; semantic equivalents remain forbidden through wrappers, eval or children |
+
+Ordinary requested Git commit/push, project dependency changes, downloads and Docker development do not need repeated native prompts. Main commits or pushes **only on explicit user instruction**, never automatically and never by proactively asking after every ordinary task. Ordinary Git add/fetch/pull/clone/merge/cherry-pick/revert/branch creation/stash save/apply/pop/switch remain subject to independent guards; force/destructive operations do not become AUTO.
+
+Native patterns are coarse spelling checks, not scope or production classifiers. Ambiguous `git checkout`/`restore`, cloud/remote tooling, global installers, privilege and integration families can still prompt harmless variants. Uncertain scope or an unmatched high-risk helper without a reliable native per-operation gate stays operator-only, not executable through another tool. Production/destructive migration effects require precise authorization even when no pattern recognizes them.
 
 YOLO honors explicit native prompts and denies; stronger Git guards and restricted-folder gates remain. ASK refuses without an interactive approval UI, including headless sessions; leave the dependent action pending and continue independent safe work without retrying through another tool. For bounded ordinary headless work:
 
@@ -159,8 +163,8 @@ Safety defaults:
 - Known native additive project tools and agent-shadowing definitions are refused. Existing project instructions remain loaded; native profile isolation does not isolate every external configuration source.
 - Readonly advisors remain headless. Child native tiers also use yolo, but explicit prompts fail closed without an approver and denies/advisory scope still apply. The bundled reviewer has broader native metadata than its advisory scope; actual activity matters.
 - Restricted folders gate path-tool targets, including symlink resolution, but gate shell/eval/browser by cwd rather than paths embedded in code. Ordered command patterns are not arbitrary-code inspection.
-- Configuration ownership and credential/exfiltration restrictions include behavioral semantic denies, not a native per-path policy or network firewall. Scoped deletion requires resolved source/ancestors, symlink inspection and inventory; command patterns cannot prove arbitrary path containment. Local edit removal operations have no separate native gate: whole-file/directory deletion must use scoped native bash with approval, not edit REM, eval or scripts. Authorized line-level content edits remain AUTO.
-- Shell, eval, browser runtimes and trusted project scripts retain ambient filesystem/network/process authority. Inspect script definitions and bootstrap behavior before execution; tests/builds can fetch packages themselves. Use installed/cached/vendor/offline execution where appropriate and stop for missing dependencies. Never use code, wrappers or children to bypass policy. Neither profiles nor OVNFS provide OS containment. Use trusted personal projects, not hostile repositories.
+- Configuration ownership and credential/exfiltration restrictions include behavioral semantic denies, not native per-path policy or a firewall. Resolve literal project targets/ancestors, symlinks, ownership and user changes before cleanup. Ordinary authorized obsolete-file edits/removals or nonrecursive cleanup are AUTO; recursive/mass/valuable-data deletion is ASK. Native edit has no deletion-only gate: never use edit REM/eval/scripts to replace a high-risk gated or refused effect. Existing absolute-path rm/chmod/chown denies remain.
+- Shell, eval, browser runtimes, project dependencies and scripts retain ambient filesystem/network/process authority. Dependency install/update/removal is autonomous only within a verified trusted project (including a project venv for pip); inspect lifecycle scripts, bootstrap behavior, target and pinned runners. Downloads do not authorize executing downloaded scripts. Do not automatically install unrelated tools, global runtimes, analysis backends or browsers. Use installed/cached/vendor/offline execution where appropriate; report unavailable verification honestly. Never use wrappers or children to bypass policy. Native tool grants are not a sandbox; neither profiles nor OVNFS provide OS containment.
 
 ## Optional OVNFS
 
@@ -172,6 +176,9 @@ Integration needs exact patch/source review, source-concurrency checks and a rec
 
 ```sh
 python3 -B eval/check_environment.py
+# Optional preservation comparison with a retained pre-change capture:
+python3 -B eval/check_environment.py --baseline /absolute/private/baseline.json
+(cd eval && python3 -B -m unittest test_policy_patterns test_ask_policy)
 python3 -B eval/check_cli.py --native
 python3 -B eval/check_controlled_yolo.py --model PROVIDER/MODEL
 python3 -B eval/check_ask_policy.py --model PROVIDER/MODEL
@@ -193,7 +200,7 @@ The sequential native-session harness evaluates natural prompts and actual task/
 
 Historical verification covers thirteen scenarios across explicit runs and two authorized models, all eight routes, the six advisors plus bundled reviewer, actual Tern interaction, and approved disposable OVNFS apply/restore/cleanup under the earlier policy. It is not a clean single-model full-suite result or evidence for the current YOLO policy; native reviewer timeouts and recovered tool/schema errors remain documented.
 
-Current policy evidence belongs in [Ask-policy validation](eval/ask-policy-validation.md). The adapted controlled-YOLO probe separates headless ASK refusals from hard DENY rejections; the focused ASK probe checks live native RPC approval state and actual disposable `rmdir` effects, not direct operator RPC bash. Commands listed here are not passing results. [Principles validation](eval/principles-validation.md), [Controlled YOLO validation](eval/controlled-yolo-validation.md), [historical full validation](eval/full-validation.md) and [Phase 1 history](eval/validation.md) retain their original scope and failures. See also [evaluation instructions](eval/README.md), [architecture](docs/architecture.md), [correction ledger](docs/corrections.md), and [improvement backlog](docs/backlog.md). The ledger records recurrence, root cause, smallest correction placement and actual validation; it does not automatically rewrite global policy after one failure.
+Current observations belong in [Minimal-ASK validation](eval/minimal-ask-validation.md). The controlled-YOLO probe distinguishes ordinary native AUTO help probes, headless ASK refusals and hard DENY rejections; the interactive probe checks live native RPC approval and disposable `rm -r -- approved-empty` / `rm -r -- denied-empty` effects, not direct operator RPC bash. Commands listed here are not passing results. [Ask-policy validation](eval/ask-policy-validation.md), [Principles validation](eval/principles-validation.md), [Controlled YOLO validation](eval/controlled-yolo-validation.md), [full validation](eval/full-validation.md) and [Phase 1 history](eval/validation.md) retain their historical scopes and failures, not current minimal-ASK evidence. See also [evaluation instructions](eval/README.md), [architecture](docs/architecture.md), [correction ledger](docs/corrections.md), and [improvement backlog](docs/backlog.md).
 
 Interaction-package checks, adaptations and retained results belong in [Interaction validation](eval/interaction-validation.md). The focused interaction probe checks actual full leaf reads and source-grounded responses, no changes for read-only requests, explicitly scoped artifact writes, and ordinary implementation/review routing. Its 23 supplied scenarios are candidate evaluations, not a claim that every scenario or model was tested.
 
@@ -207,7 +214,7 @@ profile/skills/             # 11 original skills + 2 selectors + 44 leaves; 8 wo
 eval/{run.py,check_environment.py,check_cli.py,check_controlled_yolo.py,check_ask_policy.py,check_principles.py,check_interactions.py,browser-check.mjs}
 eval/{cases.json,extended-cases.json,ui-case.json,principle-cases.json,principle-expectations.json,interaction-scenarios.json}
 eval/{config.yml,profile.yml,prompt-check.yml}
-eval/{README.md,interaction-validation.md,ask-policy-validation.md,principles-validation.md,controlled-yolo-validation.md,validation.md,full-validation.md}
+eval/{README.md,minimal-ask-validation.md,interaction-validation.md,ask-policy-validation.md,principles-validation.md,controlled-yolo-validation.md,validation.md,full-validation.md}
 eval/results/              # Private, gitignored execution evidence
 docs/{architecture.md,skills-catalog.md,implementation-plan.md,corrections.md,backlog.md}
 ```
