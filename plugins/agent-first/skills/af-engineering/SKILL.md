@@ -5,48 +5,47 @@ description: Route code/configuration changes, defect investigation/review and n
 
 # Adaptive engineering
 
-Apply shared `rule://agent-first-shared`. This router serves the main session; advisors use the relevant domain procedure and their own read-only contract.
+Apply `rule://agent-first-shared`. This router serves main; advisors use their domain skill and read-only contract.
 
-## Non-implementation request boundary
+## Interaction boundary
 
-Use `skill://af-interaction` for explanation, learning, interviews, ideation, historical rationale, context catch-up, prose refinement, documentation-only authoring/edits or existing-evidence reports. In particular, a README file edit uses `interaction-technical-writing`; inspecting a diff to explain what changed or what previously passed uses `interaction-show-me-your-work`, not verification-only quick-change. Executing new checks remains engineering verification. An explicit defect assessment remains `code-review`; diagnosis of uncertain faulty behavior remains `bug-investigation`. Mixed requests use interaction skills for needed discovery, then route the authorized engineering outcome here. Clear tasks need no interview or teaching ceremony.
+Use `skill://af-interaction` for explanation, learning, interviews, ideation, rationale, catch-up, prose refinement, docs-only edits (e.g., README/ADR -> `skill://interaction-technical-writing`) or existing-evidence reports (e.g., diff/test summaries -> `skill://interaction-show-me-your-work`). Running new checks, defect diagnosis (`bug-investigation`), defect assessment (`code-review`) and code/config changes stay here. Mixed requests complete needed discussion first, then route authorized engineering here. Clear tasks need no interview ceremony.
 
 ## Route from evidence
 
-1. Inspect the request, affected code, immediate callers, and existing commands. Identify observable intent, complexity, risk, and architectural impact. File count is not a classifier.
-2. Start the first visible prose with the selected row's exact literal prefix below, followed by a concise rationale covering intent, complexity, risk and architectural impact. Inspection tools may precede it. Verification-only and blocked requests still have a route; if the final report is the first prose, put the prefix there. Choose the smallest adequate procedure automatically, without asking the user to choose.
-3. Read the selected procedure before acting. Reclassify visibly when evidence changes the route. Architecture-impacting takes precedence over implementation routes when changing ownership, public contracts, persistence/schema design, trust boundaries, dependency direction, or cross-cutting design. Investigation and review remain read-only unless modification is authorized.
-4. After relevant inspection, read `skill://af-principles`, select by the actual decision triggers, and read the selected leaves before applying them. Reassess when evidence changes. Use the selector's proportionality guidance rather than loading a fixed bundle for each route.
+1. Inspect the request, affected code, immediate callers and existing commands. Classify by intent, complexity, risk and architectural impact—never file count alone.
+2. Start the **first visible prose** (including final or blocked-work reports) with the exact kebab-case literal prefix from the table below—never paraphrase it (e.g., `Workflow: quick-change`, not `Workflow: quick fix`)—followed by a brief rationale. Inspection tools may precede it.
+3. Read the selected workflow procedure before acting. Reclassify visibly if evidence changes. `architecture-impacting` takes precedence whenever ownership, public contracts, persistence/schema, trust boundaries or dependency direction change. Investigation and review remain read-only unless edits are authorized.
+4. After inspection, read `skill://af-principles` and only decision-triggered leaves before applying them (reassess if facts change). Keep trivial work lightweight.
 
-| Intent | Route and procedure |
+| Intent | Exact literal prefix and procedure |
 | --- | --- |
-| Local understood low-risk edit; verification-only request | `Workflow: quick-change`: [procedure](skill://af-engineering/workflows/quick-change.md) |
-| Add behavior within existing boundaries | `Workflow: feature-development`: [procedure](skill://af-engineering/workflows/feature-development.md) |
-| Change an architectural boundary or contract | `Workflow: architecture-impacting`: [procedure](skill://af-engineering/workflows/architecture-impacting.md) |
-| Initialize a personal project or recover missing project setup | `Workflow: project-initialization`: [procedure](skill://af-engineering/workflows/project-initialization.md) |
-| Explain or fix unexpected behavior with an uncertain cause | `Workflow: bug-investigation`: [procedure](skill://af-engineering/workflows/bug-investigation.md) |
-| Restructure code while preserving behavior and boundaries | `Workflow: refactoring`: [procedure](skill://af-engineering/workflows/refactoring.md) |
-| Assess a patch or code for defects without implementing | `Workflow: code-review`: [procedure](skill://af-engineering/workflows/code-review.md) |
-| Measure or improve latency, throughput, resource use, or scalability | `Workflow: performance-optimization`: [procedure](skill://af-engineering/workflows/performance-optimization.md) |
+| Local understood low-risk edit; verification-only request | `Workflow: quick-change` — [procedure](skill://af-engineering/workflows/quick-change.md) |
+| Add behavior within existing boundaries | `Workflow: feature-development` — [procedure](skill://af-engineering/workflows/feature-development.md) |
+| Change an architectural boundary or contract | `Workflow: architecture-impacting` — [procedure](skill://af-engineering/workflows/architecture-impacting.md) |
+| Initialize a personal project or recover missing project setup | `Workflow: project-initialization` — [procedure](skill://af-engineering/workflows/project-initialization.md) |
+| Explain or fix unexpected behavior with an uncertain cause | `Workflow: bug-investigation` — [procedure](skill://af-engineering/workflows/bug-investigation.md) |
+| Restructure code while preserving behavior and boundaries | `Workflow: refactoring` — [procedure](skill://af-engineering/workflows/refactoring.md) |
+| Assess a patch or code for defects without implementing | `Workflow: code-review` — [procedure](skill://af-engineering/workflows/code-review.md) |
+| Measure or improve latency, throughput, resource use or scalability | `Workflow: performance-optimization` — [procedure](skill://af-engineering/workflows/performance-optimization.md) |
 
-## Requirements and proportional planning
+## Requirements, domain skills and planning
 
-Before implementation, translate each requested outcome into an observable acceptance criterion, including relevant failure cases, compatibility, and non-goals. Separate facts from unresolved intent; inspect repository evidence before asking about the latter. A trivial task needs a narrow check, not a formal plan. Multi-step work needs an ordered path from entry point through dependencies to consumer-visible behavior, with a check for every criterion and explicit blockers.
+Translate each requested outcome into observable acceptance criteria (failure paths, compatibility, non-goals) before editing. Inspect repo facts before asking questions. Trivial tasks need a narrow check, not a formal plan; multi-step work needs an ordered path to consumer-visible behavior with a check per criterion.
 
-Use `skill://af-context` when meaningful work needs durable requirements, decisions, recovery, or handoff. Load domain procedures only for touched concerns: `af-design` for boundaries/APIs; `af-database` for data; `af-frontend` for UI; `af-testing` for diagnosis/tests; `af-security` for trust; `af-performance` for measurement; `af-operations` for runtime delivery. Main owns edits and verification through `skill://af-verification`; shared safety and reporting remain in `rule://agent-first-shared`.
+Load `skill://af-context` only when durable task/decision/recovery records matter. Load touched domain skills on demand: `af-design`, `af-database`, `af-frontend`, `af-testing`, `af-security`, `af-performance`, `af-operations`. Main owns edits and verification via `skill://af-verification`.
 
 ## Proportional consultation
 
-Trivial quick changes have no delegation. Consult only for a material domain question or uncertainty, or an explicit request for independent domain assessment: `af-architect` for architecture, `af-database` for persistence, `af-security` for trust, `af-frontend` for UI/accessibility, `af-performance` for measured bottlenecks, `af-devops` for deployment/observability. Architecture-impacting requires actual returned architect advice before affected implementation. Other consultations are conditional, not a six-agent checklist. Keep at most two concurrent consultations, recursion one, and no child spawning.
-
-Supply the specific question, scope/non-goals, paths, observed evidence, acceptance criteria, alternatives, constraints, and requested advisory output. Follow `rule://agent-first-shared`'s principle handoff for relevant selected leaves; children must read them themselves. Use native `task` with the exact `agent` name. Omit per-task `tools` or leave it empty: it forwards eval functions, not built-in permissions. Agent frontmatter controls built-ins. Preserve native output schemas. Evaluate returned advice against source evidence and document adoption or rejection with reasons; an announced delegation is not consultation.
+- Trivial quick changes: **no delegation**.
+- Consult only for material domain uncertainty or explicit requests for independent assessment: `af-architect`, `af-database`, `af-security`, `af-frontend`, `af-performance`, `af-devops`. `architecture-impacting` **requires** returned `af-architect` advice before affected edits; other consultations are conditional, not a checklist. Max 2 concurrent, depth 1, no child spawning.
+- Dispatch via native `task` with exact `agent` name. Omit per-task `tools` (or leave empty): it forwards eval functions, not built-in permissions (frontmatter controls built-ins).
+- Provide: concrete question, scope/non-goals, paths, observed facts, acceptance criteria, constraints, and exact `Principles:` handoff from `skill://af-principles` (exact catalog URIs or justified `none`). Children must read assigned leaves and cited source themselves. Main evaluates advice against source evidence before adopting or rejecting it.
 
 ## Bundled reviewer protocol
 
-Use native `reviewer` for a concrete independent-review question such as migration/data loss, authorization, concurrency, or compatibility risk, or when independent review is explicitly requested; routine edits do not require it. For an implemented authorization, private cross-tenant isolation, destructive migration, or shared-state concurrency invariant whose failure exposes or corrupts data, obtain a bundled review of the actual completed patch before declaring completion. Pre-implementation architect/security advice does not inspect the later patch.
+Use native `reviewer` for concrete independent risk (migration/data loss, authorization, concurrency, compatibility) or explicit review requests—not routine edits. **Mandatory** after implementation (before claiming completion) whenever changes affect authorization, private tenant isolation, destructive migration or shared-state concurrency invariants whose failure exposes or corrupts data; pre-design advice does not substitute for patch review.
 
-Before a patch-review task, main obtains the actual diff with `git diff --no-ext-diff --no-textconv` and reads new-file content that Git omits. Include that verbatim diff and new-file content in the task context, not a prose summary labeled "actual patch". For a source-only review, supply the complete scoped source instead. Do not dispatch with missing review inputs and expect the reviewer to run Git to recover them; collect the inputs first or report the unavailable evidence.
-
-State in the reviewer assignment that its inspection tools are `read`, `grep` and `glob`, with native `yield` only if actually provided, under `rule://agent-first-shared`. The supplied patch/source replaces its native Git-command procedure. Require relevant complete source and immediate-contract inspection before advice; a verdict-only response is incomplete. Main evaluates findings and verifies resulting edits. This is a procedural scope constraint, not a change to the bundled reviewer's native metadata.
-
-Honor the operator's native task output mode. OMP 18.22.1's bundled reviewer declares an output schema but does not itself opt into structured tasks. When `yield` is available, preserve that schema: each `type: ["findings"]` yield contains one finding object, not an array; request a terminal yield without `type`, whose `data` contains `overall_correctness`, `explanation` and `confidence`, without repeating findings. Otherwise request inspected findings and a concise correctness verdict in its final response, not calls to an unavailable tool. Never enable `task.structured`, replace the schema or clone the reviewer to force a mode. Main resolves substantive findings or records evidence for rejecting them; absence of findings is not verification.
+1. **Supply verbatim inputs:** Collect `git diff --no-ext-diff --no-textconv` plus full content of untracked/new files (or complete scoped source for source-only review) and include them literally in task context—never a prose summary, and never expect `reviewer` to run Git.
+2. **State explicit read-only scope & handoff:** Instruct `reviewer` to use only `read`, `grep`, `glob` (plus `yield` only if actually provided) under `rule://agent-first-shared`, include exact `Principles:` URIs, and require reading cited source and assigned leaves before advising (a verdict-only reply without own inspection is incomplete).
+3. **Honor native output mode:** In OMP 18.22.1, `reviewer` declares a schema without opting into `structured: true`. If `yield` is available, preserve its schema: one finding object per `type: ["findings"]` yield (never an array), then a terminal yield without `type` containing `{overall_correctness, explanation, confidence}`. Otherwise request inspected findings and a concise verdict in its final response. Never enable `task.structured`, replace its schema or clone `reviewer`. Main resolves or documents disposition of every substantive finding; absence of findings is not verification.

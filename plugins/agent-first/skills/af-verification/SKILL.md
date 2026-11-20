@@ -5,45 +5,39 @@ description: Evidence-based verification of fixes, features, designs, reviews, r
 
 # Evidence-based verification
 
-Apply `rule://agent-first-shared`, effective native permissions, advisory scope and browser limits. Main executes verification; advisors recommend checks only. Use `approval.md` when authorization or a native gate affects execution. This plugin grants no tool permissions and assumes no particular approval mode.
+Apply `rule://agent-first-shared`. Main executes checks; advisors only recommend them. Consult `approval.md` when authorization or native gates apply, `checks.md` for boundary-specific checks and `browser.md` before Tern flows.
 
-Read `skill://af-principles` if not already read, including verification-only or denied-check requests. Before a completion or blocked-check report, read `skill://principle-prove-it-works` in full unless already read. Select other triggered lenses through the selector, such as behavior-not-implementation for test oracles and explain-the-number for quantitative claims. Leaves guide the evidence decision; this skill remains the verification and final-report procedure.
+## Mandatory pre-report principle gate
 
-## Establish the verification target
+Before **any** engineering completion, verification-only or blocked-check report:
+1. `read` `skill://af-principles` (if not already read).
+2. `read` `skill://principle-prove-it-works` **in full** (if not already read).
+3. Load additional triggered leaves only when relevant (e.g., `test-behavior-not-implementation` for test oracles, `explain-the-number` for measurements).
 
-Map every acceptance criterion and adopted constraint to observable evidence. Inspect project instructions, manifests, tests and CI; prefer installed tools and existing conventions, resolving task-required project dependencies under `rule://agent-first-shared` when needed. Consult `checks.md` for relevant static/type/lint/build, testing/debugging, API/database, security, performance and deployment branches. Use `browser.md` before the actual Tern flow. Load a domain skill only when uncertainty affects check design.
+## Select and execute checks
 
-Select the smallest set covering the change and affected consumer path. Existing failure/user reports are repro evidence, not a reason to rerun unchanged failures. Add a regression only when current coverage misses the consumer-visible bug. Separate source inspection from runtime/measurement proof; identify any required but unavailable check before execution.
-
-Complete selection when every acceptance criterion has a check or an explicit reason it cannot be exercised with the installed, authorized capabilities.
-
-## Execute and observe
-
-1. Run the selected permitted commands in the main session, recording the exact tool arguments, working directory, exit/result status, and relevant output. Finite checks use ordinary execution without service `name` or `ready` metadata; service readiness is not test completion. Attribute each result only to that actual command: a pre-execution argument error or failed inspection is not an executed test. Approval denied, missing dependency, timeout, and interrupted execution are not passes. Preserve failures instead of replacing them with success-shaped summaries.
-2. Exercise the actual changed entry point: the CLI, API, application flow, or other consumer path. Compare the observed result to the acceptance criterion. Source text, a proposed command, a mock-only test, or a child recommendation does not establish runtime success.
-3. For UI behavior follow `browser.md` and the shared browser boundary: actual Tern backend, owned tab/runtime, observe/action/result, relevant keyboard/accessibility/error evidence and screenshot. Scripts may inspect the page, not manufacture successful state. State unsupported/manual checks as gaps.
-4. Diagnose failed checks, make the relevant main-agent correction, and repeat the affected checks when code or conditions change. Resolve reviewer findings with the same evidence standard. Distinguish a known unrelated failure from a pass and explain the evidence for that distinction.
-5. Release only resources created for this task, preserving useful evidence before disposable workspace cleanup. Stop once the acceptance criteria are covered; do not add unrelated audits.
-
-A check completes only when its real result is available. If a required check cannot run, finish independent reachable work and retain that check as unverified with its precise blocker.
+1. **Map criteria to smallest falsifying checks:** Inspect manifests, tests and CI; prefer installed project commands. Use existing user reports/failing tests as repro—do not rerun unchanged failures just to confirm them. Add a regression only when current coverage misses the consumer-visible bug.
+2. **Run finite checks cleanly:** Execute permitted commands in main and record exact args, cwd, exit/status and key output. Finite commands must **not** pass service `name` or `ready` metadata (service readiness is not test completion). Pre-execution argument errors, denials, timeouts and missing dependencies are `NOT-RUN`, never `PASS` or `FAIL`.
+3. **Exercise the real boundary:** Run the actual changed CLI, API or UI flow—source reads, proposed commands, mock-only tests and advisor reports do not prove runtime behavior. For UI, follow `browser.md` with actual Tern backend and owned tab/runtime; never manufacture page state.
+4. **Fix, recheck and clean up:** Re-run affected checks after edits or reviewer-driven fixes. Separate known unrelated failures from passes with evidence. Stop/close only resources created for this task (retaining artifacts first), then stop once acceptance criteria are covered. If a required check is blocked, finish independent reachable work and report the exact blocker.
 
 ## Outcome semantics
 
-- **PASS**: the actual relevant check completed successfully on the recorded source/input/environment.
-- **FAIL**: an executed check failed its expectation; preserve the error and any later corrected result separately.
-- **NOT-RUN**: a required/proposed check was unavailable, denied, interrupted, unsupported, or never submitted; explain which and why.
-- **NOT-APPLICABLE**: a check has no relevant target for this task; give a concrete reason. Missing tools or a denied check are not this status.
+- **PASS:** Actual relevant check completed successfully on the current code/input/environment.
+- **FAIL:** Executed check failed its expectation; preserve the failure separately from any later passing rerun.
+- **NOT-RUN:** Required/proposed check was unavailable, denied, interrupted, unsupported or unsubmitted; state why.
+- **NOT-APPLICABLE:** No relevant target for this task with a concrete reason (missing tools or denials are `NOT-RUN`, not `NOT-APPLICABLE`).
 
-Use explicit outcomes for relevant categories, including static/types/lint/build, unit/integration, API/database, security, performance, and browser/accessibility. Do not invent irrelevant work to fill a checklist. Scope a PASS to the exercised boundary, not the whole application or accessibility/security compliance.
+Scope every `PASS` strictly to the exercised boundary.
 
 ## Final evidence report
 
-Keep the handoff concise but include each field, using `none` or `not applicable` with a reason when appropriate. If this report is the first visible prose, begin with `af-engineering`'s selected row's exact route prefix and rationale before these fields.
+Keep the report concise and include all five fields (`none` or `not applicable` with reason where appropriate). If this report is the **first visible prose**, begin with the exact kebab-case `Workflow: <route>` literal from `af-engineering` plus rationale:
 
-- **Changed**: implemented behavior and important affected paths.
-- **Checks**: actual commands and cwd with PASS, FAIL, NOT-RUN, or NOT-APPLICABLE and useful observed output. Record planned/attempted/completed separately; a refusal of a different command does not establish test execution. Tie evidence to task/source state; invalidated historical results are not current passes.
-- **Runtime evidence**: entry point or browser flow exercised, expected versus observed behavior, and useful artifact references. Separate this from source-only evidence.
-- **Unverified requirements**: uncovered acceptance criteria, blocked checks, and any source-only conclusions.
-- **Remaining risks**: unresolved failures, assumptions, compatibility/security concerns, environmental limitations, and any required approval; do not hide them behind a general claim of completion. Update the task/handoff and applicable evidence/issues records using `af-context`; record a repeated correction pattern with actual validation rather than silently changing global policy.
+- **Changed:** Implemented behavior and key affected paths.
+- **Checks:** Exact commands, cwd, status (`PASS`/`FAIL`/`NOT-RUN`/`NOT-APPLICABLE`) and key output. Keep planned, attempted, rejected-before-execution and completed runs distinct; tie evidence to current code state.
+- **Runtime evidence:** Consumer entry point or browser flow exercised, expected vs observed output and artifact paths (distinct from source inspection).
+- **Unverified requirements:** Uncovered criteria, blocked checks and source-only conclusions.
+- **Remaining risks:** Unresolved failures, assumptions, compatibility/security/environment limits and pending approvals. Update `.agent-first/` via `skill://af-context` only when durable records matter.
 
-Claim completion only for outcomes supported by the evidence. When required behavior remains unverified, state that limitation directly rather than calling the implementation fully verified.
+Claim completion only for outcomes directly supported by evidence.
