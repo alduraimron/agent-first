@@ -10,7 +10,7 @@ import tempfile
 import unittest
 
 from plugin_fixture import PluginFixture, backup_database, run_command
-from run import case_policy, policy_overlays
+from run import case_policy, policy_overlays, save_json
 
 
 class PluginFixtureTests(unittest.TestCase):
@@ -138,6 +138,12 @@ class PluginFixtureTests(unittest.TestCase):
         self.assertEqual(policy_overlays('prompt'), ['eval/native.yml', 'eval/prompt-check.yml'])
         with self.assertRaises(ValueError):
             policy_overlays('profile')
+
+    def test_save_json_creates_missing_parent_directories(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / 'nested' / 'case-id' / 'result.json'
+            save_json(target, {'status': 'fail'})
+            self.assertEqual(json.loads(target.read_text()), {'status': 'fail'})
 
 
 if __name__ == '__main__':

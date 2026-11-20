@@ -2,6 +2,7 @@ import json
 import unittest
 
 from check_plugin import catalog_names, settings_values
+from check_principles import advisor_contract_valid
 
 
 class PluginEvidenceTests(unittest.TestCase):
@@ -36,6 +37,18 @@ class PluginEvidenceTests(unittest.TestCase):
     def test_missing_catalog_is_not_successful_empty_discovery(self):
         with self.assertRaises(ValueError):
             catalog_names('Instructions without a native catalog.')
+
+    def test_advisor_contract_requires_explicit_report_output_schema(self):
+        valid = ('---\nname: af-architect\ntools: [read, grep, glob]\nspawns: []\n'
+                 'structured: true\noutput:\n  properties:\n    report:\n      type: string\n'
+                 'autoloadSkills: [af-design, af-principles]\n---\n\n# Body\n')
+        missing_schema = ('---\nname: af-architect\ntools: [read, grep, glob]\nspawns: []\n'
+                          'structured: true\nautoloadSkills: [af-design, af-principles]\n---\n'
+                          '\noutput:\n  properties:\n    report:\n      type: string\n')
+        eager_leaf = valid.replace('af-principles', 'principle-prove-it-works')
+        self.assertTrue(advisor_contract_valid(valid))
+        self.assertFalse(advisor_contract_valid(missing_schema))
+        self.assertFalse(advisor_contract_valid(eager_leaf))
 
 
 if __name__ == '__main__':

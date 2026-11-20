@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import shutil
 from plugin_fixture import PLUGIN, PluginFixture
 import tempfile
@@ -35,6 +36,23 @@ SECTIONS = ('Purpose', 'Triggers', 'Decision procedure', 'Trade-offs', 'Examples
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def advisor_contract_valid(content):
+    """Require read-only tools, no spawning, index-only autoload and report JTD schema."""
+    match = re.match(r'^---\n(.*?)\n---(?:\n|\Z)', content, re.S)
+    if not match:
+        return False
+    frontmatter = match.group(1)
+    has_report_schema = bool(re.search(
+        r'(?m)^output:\s*\n  properties:\s*\n    report:\s*\n      type:\s*string\s*$',
+        frontmatter))
+    return (bool(re.search(r'(?m)^tools:\s*\[read, grep, glob\]\s*$', frontmatter))
+            and bool(re.search(r'(?m)^spawns:\s*\[\]\s*$', frontmatter))
+            and bool(re.search(r'(?m)^structured:\s*true\s*$', frontmatter))
+            and has_report_schema
+            and bool(re.search(r'(?m)^autoloadSkills:\s*\[af-[a-z-]+,\s*af-principles\]\s*$', frontmatter))
+            and 'principle-' not in frontmatter)
 
 
 def default_hashes():
@@ -91,11 +109,7 @@ def main():
         for section in SECTIONS))
     for path in (plugin / 'agents').glob('af-*.md'):
         content = path.read_text()
-        check('advisor-index-only-' + path.stem,
-              'tools: [read, grep, glob]' in content and 'spawns: []' in content
-              and 'structured: true' in content
-              and 'autoloadSkills: [' in content and ', af-principles]' in content
-              and 'autoloadSkills: [principle-' not in content)
+        check('advisor-index-only-' + path.stem, advisor_contract_valid(content))
 
     omp = shutil.which('omp')
     check('existing-omp', bool(omp))
