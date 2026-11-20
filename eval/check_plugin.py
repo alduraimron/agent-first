@@ -165,6 +165,12 @@ def main():
             other_state, _ = inspect_session(fixture, output, 'unrelated-rpc', other)
             check('uninstalled-project-has-no-agent-first-routing',
                   'Agent-First orchestration' not in str(other_state.get('systemPrompt')))
+            # A descendant without its own .omp/ or .git/ inherits the ancestor project install.
+            descendant = project / 'packages/sub-service'
+            descendant.mkdir(parents=True)
+            descendant_state, _ = inspect_session(fixture, output, 'descendant-rpc', descendant)
+            check('descendant-inherits-ancestor-project-install',
+                  'Agent-First orchestration' in str(descendant_state.get('systemPrompt')))
             # Reproduce retained-fixture nesting: a parent .omp must not capture
             # installation intended for a newly allocated child project.
             parent_registry = registry.read_bytes()
@@ -237,6 +243,31 @@ def main():
                   fixture.command('operator-yolo-install', 'plugin', 'install', '--scope', 'project', PLUGIN)['status'] == 'pass')
             record = fixture.command('operator-yolo-settings', 'config', 'get', 'tools.approvalMode', '--json')
             check('operator-yolo-inherited', json.loads((output / record['stdout']).read_text()).get('value') == 'yolo')
+            # Project-owned skills/agents shadow plugin names and operator disables remain authoritative.
+            collision = allocation / 'collision-probe'
+            (collision / '.omp/skills/af-engineering').mkdir(parents=True)
+            (collision / '.omp/agents').mkdir(parents=True)
+            shadow_skill = collision / '.omp/skills/af-engineering/SKILL.md'
+            shadow_skill.write_text('---\nname: af-engineering\ndescription: Project-owned engineering override.\n---\n\nPROJECT_OWNED_ENGINEERING_SHADOW\n')
+            shadow_agent = collision / '.omp/agents/af-architect.md'
+            shadow_agent.write_text('---\nname: af-architect\ndescription: PROJECT_OWNED_ARCHITECT_SHADOW\ntools: [read]\nspawns: []\n---\n\nProject override body.\n')
+            collision_config = collision / '.omp/config.yml'
+            collision_config.write_text('task:\n  disabledAgents:\n    - af-devops\n')
+            collision_preserved = {path: path.read_bytes() for path in (shadow_skill, shadow_agent, collision_config)}
+            fixture.workspace = collision
+            check('collision-project-install',
+                  fixture.command('collision-install', 'plugin', 'install', '--scope', 'project', PLUGIN)['status'] == 'pass')
+            record = fixture.command('collision-skill-read', 'read', 'skill://af-engineering')
+            check('project-skill-keeps-bare-name-on-collision',
+                  record['status'] == 'pass' and 'PROJECT_OWNED_ENGINEERING_SHADOW' in (output / record['stdout']).read_text())
+            collision_state, _ = inspect_session(fixture, output, 'collision-rpc', collision)
+            collision_roster = json.dumps(collision_state.get('dumpTools', []))
+            check('project-agent-shadows-plugin-advisor', 'PROJECT_OWNED_ARCHITECT_SHADOW' in collision_roster)
+            check('operator-disabled-agent-honored', 'af-devops' not in collision_roster and 'af-security' in collision_roster)
+            check('collision-project-uninstall',
+                  fixture.command('collision-uninstall', 'plugin', 'uninstall', '--scope', 'project', PLUGIN)['status'] == 'pass')
+            check('collision-project-overrides-byte-preserved',
+                  all(path.read_bytes() == content for path, content in collision_preserved.items()))
             result['fixture'] = fixture.evidence()
         except Exception as error:
             check('lifecycle-completed', False, f'{type(error).__name__}: {error}')
