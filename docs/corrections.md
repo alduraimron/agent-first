@@ -1,6 +1,6 @@
 # Agent-First correction ledger
 
-This is the system's evidence-backed correction record, not an automatically applied policy or a claim that every model run passed. Shared policy remains in `profile/RULES.md`; procedures belong to their skills. Project-specific learning belongs in `.agent-first/corrections.md` using `af-context`.
+This is the system's evidence-backed correction record, not an automatically applied policy or a claim that every model run passed. Shared behavioral policy lives in [agent-first-shared.md](../plugins/agent-first/rules/agent-first-shared.md) (`rule://agent-first-shared`, superseding the retired `profile/RULES.md` referenced in historical entries below); procedures belong to their skills. Project-specific learning belongs in `.agent-first/corrections.md` using `af-context`.
 
 Sources: [Phase 1 validation](../eval/validation.md), [principles validation](../eval/principles-validation.md), retained results linked below, and explicitly scoped parser replays. `eval/results/` is private/gitignored local evidence and may be absent in another checkout; portable observations remain in the validation records. Each entry distinguishes observed execution, tooling replay, and unverified behavioral mitigation.
 

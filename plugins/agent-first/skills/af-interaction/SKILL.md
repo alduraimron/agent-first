@@ -61,7 +61,7 @@ Ground claims in available source, records, or observed results. Separate observ
 
 ## Advisor handoff
 
-Interaction advisors are optional: delegate only for a material specialist question, not to satisfy a checklist. Existing mandatory engineering consultation still applies when the task enters that workflow. Supply precise source paths, observed facts, selected interaction leaf URI, and read-only expectations. Children do not inherit main-session the main-only orchestrator rule; include necessary task intent explicitly. Advisors inspect and recommend; main owns any authorized artifact edits and engineering implementation. An interaction skill does not expand permissions to edit, execute commands, or publish.
+Interaction advisors are optional: delegate only for a material specialist question, not to satisfy a checklist. Existing mandatory engineering consultation still applies when the task enters that workflow. Supply precise source paths, observed facts, selected interaction leaf URI, and read-only expectations. Children do not inherit the main-only orchestrator rule; include necessary task intent explicitly. Advisors inspect and recommend; main owns any authorized artifact edits and engineering implementation. An interaction skill does not expand permissions to edit, execute commands, or publish.
 
 ## Provenance
 

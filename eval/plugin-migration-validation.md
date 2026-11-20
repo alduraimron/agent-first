@@ -2,7 +2,7 @@
 
 ## Disposition
 
-Agent-First 2.0.0 is implemented as a native project-scoped OMP marketplace plugin. The catalog, plugin assets and documentation are local and uncommitted. No GitHub release, commit or push was performed. Native packaging/lifecycle works; behavioral results are not an all-green or all-model reliability claim. Later targeted outcomes and native integration corrections are recorded below, without rewriting earlier failures.
+Agent-First 2.0.0 is implemented as a native project-scoped OMP marketplace plugin. The checks below were recorded against the local checkout before commit/push; the migration was subsequently committed to `main` (`alduraimron/agent-first`), while no `2.0.0` GitHub tag/release or remote GitHub marketplace installation has been performed or validated yet. Native packaging/lifecycle works; behavioral results are not an all-green or all-model reliability claim. Later targeted outcomes and native integration corrections are recorded below, without rewriting earlier failures.
 
 Observed environment: OMP `18.22.1`; Tern `0.9.26 (6a1aeb9)`; OVNFS `0.7.0`. Existing Python, Git and Node were used without dependency/runtime/browser installation or updates. Commands ran from `/home/alduraimron/code/omp/agent-first` unless a retained command record names its synthetic workspace.
 
