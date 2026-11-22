@@ -7,8 +7,9 @@ Use for new or changed behavior within established boundaries. Require user outc
 1. Trace the end-to-end path and derive observable acceptance criteria using the engineering requirements procedure. Include invalid input and relevant failure states.
 2. Plan the smallest complete vertical slice: data/logic, interface, consumers, tests, and documentation where behavior changes. Identify a check for each criterion.
 3. Load the touched domain skills. If the design changes boundaries or public contracts, reclassify architecture-impacting before implementing that part.
-4. Implement the planned slices, migrating every affected caller and removing superseded mechanisms. Track meaningful task state through `skill://af-context`.
-5. Compare implementation coverage to every criterion; resolve gaps before verification.
+4. Apply **Agreement before changes** in `rule://agent-first-orchestrator`: present the plan and stop for explicit user approval before any write. An unambiguous feature request is still a planning turn, not approval to implement.
+5. After approval, implement the planned slices, migrating affected callers and removing superseded mechanisms. Track meaningful task state through `skill://af-context`.
+6. Compare implementation coverage to every criterion; resolve gaps before verification.
 
 ## Consultation
 Use router protocol only for material domain uncertainty. Independent reviewer is conditional on concrete risk, not feature size alone.
