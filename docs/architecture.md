@@ -39,6 +39,8 @@ Real old launcher/profile symlinks remain untouched. Optional operator cleanup r
 
 `rules/agent-first-shared.md` has `alwaysApply: true` and explicitly targets main, all six `af-*` advisors and bundled `reviewer`. It owns scoped authorization, read-only advisory behavior, evidence/handoff and shared boundaries. Procedures reference `rule://agent-first-shared`, not a linked profile `RULES.md`.
 
+[`rules/agent-first-comments.md`](../plugins/agent-first/rules/agent-first-comments.md) is an always-applied preference shipped with the plugin. It provides guidance in projects that install Agent-First, not a TTSR trigger or a checkout-local rule.
+
 Marketplace rules are implemented by OMP v18.22.1 `packages/coding-agent/src/discovery/claude-plugins.ts` **`loadRules`**, even where marketplace summaries omit rules. Rule agent filters provide the main/shared split without appending a launcher system prompt. Native context and task inheritance still apply: children do not inherit main's read history or main-only contract; explicit scoped leaf handoffs remain necessary. Provider/rule disables are honored, never repaired by silently editing operator configuration.
 
 ## Discovery and coexistence
