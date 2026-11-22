@@ -20,7 +20,7 @@ For engineering execution, the path is **workflow -> relevant domain procedure -
 | [interaction-in-your-own-words](../plugins/agent-first/skills/interaction-in-your-own-words/SKILL.md) | Confirm intent and scope without implementing |
 | [interaction-idea-refine](../plugins/agent-first/skills/interaction-idea-refine/SKILL.md) | Compare concepts and the smallest useful experiment |
 | [interaction-sharpen](../plugins/agent-first/skills/interaction-sharpen/SKILL.md) | Define observable outcomes, constraints and non-goals |
-| [interaction-architect](../plugins/agent-first/skills/interaction-architect/SKILL.md) | Discuss architectural alternatives before implementation |
+| [interaction-architect](../plugins/agent-first/skills/interaction-architect/SKILL.md) | Discuss project architecture and conventions; record approved standards |
 | [interaction-figure-it-out](../plugins/agent-first/skills/interaction-figure-it-out/SKILL.md) | Find a cheap, safe next diagnostic step |
 | [interaction-recall](../plugins/agent-first/skills/interaction-recall/SKILL.md) | Recover a specific documented past decision |
 | [interaction-ketchup](../plugins/agent-first/skills/interaction-ketchup/SKILL.md) | Separate completed, active and blocked project work |

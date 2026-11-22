@@ -1,6 +1,6 @@
 ---
 name: interaction-architect
-description: Compare architectural options and trade-offs before implementation, facilitating a decision without executing it.
+description: Discuss project architecture and conventions, compare trade-offs before implementation, and record or revise project standards when the user approves and authorizes saving them.
 hide: true
 ---
 
@@ -8,19 +8,19 @@ hide: true
 
 ## Intent and trigger
 
-Facilitate an architecture decision without executing it. Use when the user asks for architectural options or trade-offs before implementation.
+Facilitate initial architecture and convention choices, or revisit one standard in an existing project. Keep the design discussion separate from implementation.
 
 ## Procedure
 
-1. Inspect contracts and constraints.
-2. Identify decisions and source of truth.
-3. Compare existing design with viable alternatives.
-4. Evaluate consistency, operations, migrations and reversal.
-5. Document proposed invariants in the response or explicitly requested artifact, keeping proposals distinct from accepted decisions.
+1. Inspect existing project instructions, relevant guides and code. Identify decisions the user needs to make, the constraints and where each decision belongs.
+2. Compare viable options only where there is a material trade-off. Turn preferences into concrete rules: what they apply to, what to do instead, and any exceptions. Ask only about unresolved choices that matter.
+3. Summarize the proposed decisions, open questions and intended files. Discussion alone leaves files unchanged. Record only settled choices after the user authorizes saving them. A request to record a specific, unambiguous rule already supplies that authorization.
+4. Update the existing authoritative section in place. Keep short project-wide rules in the project's instruction file (`AGENTS.md` by default). Put area-specific rules and examples in the area's guide, and put architecture boundaries and data flow in the architecture doc. For each changed or new guide, ensure the instruction file has a direct, scoped pointer such as “Before editing React components, read [React conventions](docs/react.md).” Keep the details in the guide, not in the pointer. Use an ADR only when a consequential trade-off needs a separate rationale. Create files only as needed.
+5. Check that changed pointers resolve, the saved wording matches the approved scope and exceptions, and unrelated content remains intact. If the decision describes a target architecture that is not yet implemented, label it as such. Saving a standard does not authorize changing application code, lint configuration or `.agent-first/` records.
 
 ## Output contract
 
-Decision options, recommendation, risks and checks. Refer a substantive domain question to `skill://af-design` or the `af-architect` advisor when needed.
+During discussion: options, recommendation, open choices and proposed destinations. After an authorized save: exact files changed and any unresolved conflicts. Refer substantive domain questions to `skill://af-design` or the `af-architect` advisor when needed.
 
 ## Boundaries and failure modes
 

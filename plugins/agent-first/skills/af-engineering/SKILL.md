@@ -33,7 +33,7 @@ Use `skill://af-interaction` for explanation, learning, interviews, ideation, ra
 
 Translate each requested outcome into observable acceptance criteria (failure paths, compatibility, non-goals) before editing. Inspect repo facts before asking questions. Trivial tasks need a narrow check, not a formal plan; multi-step work needs an ordered path to consumer-visible behavior with a check per criterion.
 
-Load `skill://af-context` only when durable task/decision/recovery records matter. Load touched domain skills on demand: `af-design`, `af-database`, `af-frontend`, `af-testing`, `af-security`, `af-performance`, `af-operations`. Main owns edits and verification via `skill://af-verification`.
+Before editing, open any project guidance linked from the project instructions whose scope matches the change. Load `skill://af-context` only when durable task/decision/recovery records matter. Load touched domain skills on demand: `af-design`, `af-database`, `af-frontend`, `af-testing`, `af-security`, `af-performance`, `af-operations`. Main owns edits and verification via `skill://af-verification`.
 
 ## Proportional consultation
 

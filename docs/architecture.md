@@ -80,6 +80,8 @@ Resolve project, runtime, database, Docker context/volumes, remote target, owner
 
 `af-context` preserves ordinary `.agent-first/` context, task, decision, verification, handoff, issue and correction templates. Create only meaningful records. Accepted decisions require an acceptance source; advice is not automatically policy. Native sessions preserve execution detail, not the sole durable decision record.
 
+Project standards are separate from task memory. The architecture interaction records approved conventions or designs only when the operator authorizes saving them. Project instructions link directly to scoped guides and architecture docs; engineering work reads the matching guidance before editing.
+
 Recovery reads active context/task, relevant accepted decisions and handoff, then reconciles changed source and instructions. Evidence records state, environment, inputs, actor, actual command/action and applicability. Historical PASS cannot become current evidence merely by loading it. Context bookkeeping after checks does not invalidate unchanged tested implementation.
 
 Correction records separate observed incidents, repeated patterns, diagnosed versus hypothesized causes, actual changes, owning layer, validation and residual risk. One cascading incident is not repeated evidence; parser replay is not fresh model compliance. There is no automatic global learning or configuration rewrite.

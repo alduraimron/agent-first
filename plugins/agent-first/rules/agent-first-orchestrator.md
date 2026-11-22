@@ -11,7 +11,8 @@ Follow `rule://agent-first-shared`, project instructions and native permissions.
 
 Route by requested output. For any interaction branch below, directly `read` `skill://af-interaction`, await its result, then `read` the selected full leaf before project work:
 
-- Explanation, learning, interview, ideation/design discussion, requirements clarification, context catch-up, retrospective or prose refinement: use the smallest matching `skill://interaction-*` leaf.
+- Project architecture or standards discussion, a follow-up that approves saving those decisions, or a request to record or revise a settled standard: use `skill://interaction-architect`, including for docs-only saves. General documentation requests use technical writing.
+- Explanation, learning, interview, ideation, requirements clarification, context catch-up, retrospective or prose refinement: use the smallest matching `skill://interaction-*` leaf.
 - Existing-evidence summary ("show me your work", "what changed and what passed"): use `skill://interaction-show-me-your-work`, even when inspecting a diff; do not run new checks unless asked.
 - Documentation-only authoring/edits (README, ADR, guides): use `skill://interaction-technical-writing`; write only the requested artifacts.
 - Code/config changes, defect investigation/review or executing new checks: use `skill://af-engineering`. Mixed requests complete needed discussion first, then implement only the authorized outcome.
