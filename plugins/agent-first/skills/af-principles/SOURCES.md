@@ -39,5 +39,5 @@ Each link targets the inspected upstream `SKILL.md`:
 - OMP 18.22.1 supports marketplace skill discovery, native `hide: true`, skill URIs and advisor `autoloadSkills`: [official skill documentation](https://github.com/can1357/oh-my-pi/blob/v18.22.1/docs/skills.md). The selector stays catalog-visible; leaves remain URI-readable. No Cursor commands, extensions or additional runtime are required.
 - Design exploration and leverage are proportional to demonstrated uncertainty and recurring cost. A one-off edit does not need a framework, script, or alternatives ceremony.
 - Shared `rule://agent-first-shared`, native denies, scope, consequential approval, and required compatibility outrank every principle. Continuing safe independent work never authorizes the blocked operation.
-- Main owns implementation and verification. Read-only advisors receive selected skill URIs explicitly and read them in their own sessions. No implementation fan-out or automatic nested delegation is introduced.
+- Main owns verification. Read-only advisors receive selected skill URIs explicitly and read them in their own sessions. The principles do not authorize implementation delegation.
 - Corrections prefer code, tests, constraints, and tooling over accumulating prompt rules. One failure does not authorize global policy rewriting.

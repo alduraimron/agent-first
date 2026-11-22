@@ -1,6 +1,6 @@
 {
   "name": "agent-first",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Project-scoped adaptive engineering, interaction routing, selective principles and read-only domain advisors",
   "author": { "name": "alduraimron" },
   "homepage": "https://github.com/alduraimron/agent-first",

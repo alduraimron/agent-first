@@ -27,6 +27,8 @@ Template target: `.agent-first/tasks/<task-id>.md`. Replace instructions; distin
 | --- | --- | --- | --- |
 | <ordered step> | <checkable completion criterion> | <choose: not-started, in-progress, done, blocked> | <facts or pending; no prechecked completion> |
 
+For delegated implementation, link each assignment in the plan and use slice acceptance results to track progress. Record the selected worker route and, after each run, the native worker reference, actual provider/model and acceptance evidence. Omit worker details for work done in main.
+
 ## Consultation disposition
 
 - <Advisor/question, actual native task ID if available, evidence/reference, recommendation adopted/rejected/deferred and why. Use none if not needed; proposed consultation is not completed advice.>

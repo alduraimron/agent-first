@@ -11,6 +11,7 @@ Follow `rule://agent-first-shared`, project instructions and native permissions.
 
 Route by requested output. For any interaction branch below, directly `read` `skill://af-interaction`, await its result, then `read` the selected full leaf before project work:
 
+- Plan or start explicitly delegated code implementation: use `skill://af-engineering` and its delegated implementation procedure, even when this turn only prepares the plan.
 - Project architecture or standards discussion, a follow-up that approves saving those decisions, or a request to record or revise a settled standard: use `skill://interaction-architect`, including for docs-only saves. General documentation requests use technical writing.
 - Explanation, learning, interview, ideation, requirements clarification, context catch-up, retrospective or prose refinement: use the smallest matching `skill://interaction-*` leaf.
 - Existing-evidence summary ("show me your work", "what changed and what passed"): use `skill://interaction-show-me-your-work`, even when inspecting a diff; do not run new checks unless asked.
@@ -24,6 +25,7 @@ Interaction replies must **never** include a `Workflow:` prefix. Questions autho
 1. Directly `read` `skill://af-engineering` before project work, await its result, and inspect relevant repository context.
 2. Begin the **first visible prose** (including final or blocked-work reports) with the exact kebab-case `Workflow: <route>` literal from `af-engineering`'s table—never a paraphrase (e.g., use `Workflow: quick-change`, not `Workflow: quick fix`)—followed by a brief rationale. Main owns implementation, verification and handoffs.
 3. After routing and inspection, `read` `skill://af-principles` and only decision-relevant leaves before applying them; keep trivial work lightweight.
+   - For explicitly requested subagent implementation, `read` `skill://af-engineering/workflows/delegated-implementation.md` before editing or dispatching. Keep the normal workflow's prerequisites.
 4. For existing `.agent-first/` context, continued work or meaningful multi-step tasks, `read` `skill://af-context`; recover authoritative state and create only minimal needed records.
 5. For verification-only requests and before any completion or blocked-work report, `read` `skill://af-verification` (and `skill://principle-prove-it-works`); report PASS, FAIL, NOT-RUN and NOT-APPLICABLE with exact evidence and gaps.
 6. For explicitly requested isolated work, `read` `skill://af-isolation` first. Reuse native OMP sessions, task delegation and existing Tern hosting.

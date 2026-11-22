@@ -7,7 +7,7 @@ Use when authorized work changes ownership, public contracts, persistence/schema
 1. Load `skill://af-design`; map current dependencies, data/control flow, and invariants with source locations. Identify the simplest viable option and material alternatives.
 2. Consult `af-architect` through the router's native task protocol before affected implementation. Supply the map, evidence, options, constraints, and question. Wait for actual returned advice.
 3. Evaluate advice against repository evidence. Record chosen design, rejected alternative, tradeoffs, migration/rollback, and enforceable constraints through `skill://af-context` when durable decisions matter.
-4. Resolve required approvals under `rule://agent-first-shared`. Main implements the complete cutover, migrating consumers and removing superseded interfaces rather than adding compatibility shims without a requirement.
+4. Resolve required approvals under `rule://agent-first-shared`. Implement the complete cutover, migrating consumers and removing superseded interfaces rather than adding compatibility shims without a requirement.
 5. Trace every adopted invariant to implementation and a verification recommendation.
 
 ## Consultation

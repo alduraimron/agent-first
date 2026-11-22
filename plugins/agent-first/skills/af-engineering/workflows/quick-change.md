@@ -6,10 +6,10 @@ Use for an understood localized low-risk edit, or verification-only request. Req
 ## Steps and decision points
 1. Inspect implementation and immediate callers/tests until the cause and effect are explainable. If the cause is uncertain, use bug-investigation; if scope grows, use feature-development.
 2. State the narrow criterion. For verification-only work, proceed directly to verification without editing.
-3. Main makes the smallest complete authorized change, including directly obsolete callers or tests. Reassess architectural boundaries before changing a contract.
+3. Make the smallest complete authorized change, including directly obsolete callers or tests. Reassess architectural boundaries before changing a contract.
 
 ## Consultation
-No delegation for trivial work. If a material specialist question appears, use the router's consultation protocol and reconsider whether this route remains adequate.
+If a material specialist question appears, use the router's consultation protocol and reconsider whether this route remains adequate.
 
 ## Verification
 Load `skill://af-verification`; select the existing focused check for the changed behavior and relevant regression. Inspection alone does not establish runtime success.

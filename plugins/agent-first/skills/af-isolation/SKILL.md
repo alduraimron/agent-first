@@ -23,7 +23,7 @@ With the source and name explicitly selected, use existing native commands:
 ovnfs new /absolute/path/to/personal-project --name af-chosen-experiment
 ```
 
-Use the actual printed checkout path, not a guessed mount. Run ordinary `omp --cwd PRINTED_CHECKOUT_PATH` there; the copied project-scoped plugin registration must resolve to its installed cache, so verify discovery before work. Main implements and verifies; advisors stay advisory. Do not create parallel CLI workers or change operator isolation settings. Record checkout/source identity. The default checkout includes current work; select `--rev` explicitly when changing the tracked baseline.
+Use the actual printed checkout path, not a guessed mount. Run ordinary `omp --cwd PRINTED_CHECKOUT_PATH` there; the copied project-scoped plugin registration must resolve to its installed cache, so verify discovery before work. Main owns verification. Any explicitly delegated implementation uses the engineering workflow and native `task`, not parallel CLI workers or changes to operator isolation settings. Record checkout/source identity. The default checkout includes current work; select `--rev` explicitly when changing the tracked baseline.
 
 ```sh
 ovnfs diff af-chosen-experiment

@@ -33,11 +33,11 @@ Use `skill://af-interaction` for explanation, learning, interviews, ideation, ra
 
 Translate each requested outcome into observable acceptance criteria (failure paths, compatibility, non-goals) before editing. Inspect repo facts before asking questions. Trivial tasks need a narrow check, not a formal plan; multi-step work needs an ordered path to consumer-visible behavior with a check per criterion.
 
-Before editing, open any project guidance linked from the project instructions whose scope matches the change. Load `skill://af-context` only when durable task/decision/recovery records matter. Load touched domain skills on demand: `af-design`, `af-database`, `af-frontend`, `af-testing`, `af-security`, `af-performance`, `af-operations`. Main owns edits and verification via `skill://af-verification`.
+Before editing, open any project guidance linked from the project instructions whose scope matches the change. Load `skill://af-context` only when durable task/decision/recovery records matter. Load touched domain skills on demand: `af-design`, `af-database`, `af-frontend`, `af-testing`, `af-security`, `af-performance`, `af-operations`. Main owns edits and verification via `skill://af-verification`; use [delegated implementation](skill://af-engineering/workflows/delegated-implementation.md) only on explicit opt-in for an edit task.
 
 ## Proportional consultation
 
-- Trivial quick changes: **no delegation**.
+- Trivial quick changes: no advisory delegation unless a material question changes the route.
 - Consult only for material domain uncertainty or explicit requests for independent assessment: `af-architect`, `af-database`, `af-security`, `af-frontend`, `af-performance`, `af-devops`. `architecture-impacting` **requires** returned `af-architect` advice before affected edits; other consultations are conditional, not a checklist. Max 2 concurrent, depth 1, no child spawning.
 - Dispatch via native `task` with exact `agent` name. Omit per-task `tools` (or leave empty): it forwards eval functions, not built-in permissions (frontmatter controls built-ins).
 - Provide: concrete question, scope/non-goals, paths, observed facts, acceptance criteria, constraints, and exact `Principles:` handoff from `skill://af-principles` (exact catalog URIs or justified `none`). Children must read assigned leaves and cited source themselves. Main evaluates advice against source evidence before adopting or rejecting it.
