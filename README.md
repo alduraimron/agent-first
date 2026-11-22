@@ -36,6 +36,12 @@ omp --model PROVIDER/MODEL "Review this diff for concurrency bugs"
 omp --continue
 ```
 
+### Project Architecture & Standards
+
+Start with a discussion in a project that has Agent-First installed: “Let's decide this project's architecture and coding conventions before implementing.” No files change during discussion. To record the settled decisions, say “Save the approved standards and architecture decisions.” To add one later, ask to record the specific rule.
+
+Keep short project-wide rules in `AGENTS.md` (or the existing instruction file). Link to area guides and architecture docs with a trigger for when to read each one. Recording decisions does not change code or create `.agent-first/` records.
+
 ### Update & Uninstall
 
 ```sh

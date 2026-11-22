@@ -29,7 +29,7 @@ Apply `rule://agent-first-shared`. Use this selector when the primary requested 
 | [in-your-own-words](skill://interaction-in-your-own-words) | Discovery | Confirm/restate intent or resolve a material ambiguous consequence |
 | [idea-refine](skill://interaction-idea-refine) | Discovery | Brainstorm, refine or shape an early concept |
 | [sharpen](skill://interaction-sharpen) | Discovery | Turn a chosen problem into measurable specs/acceptance criteria |
-| [architect](skill://interaction-architect) | Discovery | Compare architectural options/trade-offs before implementation |
+| [architect](skill://interaction-architect) | Discovery | Discuss project architecture or conventions, or record or revise approved project standards |
 | [figure-it-out](skill://interaction-figure-it-out) | Discovery | Find a safe next diagnostic step with no known starting point |
 | [recall](skill://interaction-recall) | Context | Recover a specific past decision, attempt or record |
 | [ketchup](skill://interaction-ketchup) | Context | Summarize what is done, active, blocked and next |

@@ -39,6 +39,8 @@ Real old launcher/profile symlinks remain untouched. Optional operator cleanup r
 
 `rules/agent-first-shared.md` has `alwaysApply: true` and explicitly targets main, all six `af-*` advisors and bundled `reviewer`. It owns scoped authorization, read-only advisory behavior, evidence/handoff and shared boundaries. Procedures reference `rule://agent-first-shared`, not a linked profile `RULES.md`.
 
+[`rules/agent-first-comments.md`](../plugins/agent-first/rules/agent-first-comments.md) is an always-applied preference shipped with the plugin. It provides guidance in projects that install Agent-First, not a TTSR trigger or a checkout-local rule.
+
 Marketplace rules are implemented by OMP v18.22.1 `packages/coding-agent/src/discovery/claude-plugins.ts` **`loadRules`**, even where marketplace summaries omit rules. Rule agent filters provide the main/shared split without appending a launcher system prompt. Native context and task inheritance still apply: children do not inherit main's read history or main-only contract; explicit scoped leaf handoffs remain necessary. Provider/rule disables are honored, never repaired by silently editing operator configuration.
 
 ## Discovery and coexistence
@@ -79,6 +81,8 @@ Resolve project, runtime, database, Docker context/volumes, remote target, owner
 ## Durable project state
 
 `af-context` preserves ordinary `.agent-first/` context, task, decision, verification, handoff, issue and correction templates. Create only meaningful records. Accepted decisions require an acceptance source; advice is not automatically policy. Native sessions preserve execution detail, not the sole durable decision record.
+
+Project standards are separate from task memory. The architecture interaction records approved conventions or designs only when the operator authorizes saving them. Project instructions link directly to scoped guides and architecture docs; engineering work reads the matching guidance before editing.
 
 Recovery reads active context/task, relevant accepted decisions and handoff, then reconciles changed source and instructions. Evidence records state, environment, inputs, actor, actual command/action and applicability. Historical PASS cannot become current evidence merely by loading it. Context bookkeeping after checks does not invalidate unchanged tested implementation.
 
