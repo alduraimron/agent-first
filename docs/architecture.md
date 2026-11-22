@@ -15,7 +15,9 @@ flowchart TD
     W --> J[Relevant principle leaves]
     J --> A[Material read-only consultation]
     A --> M
-    M --> I[Main implementation and verification]
+    M --> I[Implementation and main verification]
+    M --> D[Opt-in workers on a user-selected model]
+    D --> I
     I --> E[Attributable evidence and handoff]
     S --> E
     E --> C
@@ -56,7 +58,7 @@ Check resolved source and behavior when a required skill/agent/rule is missing o
 
 ## Routing and proportional loading
 
-Eight engineering workflows remain: project-initialization, feature-development, bug-investigation, refactoring, architecture-impacting, code-review, performance-optimization and quick-change. Main announces the selected route with its reason and revises it when evidence changes. The sequence is workflow -> relevant domain procedure -> relevant principles -> main implementation and checks. Architecture-impacting implementation requires returned architect advice first; local understood edits do not delegate.
+Eight engineering workflows remain: project-initialization, feature-development, bug-investigation, refactoring, architecture-impacting, code-review, performance-optimization and quick-change. Main announces the selected route and revises it when evidence changes. Main implements by default and owns final checks. Architecture-impacting implementation requires returned architect advice first.
 
 Explanation, learning, interviews, idea/design discussion, context recovery, reflection and writing use `af-interaction` and the relevant full leaf. Read-only is default; explicitly requested artifact writes authorize only those artifacts. Actual diagnosis, review, verification and implementation use engineering routes. Clear changes need no compulsory interview. Interaction architecture discussion is not implementation consultation.
 
@@ -64,11 +66,13 @@ The catalog contains eleven original domain/support skills, two selectors, 24 pr
 
 Selectors choose relevant full bodies rather than eagerly appending all leaves. Usually one to three principles inform a decision; trivial understood work normally needs proof and at most one additional justified leaf. A catalog entry, name mention or late read does not prove application. See the [catalog](skills-catalog.md) for every name and attribution.
 
+[Delegated implementation](../plugins/agent-first/skills/af-engineering/workflows/delegated-implementation.md) is an explicit execution mode, not a ninth route. Main writes the shared task brief and assignment files, then waits for the user to choose a model and authorize starting. Native `task` runs workers only for ready assignments. Main accepts a slice against its write scope, spec, standards and check results before releasing dependents. Write scope is behavioral, not a sandbox. For strict main-loop model selection, the operator must enable and grant native per-call routing; the plugin does not configure it.
+
 ## Read-only consultation
 
 Six advisors cover architecture, database, security, frontend, performance and operations. Their definitions declare read/grep/glob, `spawns: []`, domain/selector autoload, `structured: true` and a native output schema with required string `report`. The schema supplies native yield independently of global `task.structured`; the boolean alone with no schema does not. Declared built-ins do not block additive MCP/extension capabilities. Advisory scope remains binding but is not OS containment.
 
-Main passes the concrete question, relevant evidence, selected leaf URIs/triggers and adopted constraints. Children read assigned leaves themselves and distinguish facts, assumptions, recommendations and checks. Main evaluates advice and owns implementation/verification. Two concurrent consultations and one delegation level are instructions, not configuration overrides or an assertion about inherited scheduler limits.
+Main passes the concrete question, relevant evidence, selected leaf URIs/triggers and adopted constraints. Advisors read assigned leaves themselves and distinguish facts, assumptions, recommendations and checks. Main evaluates advice and owns verification. The two-child concurrency limit and one delegation level are instructions, not scheduler overrides.
 
 The native bundled `reviewer` is reused without a cloned agent definition. Provide literal diff/new-file content, relevant principle handoff and an explicit read-only assignment. Its native tools are broader than advisory scope; inspect actual calls. In OMP 18.22.1 it declares a schema without `structured: true`: use schema-preserving yields only when native task settings supply `yield`, otherwise use its inspected final findings/verdict. Do not install `task.structured` to force a mode. Invalid tool/schema results, forbidden attempts, errors and timeouts remain failures even if another call later succeeds.
 

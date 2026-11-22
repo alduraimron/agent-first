@@ -42,6 +42,12 @@ Start with a discussion in a project that has Agent-First installed: “Let's de
 
 Keep short project-wide rules in `AGENTS.md` (or the existing instruction file). Link to area guides and architecture docs with a trigger for when to read each one. Recording decisions does not change code or create `.agent-first/` records.
 
+### Delegated Implementation
+
+Ask “Plan this change for delegated implementation; I'll pick the worker model after seeing the plan.” Agent-First writes one shared task brief and one assignment per verifiable slice under `.agent-first/tasks/`, then pauses without editing code.
+
+When ready, ask it to start and select a worker model with `^` in the OMP composer. Main checks each slice before starting its dependents, then verifies the combined change. The `^` route can inherit native model fallback. For an exact model without main-loop fallback, use an operator-approved native per-call model instead. Without delegation opt-in, main implements as usual.
+
 ### Update & Uninstall
 
 ```sh
