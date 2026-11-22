@@ -12,7 +12,7 @@ Apply `rule://agent-first-shared`. Use this selector when the primary requested 
 1. Honor explicit requests ("interview me", "teach me", "explain how", "show me your work"); otherwise pick the smallest matching `skill://interaction-*` leaf by desired output, not keywords alone.
 2. `read` the selected full leaf before acting (at most one complementary leaf for a distinct need; multi-phase requests sequence leaves rather than loading the catalog). Never emit an engineering `Workflow:` prefix.
 3. **Read-only by default:** Never convert discussion, explanation, recall, catch-up or reflection into edits or context-file writes. Explicit artifact requests (e.g., README/ADR/handoff) authorize **only** those artifacts—never code edits, commits, installs or external effects. Examples and documented commands are not execution instructions.
-4. For mixed discuss-and-implement requests, finish needed discovery first, then route authorized implementation to `skill://af-engineering`. Clear engineering actions need no interview or teaching ceremony. Ask one material question at a time in interview mode.
+4. For mixed discuss-and-implement requests, finish discovery before routing implementation to `skill://af-engineering`. For any requested write, apply **Agreement before changes** in `rule://agent-first-orchestrator`. Ask one material question at a time in interview mode.
 5. Ground claims in actual source, records or observed results. Separate observations, inferences, unknowns and unexecuted checks; stored verification is historical until applicability is confirmed. Use `skill://af-context` only when durable recording/recovery needs it, and `skill://af-verification` outcome labels when reporting checks.
 
 ## Trigger catalog

@@ -7,9 +7,11 @@ description: Route code/configuration changes, defect investigation/review and n
 
 Apply `rule://agent-first-shared`. This router serves main; advisors use their domain skill and read-only contract.
 
+For a requested change, start with **Agreement before changes** in `rule://agent-first-orchestrator`. All feature work, and every other nontrivial change, stays read-only until the user explicitly approves the plan already presented. Fully specified requirements can skip discovery questions, not plan approval.
+
 ## Interaction boundary
 
-Use `skill://af-interaction` for explanation, learning, interviews, ideation, rationale, catch-up, prose refinement, docs-only edits (e.g., README/ADR -> `skill://interaction-technical-writing`) or existing-evidence reports (e.g., diff/test summaries -> `skill://interaction-show-me-your-work`). Running new checks, defect diagnosis (`bug-investigation`), defect assessment (`code-review`) and code/config changes stay here. Mixed requests complete needed discussion first, then route authorized engineering here. Clear tasks need no interview ceremony.
+Use `skill://af-interaction` for explanation, learning, interviews, ideation, rationale, catch-up, prose refinement, docs-only edits (e.g., README/ADR -> `skill://interaction-technical-writing`) or existing-evidence reports (e.g., diff/test summaries -> `skill://interaction-show-me-your-work`). Running new checks, defect diagnosis (`bug-investigation`), defect assessment (`code-review`) and code/config changes stay here.
 
 ## Route from evidence
 
@@ -31,7 +33,7 @@ Use `skill://af-interaction` for explanation, learning, interviews, ideation, ra
 
 ## Requirements, domain skills and planning
 
-Translate each requested outcome into observable acceptance criteria (failure paths, compatibility, non-goals) before editing. Inspect repo facts before asking questions. Trivial tasks need a narrow check, not a formal plan; multi-step work needs an ordered path to consumer-visible behavior with a check per criterion.
+Translate outcomes into observable acceptance criteria (failure paths, compatibility, non-goals). Use a narrow check for simple edits; for multi-step work, propose an ordered path with a check per criterion. Apply the agreement gate before editing, writing task records, or launching implementation workers.
 
 Before editing, open any project guidance linked from the project instructions whose scope matches the change. Load `skill://af-context` only when durable task/decision/recovery records matter. Load touched domain skills on demand: `af-design`, `af-database`, `af-frontend`, `af-testing`, `af-security`, `af-performance`, `af-operations`. Main owns edits and verification via `skill://af-verification`; use [delegated implementation](skill://af-engineering/workflows/delegated-implementation.md) only on explicit opt-in for an edit task.
 

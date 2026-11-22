@@ -4,9 +4,9 @@ This is an opt-in execution mode for a code-edit workflow, not a new route. Keep
 
 ## Plan before starting
 
-1. Read `skill://af-context` and its task template. Write one shared brief at `.agent-first/tasks/<task-id>.md`: outcome, non-goals, shared contracts, project guidance and how to prove the whole task is done. Link each assignment in the brief's plan.
-2. Read the [assignment template](skill://af-context/templates/assignment.md). Write one `.agent-first/tasks/<task-id>/assignments/<slice>.md` per independently verifiable behavior, including when there is only one slice. Split by a behavior that can be demonstrated, not by technical layer. Name actual blockers and give each slice concrete write paths. Order slices with overlapping writes or unfinished contract dependencies; never infer independence from different ticket names.
-3. Show the user the slices, blockers and definition of done. End the planning turn without dispatching workers or editing implementation files. Wait for a follow-up that authorizes starting with a selected worker model. The task brief and assignments are the only new context records needed for this handoff.
+1. Inspect the project and propose one slice per independently verifiable behavior, including when there is only one slice. Give each slice concrete write paths, a check, and actual blockers. Order slices that overlap in writes or depend on unaccepted work.
+2. Show the shared outcome, non-goals, contracts, slices, blockers, and definition of done in chat. Apply **Agreement before changes** in `rule://agent-first-orchestrator`. Ask the user to approve the plan and select a worker model when ready to start; one reply can do both. Do not write records or dispatch workers before approval. If the user approves only saving the plan, save the records but wait for an explicit start instruction selecting a model.
+3. Once authorized, read `skill://af-context` and its task template. Write one brief at `.agent-first/tasks/<task-id>.md` with the agreed outcome, non-goals, shared contracts, project guidance, and whole-task acceptance check. Link one `.agent-first/tasks/<task-id>/assignments/<slice>.md` per slice and write each using the [assignment template](skill://af-context/templates/assignment.md). Reuse the approved records if they were already saved without starting workers.
 
 ## Start on the selected model
 
