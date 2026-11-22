@@ -8,7 +8,7 @@
     {
       "name": "agent-first",
       "description": "Adaptive main-agent engineering with evidence-based verification and durable project context",
-      "version": "2.1.1",
+      "version": "2.1.2",
       "source": "./plugins/agent-first",
       "homepage": "https://github.com/alduraimron/agent-first",
       "repository": "https://github.com/alduraimron/agent-first"
